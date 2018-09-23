@@ -9,3 +9,4 @@
     - [leveldb](doc/leveldb.md)
     - [lua](doc/lua.md)
     - [sqlite](doc/sqlite.md)
+    - [medis](doc/medis.md)

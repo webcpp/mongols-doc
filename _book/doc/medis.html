@@ -1,0 +1,481 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>medis · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    
+    <link rel="prev" href="sqlite.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    c++ mongols 简介
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.1.1" data-path="install.html">
+            
+                <a href="install.html">
+            
+                    
+                    安装
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.2" data-path="tcp.html">
+            
+                <a href="tcp.html">
+            
+                    
+                    TCP
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.3" data-path="http.html">
+            
+                <a href="http.html">
+            
+                    
+                    HTTP
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.4" data-path="websocket.html">
+            
+                <a href="websocket.html">
+            
+                    
+                    websocket
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.5" data-path="web.html">
+            
+                <a href="web.html">
+            
+                    
+                    web
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.6" data-path="leveldb.html">
+            
+                <a href="leveldb.html">
+            
+                    
+                    leveldb
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.7" data-path="lua.html">
+            
+                <a href="lua.html">
+            
+                    
+                    lua
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.8" data-path="sqlite.html">
+            
+                <a href="sqlite.html">
+            
+                    
+                    sqlite
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.1.9" data-path="medis.html">
+            
+                <a href="medis.html">
+            
+                    
+                    medis
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >medis</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="medis-&#x670D;&#x52A1;&#x5668;">medis &#x670D;&#x52A1;&#x5668;</h1>
+<p>medis_server &#x662F;&#x4E00;&#x4E2A;&#x4F7F;&#x7528;RESP&#x534F;&#x8BAE;&#x8FDB;&#x884C;&#x4EA4;&#x4E92;&#x7684;&#x6DF7;&#x5408;&#x578B;&#x7F13;&#x5B58;&#x670D;&#x52A1;&#x5668;&#x3002;</p>
+<p>&#x5B83;&#x50CF;redis&#x4E00;&#x6837;&#xFF0C;&#x63D0;&#x4F9B;&#x591A;&#x79CD;&#x590D;&#x6742;&#x6570;&#x636E;&#x7ED3;&#x6784;&#x2014;&#x2014;&#x5B57;&#x7B26;&#x4E32;&#x3001;&#x54C8;&#x5E0C;&#x3001;&#x5217;&#x8868;&#x3001;&#x96C6;&#x5408;&#x3001;&#x961F;&#x5217;&#x548C;&#x5806;&#x6808;&#x2014;&#x2014;&#x4F46;&#x662F;&#x5B83;&#x63D0;&#x4F9B;&#x4E24;&#x79CD;&#x4FDD;&#x5B58;&#x9009;&#x62E9;:&#x5185;&#x5B58;&#x6216;&#x8005;&#x786C;&#x76D8;(&#x901A;&#x8FC7;leveldb)&#x3002;&#x5982;&#x679C;&#x8FD9;&#x4E9B;&#x6570;&#x636E;&#x7ED3;&#x6784;&#x8FD8;&#x4E0D;&#x80FD;&#x6EE1;&#x8DB3;&#x9700;&#x8981;&#xFF0C;&#x5B83;&#x8FD8;&#x63D0;&#x4F9B;sqlite&#xFF0C;&#x7528;&#x6237;&#x53EF;&#x4EE5;&#x81EA;&#x7531;&#x901A;&#x8FC7;SQL&#x5B9A;&#x4E49;&#x6570;&#x636E;&#x7ED3;&#x6784;&#x3002;</p>
+<p>&#x6240;&#x6709;&#x8FD9;&#x4E9B;&#x529F;&#x80FD;&#xFF0C;&#x90FD;&#x80FD;&#x901A;&#x8FC7;RESP&#x534F;&#x8BAE;&#x8FDB;&#x884C;&#x8BBF;&#x95EE;&#x3002;&#x4E5F;&#x5C31;&#x662F;&#x8BF4;&#xFF0C;&#x53EF;&#x4EE5;&#x7528;redis-cli&#x5B9E;&#x73B0;&#x4E0E;medis_server&#x7684;&#x4EA4;&#x4E92;&#x3002;</p>
+<p>&#x6765;&#x770B;&#x4F8B;&#x5B50;&#xFF1A;</p>
+<pre><code class="lang-cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;mongols/medis_server.hpp&gt;</span></span>
+
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-keyword">int</span>,<span class="hljs-keyword">char</span>**)</span></span>{
+    <span class="hljs-keyword">int</span> port = <span class="hljs-number">9090</span>;
+    <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>* host=<span class="hljs-string">&quot;127.0.0.1&quot;</span>;
+    mongols::<span class="hljs-function">medis_server
+    <span class="hljs-title">server</span><span class="hljs-params">(host,port,<span class="hljs-number">5000</span>,<span class="hljs-number">8096</span>,<span class="hljs-number">2</span><span class="hljs-comment">/*0*/</span>)</span></span>;
+    server.ready();
+    server.run(<span class="hljs-string">&quot;html/leveldb&quot;</span>,<span class="hljs-string">&quot;html/sqlite/test.db&quot;</span>);
+}
+</code></pre>
+<h1 id="&#x547D;&#x4EE4;&#x5217;&#x8868;">&#x547D;&#x4EE4;&#x5217;&#x8868;</h1>
+<p>&#x6240;&#x6709;&#x547D;&#x4EE4;&#x5747;&#x4E3A;&#x5927;&#x5199;&#xFF0C;&#x524D;&#x7F00;&#x4E3A;<code>_</code>&#x4E0B;&#x5212;&#x7EBF;&#x7684;&#x8868;&#x793A;&#x4FDD;&#x5B58;&#x5728;&#x5185;&#x5B58;&#x4E2D;&#x3002;</p>
+<h2 id="&#x5B57;&#x7B26;&#x4E32;">&#x5B57;&#x7B26;&#x4E32;</h2>
+<ul>
+<li><p>SET key value or _SET key value</p>
+</li>
+<li><p>GET key or _GET key</p>
+</li>
+<li><p>DEL key or _DEL key</p>
+</li>
+<li><p>EXISTS key or _EXISTS key</p>
+</li>
+<li><p>MSET key value [key value ...] or _MSET key value [key value ...]</p>
+</li>
+<li><p>MGET key [key ...] or _MGET key [key ...]</p>
+</li>
+<li><p>GETSET key value or _GETSET key value</p>
+</li>
+<li><p>STRLEN key or _STRLEN key</p>
+</li>
+<li><p>APPEND key value or _APPEND key value</p>
+</li>
+<li><p>INCR key or _INCR key</p>
+</li>
+<li><p>INCRBY key increment or _INCRBY key increment</p>
+</li>
+<li><p>DECR key or _DECR key</p>
+</li>
+<li><p>DECRBY key decrement or _DECRBY key decrement</p>
+</li>
+</ul>
+<h2 id="&#x54C8;&#x5E0C;">&#x54C8;&#x5E0C;</h2>
+<ul>
+<li><p>HSET key field value or _HSET key field value</p>
+</li>
+<li><p>HGET key field or _HGET key field</p>
+</li>
+<li><p>HDEL key field [field ...] or _HDEL key field [field ...]</p>
+</li>
+<li><p>HEXISTS key field or _HEXISTS key field</p>
+</li>
+</ul>
+<h2 id="&#x5217;&#x8868;">&#x5217;&#x8868;</h2>
+<ul>
+<li><p>LFRONT key or _LFRONT key</p>
+</li>
+<li><p>LBACK key or _LBACK key</p>
+</li>
+<li><p>LPUSH_FRONT key [value ...]  or _LPUSH_FRONT key [value ...] </p>
+</li>
+<li><p>LPUSH_BACK key [value ...]  or _LPUSH_BACK key [value ...] </p>
+</li>
+<li><p>LPOP_FRONT key  or _LPOP_FRONT key </p>
+</li>
+<li><p>LPOP_BACK key   or _LPOP_BACK key</p>
+</li>
+<li><p>LLEN key or _LLEN key </p>
+</li>
+</ul>
+<h2 id="&#x96C6;&#x5408;&#x6709;&#x5E8F;">&#x96C6;&#x5408;(&#x6709;&#x5E8F;)</h2>
+<ul>
+<li><p>SADD SADD key member [member ...] or _SADD key member [member ...]</p>
+</li>
+<li><p>SDEL key member [member ...] or _SDEL key member [member ...]</p>
+</li>
+<li><p>SMEMBERS key or _SMEMBERS key</p>
+</li>
+<li><p>SEXISTS key or _SEXISTS key</p>
+</li>
+<li><p>SCARD key or _SCARD key</p>
+</li>
+<li><p>SDIFF key1 key2 or _SDIFF key1 key2</p>
+</li>
+<li><p>SINTER key1 key2 or _SINTER key1 key2</p>
+</li>
+<li><p>SUNION key1 key2 or _SUNION key1 key2</p>
+</li>
+<li><p>SSYDIFF key1 key2 or _SSYDIFF key1 key2</p>
+</li>
+</ul>
+<h2 id="&#x961F;&#x5217;">&#x961F;&#x5217;</h2>
+<ul>
+<li><p>QPUSH key member [member ...] or _QPUSH key member [member ...]</p>
+</li>
+<li><p>QPOP key or _QPOP key</p>
+</li>
+<li><p>QEMPTY key or _QEMPTY key</p>
+</li>
+<li><p>QFRONT key or _QFRONT key</p>
+</li>
+<li><p>QBACK key or _QBACK key</p>
+</li>
+</ul>
+<h2 id="&#x5806;&#x6808;">&#x5806;&#x6808;</h2>
+<ul>
+<li><p>ZPUSH  key member [member ...] or _ZPUSH key member [member ...]</p>
+</li>
+<li><p>ZPOP key or _ZPOP key</p>
+</li>
+<li><p>ZTOP key or _ZTOP key</p>
+</li>
+<li><p>ZEMPTY key or _ZEMPTY key</p>
+</li>
+</ul>
+<h2 id="sqlite">SQLite</h2>
+<ul>
+<li><p>SQLCMD statement</p>
+<p>  <code>SQLCMD &apos;update a set name=&quot;test&quot; where id=4 or id=5&apos;</code></p>
+</li>
+<li><p>SQLBINDCMD statement</p>
+<p>  <code>SQLBINDCMD &quot;INSERT INTO A(ID,NAME)VALUES(:ID,:NAME);&quot; &quot;:ID&quot; 4 &quot;:NAME&quot; &quot;CPP&quot;</code></p>
+</li>
+<li><p>SQLTRANSACTION statement</p>
+<p>  <code>SQLTRANSACTION &apos;INSERT INTO A(ID,NAME)VALUES(14,&quot;14&quot;);UPDATE A SET NAME=&quot;TEST&quot; WHERE ID=14;&apos;</code></p>
+</li>
+<li><p>SQLQUERY statement</p>
+<p>  <code>SQLQUERY &apos;SELECT * FROM A ORDER BY ID desc limit 3&apos;</code></p>
+</li>
+</ul>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="sqlite.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: sqlite">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"medis","level":"1.1.9","depth":2,"previous":{"title":"sqlite","level":"1.1.8","depth":2,"path":"doc/sqlite.md","ref":"doc/sqlite.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/medis.md","mtime":"2018-09-23T23:28:09.204Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-09-23T23:29:58.863Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
