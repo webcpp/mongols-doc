@@ -43,6 +43,14 @@ int main(int,char**){
 
 所有命令均为大写，前缀为`_`下划线的表示保存在内存中。所有保存在内存中的数据均可以通过`_FLUSHALL`命令全部清除。
 
+## 常规
+
+- ECHO value
+
+- PING [value]
+
+- _FLUSHALL
+
 
 
 ## 字符串
@@ -163,4 +171,4 @@ int main(int,char**){
 
 ## TODO
 
-添加更多针对高级数据结构的命令，但不会完全跟随redis。
+添加更多针对高级数据结构的命令。
