@@ -91,6 +91,8 @@ int main(int,char**){
 
 - HEXISTS key field or _HEXISTS key field
 
+- _HERASE key
+
 ## 列表
 
 - LFRONT key or _LFRONT key
@@ -106,6 +108,12 @@ int main(int,char**){
 - LPOP_BACK key   or _LPOP_BACK key
 
 - LLEN key or _LLEN key 
+
+- LRANGE key start stop or _LRANGE key start stop
+
+- _LEXISTS key value 
+
+- _LERASE key
 
 ## 集合(有序)
 
@@ -127,6 +135,8 @@ int main(int,char**){
 
 - SSYDIFF key1 key2 or _SSYDIFF key1 key2
 
+- _SERASE key
+
 ## 队列
 
 - QPUSH key member [member ...] or _QPUSH key member [member ...]
@@ -139,6 +149,8 @@ int main(int,char**){
 
 - QBACK key or _QBACK key
 
+- _QERASE key
+
 ## 堆栈
 
 - ZPUSH  key member [member ...] or _ZPUSH key member [member ...]
@@ -148,6 +160,8 @@ int main(int,char**){
 - ZTOP key or _ZTOP key
 
 - ZEMPTY key or _ZEMPTY key
+
+- _ZERASE key
 
 ## SQLite
 
@@ -169,6 +183,4 @@ int main(int,char**){
 
 
 
-## TODO
 
-添加更多针对高级数据结构的命令。

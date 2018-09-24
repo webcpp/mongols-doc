@@ -301,6 +301,15 @@
 </ul>
 <h1 id="&#x547D;&#x4EE4;&#x5217;&#x8868;">&#x547D;&#x4EE4;&#x5217;&#x8868;</h1>
 <p>&#x6240;&#x6709;&#x547D;&#x4EE4;&#x5747;&#x4E3A;&#x5927;&#x5199;&#xFF0C;&#x524D;&#x7F00;&#x4E3A;<code>_</code>&#x4E0B;&#x5212;&#x7EBF;&#x7684;&#x8868;&#x793A;&#x4FDD;&#x5B58;&#x5728;&#x5185;&#x5B58;&#x4E2D;&#x3002;&#x6240;&#x6709;&#x4FDD;&#x5B58;&#x5728;&#x5185;&#x5B58;&#x4E2D;&#x7684;&#x6570;&#x636E;&#x5747;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;<code>_FLUSHALL</code>&#x547D;&#x4EE4;&#x5168;&#x90E8;&#x6E05;&#x9664;&#x3002;</p>
+<h2 id="&#x5E38;&#x89C4;">&#x5E38;&#x89C4;</h2>
+<ul>
+<li><p>ECHO value</p>
+</li>
+<li><p>PING [value]</p>
+</li>
+<li><p>_FLUSHALL</p>
+</li>
+</ul>
 <h2 id="&#x5B57;&#x7B26;&#x4E32;">&#x5B57;&#x7B26;&#x4E32;</h2>
 <ul>
 <li><p>SET key value or _SET key value</p>
@@ -340,6 +349,8 @@
 </li>
 <li><p>HEXISTS key field or _HEXISTS key field</p>
 </li>
+<li><p>_HERASE key</p>
+</li>
 </ul>
 <h2 id="&#x5217;&#x8868;">&#x5217;&#x8868;</h2>
 <ul>
@@ -356,6 +367,12 @@
 <li><p>LPOP_BACK key   or _LPOP_BACK key</p>
 </li>
 <li><p>LLEN key or _LLEN key </p>
+</li>
+<li><p>LRANGE key start stop or _LRANGE key start stop</p>
+</li>
+<li><p>_LEXISTS key value </p>
+</li>
+<li><p>_LERASE key</p>
 </li>
 </ul>
 <h2 id="&#x96C6;&#x5408;&#x6709;&#x5E8F;">&#x96C6;&#x5408;(&#x6709;&#x5E8F;)</h2>
@@ -378,6 +395,8 @@
 </li>
 <li><p>SSYDIFF key1 key2 or _SSYDIFF key1 key2</p>
 </li>
+<li><p>_SERASE key</p>
+</li>
 </ul>
 <h2 id="&#x961F;&#x5217;">&#x961F;&#x5217;</h2>
 <ul>
@@ -391,6 +410,8 @@
 </li>
 <li><p>QBACK key or _QBACK key</p>
 </li>
+<li><p>_QERASE key</p>
+</li>
 </ul>
 <h2 id="&#x5806;&#x6808;">&#x5806;&#x6808;</h2>
 <ul>
@@ -401,6 +422,8 @@
 <li><p>ZTOP key or _ZTOP key</p>
 </li>
 <li><p>ZEMPTY key or _ZEMPTY key</p>
+</li>
+<li><p>_ZERASE key</p>
 </li>
 </ul>
 <h2 id="sqlite">SQLite</h2>
@@ -418,8 +441,6 @@
 <p>  <code>SQLQUERY &apos;SELECT * FROM A ORDER BY ID desc limit 3&apos;</code></p>
 </li>
 </ul>
-<h2 id="todo">TODO</h2>
-<p>&#x6DFB;&#x52A0;&#x66F4;&#x591A;&#x9488;&#x5BF9;&#x9AD8;&#x7EA7;&#x6570;&#x636E;&#x7ED3;&#x6784;&#x7684;&#x547D;&#x4EE4;&#xFF0C;&#x4F46;&#x4E0D;&#x4F1A;&#x5B8C;&#x5168;&#x8DDF;&#x968F;redis&#x3002;</p>
 
                                 
                                 </section>
@@ -459,7 +480,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"medis","level":"1.1.9","depth":2,"previous":{"title":"sqlite","level":"1.1.8","depth":2,"path":"doc/sqlite.md","ref":"doc/sqlite.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/medis.md","mtime":"2018-09-24T05:31:54.541Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-09-24T05:32:51.538Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"medis","level":"1.1.9","depth":2,"previous":{"title":"sqlite","level":"1.1.8","depth":2,"path":"doc/sqlite.md","ref":"doc/sqlite.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/medis.md","mtime":"2018-09-24T15:00:10.196Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-09-24T15:04:13.872Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
