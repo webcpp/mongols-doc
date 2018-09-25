@@ -111,7 +111,7 @@ int main(int,char**){
 
 - LLEN key or _LLEN key 
 
-- LRANGE key start stop or _LRANGE key start stop
+- LRANGE key start count or _LRANGE key start count
 
 - _LEXISTS key value 
 
