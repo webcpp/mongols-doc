@@ -95,6 +95,14 @@ int main(int,char**){
 
 - _HERASE key
 
+- HLEN key or _HLEN key
+
+- HGETALL key or _HGETALL key
+
+- HMSET key field value [field value ...] or _HMSET key field value [field value ...]
+
+- HMGET key field [field ...] or _HMGET key field [field ...]
+
 ## 列表
 
 - LFRONT key or _LFRONT key
@@ -127,7 +135,7 @@ int main(int,char**){
 
 - SEXISTS key or _SEXISTS key
 
-- SCARD key or _SCARD key
+- SLEN key or _SLEN key
 
 - SDIFF key1 key2 or _SDIFF key1 key2
 
@@ -153,6 +161,8 @@ int main(int,char**){
 
 - _QERASE key
 
+- _QLEN key
+
 ## 堆栈
 
 - ZPUSH  key member [member ...] or _ZPUSH key member [member ...]
@@ -164,6 +174,8 @@ int main(int,char**){
 - ZEMPTY key or _ZEMPTY key
 
 - _ZERASE key
+
+- _ZLEN key
 
 ## SQLite
 
