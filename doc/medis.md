@@ -83,6 +83,10 @@ int main(int,char**){
 
 - DECRBY key decrement or _DECRBY key decrement
 
+- SETRANGE key start value or _SETRANGE key start value
+
+- GETRANGE key start count or _GETRANGE key start count
+
 ## 哈希
 
 - HSET key field value or _HSET key field value
