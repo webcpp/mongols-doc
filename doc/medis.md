@@ -5,6 +5,8 @@ medis_server 是一个使用RESP协议进行交互的混合型缓存服务器。
 
 它像redis一样，提供多种复杂数据结构——字符串、哈希、列表、集合、队列和堆栈——但是它提供两种保存选择:内存或者硬盘(通过leveldb)。如果这些数据结构还不能满足需要，它还提供sqlite，用户可以自由通过SQL定义数据结构。
 
+medis_server 内嵌lua(5.3)脚本引擎，对于某些需要在服务器端完成的计算，应该是有所帮助的。
+
 所有这些功能，都能通过RESP协议进行访问。也就是说，可以用redis-cli实现与medis_server的交互。
 
 来看例子：
@@ -201,4 +203,16 @@ int main(int,char**){
 
 
 
+## lua 脚本引擎
+该引擎为lua5.3，内置一个名为`medis`的表变量,它包含6个对应于字符串操作的函数，分别是：
 
+- SET,GET,DEL
+- _SET,_GET,_DEL
+
+当需要客户端获取字符串缓存并通过计算变换值时，可以考虑把相关计算放在服务器端运行。这样可以省去网络交互的麻烦。当然，也会消耗一些服务器时间。所以，该引擎主要针对轻量级计算。
+
+- LUACONTENT statement
+	`LUACONTENT "local echo=require('echo') medis.SET('lua',echo.concat('hello','world'))"`
+
+- LUASCRIPT path
+	`LUASCRIPT 'html/lua/medis.lua'`
