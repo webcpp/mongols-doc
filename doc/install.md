@@ -23,3 +23,8 @@ CXX=clang++
 ## 使用
 
 很简单：`pkg-config --libs --cflags mongols`。
+
+
+## 例子
+ 
+安装后，`cd example && make`。`example`目录下有几个基本例子。可参考。
