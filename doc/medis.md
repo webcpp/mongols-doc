@@ -51,7 +51,7 @@ int main(int,char**){
 
 - PING [value]
 
-- _FLUSHALL
+- FLUSHALL or _FLUSHALL
 
 
 
