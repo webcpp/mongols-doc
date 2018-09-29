@@ -155,29 +155,29 @@ int main(int,char**){
 
 ## 队列
 
-- QPUSH key member [member ...] or _QPUSH key member [member ...]
+-  _QPUSH key member [member ...]
 
-- QPOP key or _QPOP key
+-  _QPOP key
 
-- QEMPTY key or _QEMPTY key
+-  _QEMPTY key
 
-- QFRONT key or _QFRONT key
+-  _QFRONT key
 
-- QBACK key or _QBACK key
+-  _QBACK key
 
-- _QERASE key
+-  _QERASE key
 
-- _QLEN key
+-  _QLEN key
 
 ## 堆栈
 
-- ZPUSH  key member [member ...] or _ZPUSH key member [member ...]
+- _ZPUSH key member [member ...]
 
-- ZPOP key or _ZPOP key
+- _ZPOP key
 
-- ZTOP key or _ZTOP key
+- _ZTOP key
 
-- ZEMPTY key or _ZEMPTY key
+- _ZEMPTY key
 
 - _ZERASE key
 
