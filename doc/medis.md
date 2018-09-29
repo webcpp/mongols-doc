@@ -204,14 +204,14 @@ int main(int,char**){
 
 
 ## lua 脚本引擎
-该引擎为lua5.3，内置一个名为`medis`的表变量,它包含一个对应于`CMD`函数，它可以调用所有上述所有操作方法。
+该引擎为lua5.3，内置一个名为`medis`的表变量,它包含一个`CMD`函数，它可以调用所有上述所有操作方法。
 如果调用以下两个命令时，包含额外参数，那么可以通过`medis`表中`ARGS`表域访问到它们。它们的值从第三个值开始计算。
 
 把一组相关计算放在lua脚本中，并在服务器端运行它，可以省去网络交互的麻烦。当然，也会消耗一些服务器时间。所以，该引擎主要针对轻量级计算。
 
 - LUACONTENT statement [arg ...]
 
-	`LUACONTENT "JSON = require('JSON') local t =JSON:encode({a=medis.ARGS[4],b=2,{c=4}}) medis.CMD('SET',medis.ARGS[3],t)" lua 100`
+	`LUACONTENT "local JSON = require('JSON') local t =JSON:encode({a=medis.ARGS[4],b=2,{c=4}}) medis.CMD('SET',medis.ARGS[3],t)" lua 100`
 
 - LUASCRIPT path [arg ...]
 
