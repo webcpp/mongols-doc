@@ -207,6 +207,9 @@ int main(int,char**){
 该引擎为lua5.3，内置一个名为`medis`的表变量,它包含一个`CMD`函数，它可以调用所有上述操作方法。
 如果调用以下两个命令时，包含额外参数，那么可以通过`medis`表中`ARGS`表域访问到它们。它们的值从第三个值开始计算。
 
+如果需要返回值，可使用`medis`表变量中的`RESULT`变量，该变量可返回布尔值、整数、字符串和无嵌套的表。
+
+
 把一组相关计算放在lua脚本中，并在服务器端运行它，可以省去网络交互的麻烦。当然，也会消耗一些服务器时间。所以，该引擎主要针对轻量级计算。
 
 - LUACONTENT statement [arg ...]
@@ -221,5 +224,6 @@ int main(int,char**){
 
 local echo=require('echo')
 medis.CMD('SET',medis.ARGS[3],echo.concat('hello,',medis.ARGS[4]))
+medis.RESULT={a='hello',b='world',1,3.5,'test'}
 
 ```
