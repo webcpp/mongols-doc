@@ -33,10 +33,8 @@ http服务器构造时可以通过第五个参数选择是否使用多线程机�
 `run`方法需要两个函数参数，第一个可用来过滤客户端，第二个则用来生成响应。
 
 
-http_server的并发性能非常好，远高于常见的基于libevent、libev或者libuv的其他http服务器。请参考[压力测试](https://www.cnblogs.com/hi-nginx/p/9527696.html)和下图：
-![mongols VS nginx](image/mongols_1.png)
+http_server的并发性能非常好，远高于常见的基于libevent、libev或者libuv的其他http服务器:
 
+![ab_http](image/ab_http.png)
 
-再看http_server在ubuntu 16.04上的一般表现:
-
-![mongols](image/mongols_3.png)
+![mongols](image/wrk_http.png)
