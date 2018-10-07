@@ -32,8 +32,9 @@ web_server可以通过`set_enable_mmap`来启用内存映射读取，在某些�
 
 函数`f`可用来根据http请求过滤客户端。
 
-关于并发性能，可参考下图：
+关于并发性能，可参考(nginx欢迎页)下图：
 
-![wrk_web](image/ab_wrk.png)
+![wrk_web](image/wrk_web.png)
 
-![ab_web](image/ab_wrk.png)
+![ab_web](image/ab_web.png)
+
