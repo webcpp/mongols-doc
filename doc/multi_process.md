@@ -95,4 +95,6 @@ static void signal_cb(int sig, siginfo_t *, void * ) {
 
 ![wrk_multi_process_web_server.png](image/wrk_multi_process_web_server.png)
 
+![nginxVSmongols.png](image/nginxVSmongols.png)
+
 以上测试使用4个工作进程，对比于使用同样数目工作进程的nginx，更胜一筹。
