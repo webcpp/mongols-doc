@@ -1,0 +1,478 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>多进程化 · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="others.html" />
+    
+    
+    <link rel="prev" href="daemon.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    c++ mongols 简介
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.1.1" data-path="install.html">
+            
+                <a href="install.html">
+            
+                    
+                    安装
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.2" data-path="tcp.html">
+            
+                <a href="tcp.html">
+            
+                    
+                    TCP
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.3" data-path="http.html">
+            
+                <a href="http.html">
+            
+                    
+                    HTTP
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.4" data-path="websocket.html">
+            
+                <a href="websocket.html">
+            
+                    
+                    websocket
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.5" data-path="web.html">
+            
+                <a href="web.html">
+            
+                    
+                    web
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.6" data-path="leveldb.html">
+            
+                <a href="leveldb.html">
+            
+                    
+                    leveldb
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.7" data-path="lua.html">
+            
+                <a href="lua.html">
+            
+                    
+                    lua
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.8" data-path="sqlite.html">
+            
+                <a href="sqlite.html">
+            
+                    
+                    sqlite
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.9" data-path="medis.html">
+            
+                <a href="medis.html">
+            
+                    
+                    medis
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.10" data-path="daemon.html">
+            
+                <a href="daemon.html">
+            
+                    
+                    服务化
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.1.11" data-path="multi_process.html">
+            
+                <a href="multi_process.html">
+            
+                    
+                    多进程化
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.12" data-path="others.html">
+            
+                <a href="others.html">
+            
+                    
+                    其他
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >多进程化</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="&#x591A;&#x8FDB;&#x7A0B;&#x5316;">&#x591A;&#x8FDB;&#x7A0B;&#x5316;</h1>
+<p>mongols&#x63D0;&#x4F9B;&#x7684;&#x6240;&#x6709;&#x670D;&#x52A1;&#x5668;&#x8BBE;&#x65BD;&#x65E2;&#x53EF;&#x4EE5;&#x591A;&#x7EBF;&#x7A0B;&#x5316;&#x4E5F;&#x53EF;&#x4EE5;&#x591A;&#x8FDB;&#x7A0B;&#x5316;&#x3002;</p>
+<p>&#x591A;&#x8FDB;&#x7A0B;&#x5316;&#x7684;&#x5173;&#x952E;&#x662F;&#xFF1A; &#x52A1;&#x5FC5;&#x8BBE;&#x7F6E;&#x5DE5;&#x4F5C;&#x7EBF;&#x7A0B;&#x6570;&#x76EE;&#x4E3A;0&#xFF0C;&#x5373;&#x4E0D;&#x652F;&#x6301;&#x591A;&#x8FDB;&#x7A0B;&#x5316;&#x7684;&#x540C;&#x65F6;&#x591A;&#x7EBF;&#x7A0B;&#x5316;&#x3002;</p>
+<p>&#x6765;&#x770B;&#x4EE3;&#x7801;&#xFF1A;</p>
+<pre><code class="lang-cpp">
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;unistd.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;sys/wait.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;sys/signal.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;mongols/util.hpp&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;mongols/web_server.hpp&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;</span></span>
+
+
+<span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">signal_cb</span><span class="hljs-params">(<span class="hljs-keyword">int</span> sig, siginfo_t *, <span class="hljs-keyword">void</span> *)</span></span>;
+<span class="hljs-keyword">static</span> <span class="hljs-built_in">std</span>::<span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">pid_t</span>&gt; pids;
+
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-keyword">int</span>, <span class="hljs-keyword">char</span>**)</span> </span>{
+    <span class="hljs-comment">//    daemon(1, 0);</span>
+    <span class="hljs-keyword">auto</span> f = [](<span class="hljs-keyword">const</span> mongols::request &amp; req) {
+        <span class="hljs-keyword">if</span> (req.method == <span class="hljs-string">&quot;GET&quot;</span> &amp;&amp; req.uri.find(<span class="hljs-string">&quot;..&quot;</span>) == <span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span>::npos) {
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+        }
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    };
+    <span class="hljs-keyword">int</span> port = <span class="hljs-number">9090</span>;
+    <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>* host = <span class="hljs-string">&quot;127.0.0.1&quot;</span>;
+    mongols::<span class="hljs-function">web_server
+    <span class="hljs-title">server</span><span class="hljs-params">(host, port, <span class="hljs-number">5000</span>, <span class="hljs-number">512000</span>, <span class="hljs-number">0</span><span class="hljs-comment">/*must be 0*/</span>)</span></span>;
+    server.set_root_path(<span class="hljs-string">&quot;html&quot;</span>);
+    server.set_mime_type_file(<span class="hljs-string">&quot;html/mime.conf&quot;</span>);
+    server.set_list_directory(<span class="hljs-literal">true</span>);
+    server.set_enable_mmap(<span class="hljs-literal">false</span>);
+
+
+    <span class="hljs-keyword">int</span> child_process_len = <span class="hljs-built_in">std</span>::thread::hardware_concurrency();
+    mongols::forker(child_process_len
+            , [&amp;]() {
+                server.run(f);
+            }
+    , pids);
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; child_process_len; ++i) {
+        mongols::process_bind_cpu(pids[i], i);
+    }
+
+    <span class="hljs-keyword">const</span> <span class="hljs-keyword">int</span> sig_len = <span class="hljs-number">4</span>;
+    <span class="hljs-keyword">int</span> sigs[sig_len] = {SIGHUP, SIGTERM, SIGINT, SIGQUIT};
+    <span class="hljs-keyword">struct</span> sigaction act;
+    <span class="hljs-built_in">memset</span>(&amp;act, <span class="hljs-number">0</span>, <span class="hljs-keyword">sizeof</span> (<span class="hljs-keyword">struct</span> sigaction));
+    sigemptyset(&amp;act.sa_mask);
+    act.sa_sigaction = signal_cb;
+
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; sig_len; ++i) {
+        <span class="hljs-keyword">if</span> (sigaction(sigs[i], &amp;act, <span class="hljs-literal">NULL</span>) &lt; <span class="hljs-number">0</span>) {
+            perror(<span class="hljs-string">&quot;sigaction error&quot;</span>);
+            <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;
+        }
+    }
+
+
+
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">size_t</span> i=<span class="hljs-number">0</span>;i&lt;pids.size();++i) {
+        <span class="hljs-keyword">pid_t</span> pid;
+        <span class="hljs-keyword">if</span> ((pid = wait(<span class="hljs-literal">NULL</span>)) &gt; <span class="hljs-number">0</span>) {
+
+        }
+    }
+
+}
+
+<span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">signal_cb</span><span class="hljs-params">(<span class="hljs-keyword">int</span> sig, siginfo_t *, <span class="hljs-keyword">void</span> * )</span> </span>{
+    <span class="hljs-keyword">switch</span> (sig) {
+        <span class="hljs-keyword">case</span> SIGTERM:
+        <span class="hljs-keyword">case</span> SIGHUP:
+        <span class="hljs-keyword">case</span> SIGQUIT:
+        <span class="hljs-keyword">case</span> SIGINT:
+            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span> &amp; i : pids) {
+                kill(i, SIGTERM);
+            }
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">default</span>:<span class="hljs-keyword">break</span>;
+    }
+}
+</code></pre>
+<p>&#x591A;&#x8FDB;&#x7A0B;&#x5316;&#x6700;&#x5408;&#x9002;&#x7684;&#x573A;&#x666F;&#x662F;web_server&#xFF0C;&#x53EF;&#x4EE5;&#x663E;&#x8457;&#x63D0;&#x5347;&#x6027;&#x80FD;&#xFF1A;</p>
+<p><img src="image/ab_multi_process_web_server.png" alt="ab_multi_process_web_server.png"></p>
+<p><img src="image/wrk_multi_process_web_server.png" alt="wrk_multi_process_web_server.png"></p>
+<p>&#x4EE5;&#x4E0A;&#x6D4B;&#x8BD5;&#x4F7F;&#x7528;4&#x4E2A;&#x5DE5;&#x4F5C;&#x8FDB;&#x7A0B;&#xFF0C;&#x5BF9;&#x6BD4;&#x4E8E;&#x4F7F;&#x7528;&#x540C;&#x6837;&#x6570;&#x76EE;&#x5DE5;&#x4F5C;&#x8FDB;&#x7A0B;&#x7684;nginx&#xFF0C;&#x66F4;&#x80DC;&#x4E00;&#x7B79;&#x3002;</p>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="daemon.html" class="navigation navigation-prev " aria-label="Previous page: 服务化">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="others.html" class="navigation navigation-next " aria-label="Next page: 其他">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"多进程化","level":"1.1.11","depth":2,"next":{"title":"其他","level":"1.1.12","depth":2,"path":"doc/others.md","ref":"doc/others.md","articles":[]},"previous":{"title":"服务化","level":"1.1.10","depth":2,"path":"doc/daemon.md","ref":"doc/daemon.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/multi_process.md","mtime":"2018-10-19T09:49:20.631Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-10-19T09:55:02.676Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+

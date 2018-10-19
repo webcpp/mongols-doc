@@ -11,7 +11,7 @@ mongols是C++ 服务器基础设施库， 它的主要特性如下：
 - sqlite 服务器
 - medis 服务器
 
-以上所有服务器均通过epoll机制实现，并且支持多线程化。
+以上所有服务器均通过epoll机制实现，并且支持多线程化和多进程化。
 
 mongols不依赖于任何事件库，其并发性能却强于著名的libevent、libev和libuv。
 
