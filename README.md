@@ -11,10 +11,17 @@ mongols是C++ 服务器基础设施库， 它的主要特性如下：
 - sqlite 服务器
 - medis 服务器
 
-以上所有服务器均通过epoll机制实现，并且支持多线程化和多进程化。
+以上所有服务器均通过epoll机制实现，并且支持多线程化和多进程化：
 
-mongols不依赖于任何事件库，其并发性能却强于著名的libevent、libev和libuv。
+- 单进程单线程
+- 单进程多线程
+- 多进程单线程
+- 多进程多线程
 
-而且，它提供非常友好的开发接口，使得任何试图基于tcp、resp或http协议开发高性能网络服务器的开发者都能够轻易地完成工作。
+这些模型统统支持，而且非常易于支持。
+
+mongols不依赖于任何事件库，其并发性能却远远强于著名的libevent、libev和libuv——这三个库已经过时啦！
+
+它还提供非常友好的开发接口，使得任何试图基于tcp、resp或http协议开发高性能网络服务器的开发者都能够轻易地完成工作。
 
 下载：[https://github.com/webcpp/mongols](https://github.com/webcpp/mongols)
