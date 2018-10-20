@@ -2,7 +2,7 @@
 
 mongols提供的所有服务器设施既可以多线程化也可以多进程化。
 
-多进程化的关键是： 务必设置工作线程数目为0，即不支持多进程化的同时多线程化。
+并且支持在多进程化的同时多线程化。
 
 来看代码：
 
@@ -30,7 +30,7 @@ int main(int, char**) {
     int port = 9090;
     const char* host = "127.0.0.1";
     mongols::web_server
-    server(host, port, 5000, 512000, 0/*must be 0*/);
+    server(host, port, 5000, 512000, 0/*2*/);
     server.set_root_path("html");
     server.set_mime_type_file("html/mime.conf");
     server.set_list_directory(true);
