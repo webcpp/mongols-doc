@@ -320,10 +320,14 @@
 <span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;mongols/util.hpp&gt;</span></span>
 <span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;mongols/web_server.hpp&gt;</span></span>
 <span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;algorithm&gt;</span></span>
+
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-string">&quot;util.hpp&quot;</span></span>
 
 
-<span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">signal_cb</span><span class="hljs-params">(<span class="hljs-keyword">int</span> sig, siginfo_t *, <span class="hljs-keyword">void</span> *)</span></span>;
+<span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">signal_cb</span><span class="hljs-params">(<span class="hljs-keyword">int</span> sig)</span></span>;
 <span class="hljs-keyword">static</span> <span class="hljs-built_in">std</span>::<span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">pid_t</span>&gt; pids;
+<span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">set_signal</span><span class="hljs-params">()</span></span>;
 
 <span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-keyword">int</span>, <span class="hljs-keyword">char</span>**)</span> </span>{
     <span class="hljs-comment">//    daemon(1, 0);</span>
@@ -342,53 +346,52 @@
     server.set_list_directory(<span class="hljs-literal">true</span>);
     server.set_enable_mmap(<span class="hljs-literal">false</span>);
 
-
-    <span class="hljs-keyword">int</span> child_process_len = <span class="hljs-built_in">std</span>::thread::hardware_concurrency();
-    mongols::forker(child_process_len
-            , [&amp;]() {
-                server.run(f);
-            }
-    , pids);
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; child_process_len; ++i) {
+    <span class="hljs-built_in">std</span>::function&lt;<span class="hljs-keyword">void</span>() &gt; process_work = [&amp;]() {
+        server.run(f);
+    };
+    mongols::forker(<span class="hljs-built_in">std</span>::thread::hardware_concurrency(), process_work, pids);
+    set_signal();
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">size_t</span> i = <span class="hljs-number">0</span>; i &lt; pids.size(); ++i) {
         mongols::process_bind_cpu(pids[i], i);
     }
 
-    <span class="hljs-keyword">const</span> <span class="hljs-keyword">int</span> sig_len = <span class="hljs-number">4</span>;
-    <span class="hljs-keyword">int</span> sigs[sig_len] = {SIGHUP, SIGTERM, SIGINT, SIGQUIT};
-    <span class="hljs-keyword">struct</span> sigaction act;
-    <span class="hljs-built_in">memset</span>(&amp;act, <span class="hljs-number">0</span>, <span class="hljs-keyword">sizeof</span> (<span class="hljs-keyword">struct</span> sigaction));
-    sigemptyset(&amp;act.sa_mask);
-    act.sa_sigaction = signal_cb;
-
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; sig_len; ++i) {
-        <span class="hljs-keyword">if</span> (sigaction(sigs[i], &amp;act, <span class="hljs-literal">NULL</span>) &lt; <span class="hljs-number">0</span>) {
-            perror(<span class="hljs-string">&quot;sigaction error&quot;</span>);
-            <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;
+    <span class="hljs-keyword">pid_t</span> pid;
+    <span class="hljs-keyword">int</span> status;
+    <span class="hljs-keyword">while</span> ((pid = wait(&amp;status)) &gt; <span class="hljs-number">0</span>) {
+        <span class="hljs-keyword">if</span> (WIFSIGNALED(status)) {
+            <span class="hljs-keyword">if</span> (WTERMSIG(status) == SIGSEGV) {
+                <span class="hljs-built_in">std</span>::<span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">int</span>&gt;::iterator p = <span class="hljs-built_in">std</span>::find(pids.begin(), pids.end(), pid);
+                <span class="hljs-keyword">if</span> (p != pids.end()) {
+                    *p = <span class="hljs-number">-1</span> * pid;
+                }
+                mongols::forker(<span class="hljs-number">1</span>, process_work, pids);
+            }
         }
     }
 
-
-
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">size_t</span> i=<span class="hljs-number">0</span>;i&lt;pids.size();++i) {
-        <span class="hljs-keyword">pid_t</span> pid;
-        <span class="hljs-keyword">if</span> ((pid = wait(<span class="hljs-literal">NULL</span>)) &gt; <span class="hljs-number">0</span>) {
-
-        }
-    }
 
 }
 
-<span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">signal_cb</span><span class="hljs-params">(<span class="hljs-keyword">int</span> sig, siginfo_t *, <span class="hljs-keyword">void</span> * )</span> </span>{
+<span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">signal_cb</span><span class="hljs-params">(<span class="hljs-keyword">int</span> sig)</span> </span>{
     <span class="hljs-keyword">switch</span> (sig) {
         <span class="hljs-keyword">case</span> SIGTERM:
         <span class="hljs-keyword">case</span> SIGHUP:
         <span class="hljs-keyword">case</span> SIGQUIT:
         <span class="hljs-keyword">case</span> SIGINT:
             <span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span> &amp; i : pids) {
-                kill(i, SIGTERM);
+                <span class="hljs-keyword">if</span> (i &gt; <span class="hljs-number">0</span>) {
+                    kill(i, SIGTERM);
+                }
             }
             <span class="hljs-keyword">break</span>;
         <span class="hljs-keyword">default</span>:<span class="hljs-keyword">break</span>;
+    }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">set_signal</span><span class="hljs-params">()</span> </span>{
+    <span class="hljs-built_in">std</span>::<span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">int</span>&gt; sigs = {SIGHUP, SIGTERM, SIGINT, SIGQUIT};
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">size_t</span> i = <span class="hljs-number">0</span>; i &lt; sigs.size(); ++i) {
+        signal(sigs[i], signal_cb);
     }
 }
 </code></pre>
@@ -440,7 +443,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"多进程化","level":"1.1.11","depth":2,"next":{"title":"其他","level":"1.1.12","depth":2,"path":"doc/others.md","ref":"doc/others.md","articles":[]},"previous":{"title":"服务化","level":"1.1.10","depth":2,"path":"doc/daemon.md","ref":"doc/daemon.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/multi_process.md","mtime":"2018-10-20T06:10:44.629Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-10-25T01:17:13.002Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"多进程化","level":"1.1.11","depth":2,"next":{"title":"其他","level":"1.1.12","depth":2,"path":"doc/others.md","ref":"doc/others.md","articles":[]},"previous":{"title":"服务化","level":"1.1.10","depth":2,"path":"doc/daemon.md","ref":"doc/daemon.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/multi_process.md","mtime":"2018-10-30T08:08:31.947Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-10-30T08:09:01.706Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
