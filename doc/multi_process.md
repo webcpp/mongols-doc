@@ -11,12 +11,12 @@ mongols提供的所有服务器设施既可以多线程化也可以多进程化�
 #include <unistd.h>
 #include <sys/wait.h>
 #include <sys/signal.h>
+#include <sys/prctl.h>
 #include <mongols/util.hpp>
 #include <mongols/web_server.hpp>
+
 #include <iostream>
 #include <algorithm>
-
-#include "util.hpp"
 
 
 static void signal_cb(int sig);
@@ -38,9 +38,10 @@ int main(int, char**) {
     server.set_root_path("html");
     server.set_mime_type_file("html/mime.conf");
     server.set_list_directory(true);
-    server.set_enable_mmap(false);
+    server.set_enable_mmap(true);
 
     std::function<void() > process_work = [&]() {
+        prctl(PR_SET_NAME, "mongols: worker");
         server.run(f);
     };
     mongols::forker(std::thread::hardware_concurrency(), process_work, pids);
@@ -53,7 +54,7 @@ int main(int, char**) {
     int status;
     while ((pid = wait(&status)) > 0) {
         if (WIFSIGNALED(status)) {
-            if (WTERMSIG(status) == SIGSEGV) {
+            if (WTERMSIG(status) == SIGSEGV || WTERMSIG(status) == SIGBUS) {
                 std::vector<int>::iterator p = std::find(pids.begin(), pids.end(), pid);
                 if (p != pids.end()) {
                     *p = -1 * pid;
@@ -78,12 +79,20 @@ static void signal_cb(int sig) {
                 }
             }
             break;
+        case SIGUSR1:
+            for (auto & i : pids) {
+                if (i > 0) {
+                    kill(i, SIGSEGV);
+                    usleep(100);
+                }
+            }
+            break;
         default:break;
     }
 }
 
 static void set_signal() {
-    std::vector<int> sigs = {SIGHUP, SIGTERM, SIGINT, SIGQUIT};
+    std::vector<int> sigs = {SIGHUP, SIGTERM, SIGINT, SIGQUIT, SIGUSR1};
     for (size_t i = 0; i < sigs.size(); ++i) {
         signal(sigs[i], signal_cb);
     }
