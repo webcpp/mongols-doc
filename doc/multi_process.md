@@ -63,6 +63,8 @@ int main(int, char**) {
         if (WIFSIGNALED(status)) {
             if (WCOREDUMP(status)) {
                 //std::cout << strsignal(WTERMSIG(status)) << std::endl;
+                // or 
+                // refork(pid);
             } else if (WTERMSIG(status) == SIGSEGV || WTERMSIG(status) == SIGBUS) {
                 refork(pid);
             }
@@ -120,4 +122,10 @@ static void set_signal() {
 
 ![nginxVSmongols.png](image/nginxVSmongols.png)
 
-以上测试使用4个工作进程，对比于使用同样数目工作进程的nginx，更胜一筹。
+以上测试使用4个工作进程，对比于使用同样数目工作进程的nginx，更胜一筹。如果你有兴趣用更大压力测试，你会发现，比如我用wrk测试，20000并发以上，随着并发数的增加nginx的弱势会越来越明显。
+
+## 注意
+
+虽然mongols所包含的所有server均可以如上例所示进行多进程化从而提升性能，但是因为其中的一些server内部包含了leveldb组件，而该组件只支持多线程化，并不支持多进程化，所有在对这些server进行多进程化时，`process_work`函数应该包含一些培植数据库的代码，使得不同工作进程绑定不同的数据库。
+
+这一点非常重要。
