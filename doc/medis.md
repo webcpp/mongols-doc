@@ -208,6 +208,13 @@ int main(int,char**){
 
 如果需要返回值，可使用`medis`表变量中的`RESULT`变量，该变量可返回布尔值、整数、字符串和无嵌套的表。
 
+为了方便，我还在lua引擎中嵌入了一个可用于正则计算的表：`mongols_regex`，内含三个函数:
+
+- full_match
+- partial_match
+- match
+
+使用方法可参考:[regex.lua](https://github.com/webcpp/mongols/blob/master/example/html/lua/regex.lua)
 
 把一组相关计算放在lua脚本中，并在服务器端运行它，可以省去网络交互的麻烦。当然，也会消耗一些服务器时间。所以，该引擎主要针对轻量级计算。
 

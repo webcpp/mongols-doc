@@ -365,6 +365,42 @@ mongols_res:status(<span class="hljs-number">200</span>)
 <li>session</li>
 <li>cache</li>
 </ul>
+<h3 id="&#x5176;&#x4ED6;">&#x5176;&#x4ED6;</h3>
+<p>&#x4E3A;&#x4E86;&#x65B9;&#x4FBF;&#xFF0C;&#x6211;&#x8FD8;&#x5728;lua&#x5F15;&#x64CE;&#x4E2D;&#x5D4C;&#x5165;&#x4E86;&#x4E00;&#x4E2A;&#x53EF;&#x7528;&#x4E8E;&#x6B63;&#x5219;&#x8BA1;&#x7B97;&#x7684;&#x8868;&#xFF1A;<code>mongols_regex</code>&#xFF0C;&#x5185;&#x542B;&#x4E09;&#x4E2A;&#x51FD;&#x6570;:</p>
+<ul>
+<li>full_match</li>
+<li>partial_match</li>
+<li>match</li>
+</ul>
+<p>&#x5176;&#x5177;&#x4F53;&#x7528;&#x6CD5;&#x53EF;&#x53C2;&#x8003;&#x4EE5;&#x4E0B;&#x4EE3;&#x7801;:</p>
+<pre><code class="lang-lua">
+mongols_res:header(<span class="hljs-string">&apos;Content-Type&apos;</span>,<span class="hljs-string">&apos;text/plain;charset=UTF-8&apos;</span>)
+
+<span class="hljs-keyword">if</span> mongols_req:has_form(<span class="hljs-string">&apos;test&apos;</span>) <span class="hljs-keyword">then</span>
+    <span class="hljs-keyword">local</span> test=mongols_req:get_form(<span class="hljs-string">&apos;test&apos;</span>)
+    <span class="hljs-keyword">if</span> mongols_regex.partial_match(<span class="hljs-string">&apos;^[0-9]+$&apos;</span>,test) <span class="hljs-keyword">then</span>
+        mongols_res:content(<span class="hljs-string">&apos;int type: &apos;</span>..test)
+    <span class="hljs-keyword">elseif</span> mongols_regex.partial_match(<span class="hljs-string">&apos;^[a-zA-Z]+$&apos;</span>,test) <span class="hljs-keyword">then</span>
+        mongols_res:content(<span class="hljs-string">&apos;string type: &apos;</span>..test)
+    <span class="hljs-keyword">else</span>
+        <span class="hljs-keyword">local</span> match=mongols_regex.match(<span class="hljs-string">&apos;(\\w+)[_:+-](\\w+)&apos;</span>,test)
+        <span class="hljs-keyword">if</span> #match &gt; <span class="hljs-number">0</span> <span class="hljs-keyword">then</span>
+            <span class="hljs-keyword">local</span> content=<span class="hljs-string">&apos;&apos;</span>
+            <span class="hljs-keyword">for</span> key,value <span class="hljs-keyword">in</span> <span class="hljs-built_in">ipairs</span>(match) <span class="hljs-keyword">do</span> 
+                content =content .. <span class="hljs-string">&apos;part &apos;</span>..key ..<span class="hljs-string">&apos; = &apos;</span>.. value..<span class="hljs-string">&apos;\n&apos;</span>
+            <span class="hljs-keyword">end</span>
+            mongols_res:content(<span class="hljs-string">&apos;match: \n&apos;</span>..content)
+        <span class="hljs-keyword">else</span>
+            mongols_res:content(<span class="hljs-string">&apos;not match: &apos;</span>.. test)
+        <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">end</span>
+<span class="hljs-keyword">else</span> 
+    mongols_res:content(<span class="hljs-string">&apos;not found test variable&apos;</span>)
+<span class="hljs-keyword">end</span>
+
+
+mongols_res:status(<span class="hljs-number">200</span>)
+</code></pre>
 
                                 
                                 </section>
@@ -408,7 +444,7 @@ mongols_res:status(<span class="hljs-number">200</span>)
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"lua","level":"1.1.7","depth":2,"next":{"title":"sqlite","level":"1.1.8","depth":2,"path":"doc/sqlite.md","ref":"doc/sqlite.md","articles":[]},"previous":{"title":"leveldb","level":"1.1.6","depth":2,"path":"doc/leveldb.md","ref":"doc/leveldb.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/lua.md","mtime":"2018-09-13T07:28:44.084Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-11-02T14:52:27.498Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"lua","level":"1.1.7","depth":2,"next":{"title":"sqlite","level":"1.1.8","depth":2,"path":"doc/sqlite.md","ref":"doc/sqlite.md","articles":[]},"previous":{"title":"leveldb","level":"1.1.6","depth":2,"path":"doc/leveldb.md","ref":"doc/leveldb.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/lua.md","mtime":"2018-11-05T23:11:30.879Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-11-05T23:14:01.280Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
