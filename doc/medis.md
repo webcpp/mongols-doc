@@ -44,7 +44,7 @@ int main(int,char**){
 
 所有命令均为大写，前缀为`_`下划线的表示保存在内存中。所有保存在内存中的数据均可以通过`_FLUSHALL`命令全部清除。
 
-所有命令暂不支持过期时间机制。
+所有内存命令支持过期时间机制。
 
 ## 常规
 
@@ -88,6 +88,10 @@ int main(int,char**){
 
 - GETRANGE key start count or _GETRANGE key start count
 
+- _EXPIRE key seconds
+
+- _TTL key
+
 ## 哈希
 
 - HSET key field value or _HSET key field value
@@ -107,6 +111,10 @@ int main(int,char**){
 - HMSET key field value [field value ...] or _HMSET key field value [field value ...]
 
 - HMGET key field [field ...] or _HMGET key field [field ...]
+
+- _HEXPIRE key seconds
+
+- _HTTL key
 
 ## 列表
 
@@ -130,6 +138,10 @@ int main(int,char**){
 
 - _LERASE key
 
+- _LEXPIRE key seconds
+
+- _LTTL key
+
 ## 集合(有序)
 
 - SADD SADD key member [member ...] or _SADD key member [member ...]
@@ -152,6 +164,11 @@ int main(int,char**){
 
 - _SERASE key
 
+- _SEXPIRE key seconds
+
+- _STTL key
+
+
 ## 队列
 
 -  _QPUSH key member [member ...]
@@ -168,6 +185,11 @@ int main(int,char**){
 
 -  _QLEN key
 
+-  _QEXPIRE key seconds
+
+-  _QTTL key
+
+
 ## 堆栈
 
 - _ZPUSH key member [member ...]
@@ -181,6 +203,10 @@ int main(int,char**){
 - _ZERASE key
 
 - _ZLEN key
+
+- _ZEXPIRE key seconds
+
+- _ZTTL key
 
 ## SQLite
 
