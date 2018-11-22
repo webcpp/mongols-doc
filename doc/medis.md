@@ -240,6 +240,10 @@ int main(int,char**){
 - partial_match
 - match
 
+以及一个用于md5和sha1计算的表:`mongols_hash`，内含两个函数:
+- md5
+- sha1
+
 使用方法可参考:[regex.lua](https://github.com/webcpp/mongols/blob/master/example/html/lua/regex.lua)
 
 把一组相关计算放在lua脚本中，并在服务器端运行它，可以省去网络交互的麻烦。当然，也会消耗一些服务器时间。所以，该引擎主要针对轻量级计算。
