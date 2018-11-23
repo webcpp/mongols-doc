@@ -50,3 +50,7 @@ RESP协议处理
 ## util
 
 满足一些零碎而必要的需求。
+
+## 性能优化建议
+
+开启缓存：`set_enable_cache`或`set_enable_lru_cache`。这个不是一般有效，是非常有效。
