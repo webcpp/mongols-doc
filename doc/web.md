@@ -22,7 +22,7 @@ int main(int,char**)
 	server.set_root_path("html");
 	server.set_mime_type_file("mime.conf");
 	server.set_list_directory(true);
-	server.set_enable_mmap(false);
+	server.set_enable_mmap(true);
 	server.run(f);
 }
 
@@ -38,3 +38,6 @@ web_server可以通过`set_enable_mmap`来启用内存映射读取，在某些�
 
 ![ab_web](image/ab_web.png)
 
+同样使用单进程，mongols比nginx更快——mongols并发2000也比nginx并发1000更快！
+
+![mongolsVSnginx](image/mongolsVSnginx.png)
