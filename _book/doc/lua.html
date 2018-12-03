@@ -312,25 +312,31 @@
                                 <h1 id="lua-&#x670D;&#x52A1;&#x5668;">lua &#x670D;&#x52A1;&#x5668;</h1>
 <p>&#x8FD9;&#x662F;&#x4E3A;&#x65B9;&#x4FBF;&#x4F7F;&#x7528;&#x811A;&#x672C;&#x8BED;&#x8A00;LUA&#x8FDB;&#x884C;web&#x5E94;&#x7528;&#x5F00;&#x53D1;&#x51C6;&#x5907;&#x7684;&#x3002;</p>
 <p>&#x6765;&#x770B;&#x4EE3;&#x7801;&#xFF1A;</p>
-<pre><code class="lang-cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;mongols/lua_server.hpp&gt;</span></span>
+<pre><code class="lang-cpp">
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;mongols/lua_server.hpp&gt;</span></span>
 
-<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-keyword">int</span>,<span class="hljs-keyword">char</span>**)</span></span>{
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-keyword">int</span>, <span class="hljs-keyword">char</span>**)</span> </span>{
     <span class="hljs-keyword">int</span> port = <span class="hljs-number">9090</span>;
-    <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>* host=<span class="hljs-string">&quot;127.0.0.1&quot;</span>;
-    mongols::lua_server 
-    <span class="hljs-comment">//server(host,port,5000,8096,2);</span>
-    server(host,port);
+    <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>* host = <span class="hljs-string">&quot;127.0.0.1&quot;</span>;
+    mongols::<span class="hljs-function">lua_server
+    <span class="hljs-title">server</span><span class="hljs-params">(host, port, <span class="hljs-number">5000</span>, <span class="hljs-number">8096</span>, <span class="hljs-number">0</span><span class="hljs-comment">/*2*/</span>)</span></span>;
     server.set_root_path(<span class="hljs-string">&quot;html/lua&quot;</span>);
-    server.run(<span class="hljs-string">&quot;html/lua/package/?.lua;&quot;</span>,<span class="hljs-string">&quot;html/lua/package/?.so;&quot;</span>);
+    server.set_enable_bootstrap(<span class="hljs-literal">true</span>);
+    server.run(<span class="hljs-string">&quot;html/lua/package/?.lua;&quot;</span>, <span class="hljs-string">&quot;html/lua/package/?.so;&quot;</span>);
 }
 </code></pre>
-<pre><code class="lang-lua"><span class="hljs-keyword">local</span> echo =  {}
+<pre><code class="lang-lua">
+<span class="hljs-keyword">local</span> echo =  {}
 
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">echo.concat</span><span class="hljs-params">(a,b)</span></span>
-   <span class="hljs-keyword">return</span> (a..b)
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">echo.concat</span><span class="hljs-params">(...)</span></span>
+    <span class="hljs-keyword">local</span> text=<span class="hljs-string">&apos;&apos;</span>
+    <span class="hljs-keyword">for</span> i,v <span class="hljs-keyword">in</span> <span class="hljs-built_in">ipairs</span>({...}) <span class="hljs-keyword">do</span>
+        text=text..<span class="hljs-built_in">tostring</span>(v)
+    <span class="hljs-keyword">end</span>
+   <span class="hljs-keyword">return</span> text
 <span class="hljs-keyword">end</span>
 
-<span class="hljs-keyword">return</span> echo    
+<span class="hljs-keyword">return</span> echo 
 
 `
 </code></pre>
@@ -401,6 +407,40 @@ mongols_res:header(<span class="hljs-string">&apos;Content-Type&apos;</span>,<sp
 
 mongols_res:status(<span class="hljs-number">200</span>)
 </code></pre>
+<h2 id="&#x5355;&#x6587;&#x4EF6;&#x5165;&#x53E3;">&#x5355;&#x6587;&#x4EF6;&#x5165;&#x53E3;</h2>
+<p>&#x5355;&#x6587;&#x4EF6;&#x5165;&#x53E3;&#x6A21;&#x5F0F;&#x662F;web&#x7F16;&#x7A0B;&#x4E2D;&#x5E38;&#x89C1;&#x7684;&#x6A21;&#x5F0F;&#x3002;&#x9ED8;&#x8BA4;&#x60C5;&#x51B5;&#x4E0B;&#xFF0C;lua_server&#x6CA1;&#x6709;&#x5F00;&#x542F;&#x5BF9;&#x8BE5;&#x6A21;&#x5F0F;&#x7684;&#x652F;&#x6301;&#x3002;&#x6B32;&#x5F00;&#x542F;&#x6B64;&#x4E00;&#x652F;&#x6301;&#xFF0C;&#x4F7F;&#x7528;&#x65B9;&#x6CD5;<code>set_enable_bootstrap</code>&#x3002;</p>
+<p><code>example</code>&#x4E0B;&#x6709;&#x4F8B;&#x5B50;&#x4EE3;&#x7801;&#xFF0C;&#x53EF;&#x53C2;&#x8003;&#xFF1A;</p>
+<pre><code class="lang-lua"><span class="hljs-comment">--index.lua</span>
+
+<span class="hljs-keyword">local</span> echo=<span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;echo&apos;</span>)
+<span class="hljs-keyword">local</span> route=<span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;route&apos;</span>):get_instance()
+
+
+route:add({<span class="hljs-string">&apos;GET&apos;</span>},<span class="hljs-string">&apos;^/hello/([0-9a-zA-Z]+)/?$&apos;</span>
+,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(req,res,param)</span></span>
+    res:content(<span class="hljs-string">&apos;hello,&apos;</span>..param[<span class="hljs-number">2</span>])
+    res:header(<span class="hljs-string">&apos;Content-Type&apos;</span>,<span class="hljs-string">&apos;text/plain;charset=UTF-8&apos;</span>)
+    res:status(<span class="hljs-number">200</span>)
+<span class="hljs-keyword">end</span>)
+
+route:add({<span class="hljs-string">&apos;GET&apos;</span>},<span class="hljs-string">&apos;^/([0-9]+)/?$&apos;</span>
+,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(req,res,param)</span></span>
+    res:content(param[<span class="hljs-number">2</span>]) 
+    res:header(<span class="hljs-string">&apos;Content-Type&apos;</span>,<span class="hljs-string">&apos;text/plain;charset=UTF-8&apos;</span>)
+    res:status(<span class="hljs-number">200</span>)
+<span class="hljs-keyword">end</span>)
+
+
+route:add({<span class="hljs-string">&apos;GET&apos;</span>,<span class="hljs-string">&apos;POST&apos;</span>,<span class="hljs-string">&apos;PUT&apos;</span>},<span class="hljs-string">&apos;^/(\\w+)/?$&apos;</span>
+,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(req,res,param)</span></span> 
+    <span class="hljs-keyword">local</span> text= echo.concat(<span class="hljs-string">&apos;uri: &apos;</span>,req:uri(),<span class="hljs-string">&apos;\n&apos;</span>,<span class="hljs-string">&apos;method: &apos;</span>,req:method(),<span class="hljs-string">&apos;\n&apos;</span>,param[<span class="hljs-number">2</span>])
+    res:content(text) 
+    res:header(<span class="hljs-string">&apos;Content-Type&apos;</span>,<span class="hljs-string">&apos;text/plain;charset=UTF-8&apos;</span>)
+    res:status(<span class="hljs-number">200</span>)
+<span class="hljs-keyword">end</span>)
+
+route:run(mongols_req,mongols_res,{})
+</code></pre>
 
                                 
                                 </section>
@@ -444,7 +484,7 @@ mongols_res:status(<span class="hljs-number">200</span>)
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"lua","level":"1.1.7","depth":2,"next":{"title":"sqlite","level":"1.1.8","depth":2,"path":"doc/sqlite.md","ref":"doc/sqlite.md","articles":[]},"previous":{"title":"leveldb","level":"1.1.6","depth":2,"path":"doc/leveldb.md","ref":"doc/leveldb.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/lua.md","mtime":"2018-11-05T23:11:30.879Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-11-30T10:32:16.756Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"lua","level":"1.1.7","depth":2,"next":{"title":"sqlite","level":"1.1.8","depth":2,"path":"doc/sqlite.md","ref":"doc/sqlite.md","articles":[]},"previous":{"title":"leveldb","level":"1.1.6","depth":2,"path":"doc/leveldb.md","ref":"doc/leveldb.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/lua.md","mtime":"2018-12-03T06:32:16.019Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-12-03T09:42:16.933Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

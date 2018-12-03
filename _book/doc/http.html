@@ -312,25 +312,24 @@
                                 <h1 id="http-&#x670D;&#x52A1;&#x5668;">http &#x670D;&#x52A1;&#x5668;</h1>
 <p>http &#x670D;&#x52A1;&#x5668;&#x5EFA;&#x6784;&#x5728;tcp &#x670D;&#x52A1;&#x5668;&#x4E4B;&#x4E0A;&#x3002;&#x5185;&#x7F6E;&#x5B8C;&#x6574;&#x7684;form&#x5904;&#x7406;&#xFF0C;&#x53EF;&#x4EE5;&#x81EA;&#x52A8;&#x89E3;&#x6790;GET&#x548C;POST&#x8868;&#x5355;&#xFF0C;&#x652F;&#x6301;POST&#x6587;&#x4EF6;&#x4E0A;&#x4F20;&#xFF0C;&#x5E76;&#x4E14;&#x652F;&#x6301;&#x4F1A;&#x8BDD;&#x7BA1;&#x7406;&#x548C;&#x7F13;&#x5B58;&#x673A;&#x5236;&#x3002;&#x5F00;&#x53D1;&#x8005;&#x5B8C;&#x5168;&#x53EF;&#x4EE5;&#x5C06;&#x5176;&#x89C6;&#x4E3A;&#x5B8C;&#x6574;&#x7684;&#x7684;&#x652F;&#x6301;http/1.1&#x7684;&#x5E94;&#x7528;&#x670D;&#x52A1;&#x5668;&#x3002;</p>
 <p>&#x6765;&#x770B;&#x4EE3;&#x7801;&#xFF1A;</p>
-<pre><code class="lang-cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;mongols/http_server.hpp&gt;</span></span>
+<pre><code class="lang-cpp">
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;mongols/http_server.hpp&gt;</span></span>
 
-<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-keyword">int</span>,<span class="hljs-keyword">char</span>**)</span>
-</span>{
-    <span class="hljs-keyword">auto</span> f=[](<span class="hljs-keyword">const</span> mongols::request&amp;){
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-keyword">int</span>, <span class="hljs-keyword">char</span>**)</span> </span>{
+    <span class="hljs-keyword">auto</span> f = [](<span class="hljs-keyword">const</span> mongols::request&amp;) {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
     };
-    <span class="hljs-keyword">auto</span> g=[](<span class="hljs-keyword">const</span> mongols::request&amp; req,mongols::response&amp; res){
-            res.content=<span class="hljs-built_in">std</span>::move(<span class="hljs-string">&quot;hello,world&quot;</span>);
-            res.status=<span class="hljs-number">200</span>;
+    <span class="hljs-keyword">auto</span> g = [](<span class="hljs-keyword">const</span> mongols::request&amp; req, mongols::response &amp; res) {
+        res.content = <span class="hljs-built_in">std</span>::move(<span class="hljs-string">&quot;hello,world&quot;</span>);
+        res.status = <span class="hljs-number">200</span>;
     };
-    <span class="hljs-keyword">int</span> port=<span class="hljs-number">9090</span>;
-    <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>* host=<span class="hljs-string">&quot;127.0.0.1&quot;</span>;
-    mongols::<span class="hljs-function">http_server 
-    <span class="hljs-title">server</span><span class="hljs-params">(host,port,<span class="hljs-number">5000</span>,<span class="hljs-number">8096</span>,<span class="hljs-number">2</span>)</span></span>;
-    <span class="hljs-comment">//server(host,port,5000,8096,0);</span>
+    <span class="hljs-keyword">int</span> port = <span class="hljs-number">9090</span>;
+    <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>* host = <span class="hljs-string">&quot;127.0.0.1&quot;</span>;
+    mongols::<span class="hljs-function">http_server
+    <span class="hljs-title">server</span><span class="hljs-params">(host, port, <span class="hljs-number">5000</span>, <span class="hljs-number">8096</span>, <span class="hljs-number">0</span><span class="hljs-comment">/*2*/</span>)</span></span>;
     server.set_enable_session(<span class="hljs-literal">false</span>);
     server.set_enable_cache(<span class="hljs-literal">false</span>);
-    server.run(f,g);
+    server.run(f, g);
 }
 </code></pre>
 <p>http&#x670D;&#x52A1;&#x5668;&#x6784;&#x9020;&#x65F6;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;&#x7B2C;&#x4E94;&#x4E2A;&#x53C2;&#x6570;&#x9009;&#x62E9;&#x662F;&#x5426;&#x4F7F;&#x7528;&#x591A;&#x7EBF;&#x7A0B;&#x673A;&#x5236;&#xFF0C;&#x5F53;&#x5176;&#x4E3A;&#x5927;&#x4E8E;0&#x65F6;&#xFF0C;&#x5176;&#x503C;&#x4E3A;&#x5DE5;&#x4F5C;&#x7EBF;&#x7A0B;&#x6570;&#x3002;</p>
@@ -381,7 +380,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"HTTP","level":"1.1.3","depth":2,"next":{"title":"websocket","level":"1.1.4","depth":2,"path":"doc/websocket.md","ref":"doc/websocket.md","articles":[]},"previous":{"title":"TCP","level":"1.1.2","depth":2,"path":"doc/tcp.md","ref":"doc/tcp.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/http.md","mtime":"2018-10-07T21:28:53.242Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-11-30T10:32:16.756Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"HTTP","level":"1.1.3","depth":2,"next":{"title":"websocket","level":"1.1.4","depth":2,"path":"doc/websocket.md","ref":"doc/websocket.md","articles":[]},"previous":{"title":"TCP","level":"1.1.2","depth":2,"path":"doc/tcp.md","ref":"doc/tcp.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/http.md","mtime":"2018-12-03T09:38:27.065Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-12-03T09:42:16.933Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
