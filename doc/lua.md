@@ -151,7 +151,7 @@ route:add({'GET','POST','PUT'},'^/(\\w+)/?$'
     res:status(200)
 end)
 
-route:run(mongols_req,mongols_res,{})
+route:run(mongols_req,mongols_res)
 
 
 ```
