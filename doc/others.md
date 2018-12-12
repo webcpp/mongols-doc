@@ -53,4 +53,4 @@ RESP协议处理
 
 ## 性能优化建议
 
-开启缓存：`set_enable_cache`或`set_enable_lru_cache`。这个不是一般有效，是非常有效。
+开启缓存：`set_enable_cache`或`set_enable_lru_cache`。这个不是一般有效，是非常有效。短短5秒的lru缓存有效期，即可令lua_server和js_server并发性能放大数倍（一般是2-5倍）。
