@@ -8,6 +8,7 @@ mongols是C++ 服务器基础设施库， 它的主要特性如下：
 - web 服务器
 - leveldb 服务器
 - lua 服务器
+- javascript 服务器
 - sqlite 服务器
 - medis 服务器
 
