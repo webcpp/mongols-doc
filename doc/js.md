@@ -177,7 +177,10 @@ mongols_res.status(200)
 
 就这一点而言，js_server与lua_server是基本一致的。不过，lua的执行效率远高于duktape——如果不开启lru缓存。
 
-特别注意:所有注册的c++类，用`new`创建、使用完毕后，一定要使用`mongols_module.free`方法进行垃圾回收，因为duktape不管理c++类实例生命期。
+特别注意:
+
+- 所有需要注册的c++类必须继承`mongols::js_object`类且不运行多重继承。
+- 所有注册的c++类，用`new`创建、使用完毕后，一定要使用`mongols_module.free`方法进行垃圾回收，因为duktape不管理c++类实例生命期。
 
 
 ## API
