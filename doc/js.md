@@ -54,14 +54,14 @@ mongols_res.status(200)
 
 
 /*
-var loaded = mongols_module.require('adder/libadder.so','adder')
+var loaded = mongols_module.require('adder/libadder','adder')
 mongols_res.header('Content-Type','text/plain;charset=UTF-8')
 mongols_res.content(loaded?adder(1,2).toString():'failed load c module.')
 mongols_res.status(200)
 */
 
 /*
-var loaded = mongols_module.require('concat/libconcat.so','concat')
+var loaded = mongols_module.require('concat/libconcat','concat')
 mongols_res.header('Content-Type','text/plain;charset=UTF-8')
 mongols_res.content(loaded?concat('Hello,','world'):'failed load c module.')
 mongols_res.status(200)
