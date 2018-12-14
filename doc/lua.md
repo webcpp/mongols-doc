@@ -155,3 +155,111 @@ route:run(mongols_req,mongols_res)
 
 
 ```
+
+### c/c++ 模块
+
+lua_server支持直接向服务器注册c/c++函数和类。例子:
+
+```c++
+
+class person {
+public:
+
+    person() : name("Tom"), age(0) {
+    }
+    virtual~person() = default;
+
+    person* set_name(const std::string& name) {
+        this->name = name;
+        return this;
+    }
+
+    person* set_age(unsigned int age) {
+        this->age = age;
+        return this;
+    }
+
+    const std::string& get_name() {
+        return this->name;
+    }
+
+    unsigned int get_age() {
+        return this->age;
+    }
+private:
+    std::string name;
+    unsigned int age;
+};
+
+class studest : public person {
+public:
+
+    studest() : person() {
+    }
+    virtual~studest() = default;
+
+    double get_score() {
+        return this->score;
+    }
+
+    studest* set_score(double score) {
+        this->score = score;
+        return this;
+    }
+private:
+    double score;
+};
+
+//some code
+
+server.set_function(&mongols::sha1, "sha1");
+server.set_function(&mongols::md5, "md5");
+
+server.set_class(
+            kaguya::UserdataMetatable<person>()
+            .setConstructors < person()>()
+            .addFunction("get_age", &person::get_age)
+            .addFunction("get_name", &person::get_name)
+            .addFunction("set_age", &person::set_age)
+            .addFunction("set_name", &person::set_name)
+            , "person");
+
+server.set_class(
+            kaguya::UserdataMetatable<studest, person>()
+            .setConstructors < studest()>()
+            .addFunction("get_score", &studest::get_score)
+            .addFunction("set_score", &studest::set_score)
+            , "studest");
+
+```
+
+```lua
+
+
+local template = require "resty.template"
+local view=template.new('name: {{name}}\
+age: {{age}}\
+score: {{score}}\
+text:{{text}}\
+text_md5: {{md5}}\
+text_sha1: {{sha1}}')
+
+local text='hello,world'
+
+local s=studest.new()
+s:set_score(74.6):set_name("Jerry"):set_age(14)
+
+view.name=s:get_name()
+view.age=s:get_age()
+view.score=s:get_score()
+view.text=text
+view.md5=md5(text)
+view.sha1=sha1(text)
+
+mongols_res:header('Content-Type','text/plain;charset=UTF-8')
+mongols_res:content(tostring(view))
+mongols_res:status(200)
+
+```
+
+所有，无需写动态库扩展了。是不是太方便？

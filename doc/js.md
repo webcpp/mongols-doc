@@ -87,9 +87,95 @@ mongols_res.status(200)
 
 用`mongols_module.require`加载
 
+写动态库终究麻烦，js_server支持直接注册c/c++函数和类到服务器：
+
+```c++
+
+class person : public mongols::js_object {
+public:
+
+    person() : mongols::js_object(), name("Tom"), age(0) {
+    }
+    virtual~person() = default;
+
+    person* set_name(const std::string& name) {
+        this->name = name;
+        return this;
+    }
+
+    person* set_age(unsigned int age) {
+        this->age = age;
+        return this;
+    }
+
+    const std::string& get_name() {
+        return this->name;
+    }
+
+    unsigned int get_age() {
+        return this->age;
+    }
+private:
+    std::string name;
+    unsigned int age;
+};
+
+class studest : public person {
+public:
+
+    studest() : person() {
+    }
+    virtual~studest() = default;
+
+    double get_score() {
+        return this->score;
+    }
+
+    studest* set_score(double score) {
+        this->score = score;
+        return this;
+    }
+private:
+    double score;
+};
+
+// some code
 
 
+server.register_class_constructor<person>("person");
+server.register_class_method(&person::set_age, "set_age");
+server.register_class_method(&person::get_age, "get_age");
+server.register_class_method(&person::set_name, "set_name");
+server.register_class_method(&person::get_name, "get_name");
 
+server.register_class_constructor<studest>("studest");
+server.register_class_method(&studest::get_score, "get_score");
+server.register_class_method(&studest::set_score, "set_score");
+server.set_base_class<mongols::js_object, person>();
+server.set_base_class<person, studest>();
+
+server.register_function(&mongols::md5, "md5");
+server.register_function(&mongols::sha1, "sha1");
+
+
+```
+
+```javascript
+
+var handlebars = require('handlebars')
+var s=new studest()
+s.set_name("Jerry").set_age(14).set_score(74.6)
+var text='hello,world'
+var tpl=handlebars.compile('name: {{name}}\nage: {{age}}\nscore: {{score}}\ntext:{{text}}\ntext_md5: {{md5}}\ntext_sha1: {{sha1}}')
+var content=tpl({name:s.get_name(),age:s.get_age(),score:s.get_score(),text:text,md5:md5(text),sha1:sha1(text)})
+mongols_module.free(s)
+mongols_res.header('Content-Type','text/plain;charset=UTF-8')
+mongols_res.content(content)
+mongols_res.status(200)
+
+```
+
+就这一点而言，js_server与lua_server是基本一致的。不过，lua的执行效率远高于duktape——如果不开启lru缓存。
 
 
 ## API

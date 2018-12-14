@@ -454,6 +454,105 @@ route:add({<span class="hljs-string">&apos;GET&apos;</span>,<span class="hljs-st
 
 route:run(mongols_req,mongols_res)
 </code></pre>
+<h3 id="cc-&#x6A21;&#x5757;">c/c++ &#x6A21;&#x5757;</h3>
+<p>lua_server&#x652F;&#x6301;&#x76F4;&#x63A5;&#x5411;&#x670D;&#x52A1;&#x5668;&#x6CE8;&#x518C;c/c++&#x51FD;&#x6570;&#x548C;&#x7C7B;&#x3002;&#x4F8B;&#x5B50;:</p>
+<pre><code class="lang-c++">
+<span class="hljs-keyword">class</span> person {
+<span class="hljs-keyword">public</span>:
+
+    person() : name(<span class="hljs-string">&quot;Tom&quot;</span>), age(<span class="hljs-number">0</span>) {
+    }
+    <span class="hljs-keyword">virtual</span>~person() = <span class="hljs-keyword">default</span>;
+
+    <span class="hljs-function">person* <span class="hljs-title">set_name</span><span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span>&amp; name)</span> </span>{
+        <span class="hljs-keyword">this</span>-&gt;name = name;
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+    }
+
+    <span class="hljs-function">person* <span class="hljs-title">set_age</span><span class="hljs-params">(<span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span> age)</span> </span>{
+        <span class="hljs-keyword">this</span>-&gt;age = age;
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+    }
+
+    <span class="hljs-keyword">const</span> <span class="hljs-built_in">std</span>::<span class="hljs-function"><span class="hljs-built_in">string</span>&amp; <span class="hljs-title">get_name</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>-&gt;name;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span> <span class="hljs-title">get_age</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>-&gt;age;
+    }
+<span class="hljs-keyword">private</span>:
+    <span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span> name;
+    <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span> age;
+};
+
+<span class="hljs-keyword">class</span> studest : <span class="hljs-keyword">public</span> person {
+<span class="hljs-keyword">public</span>:
+
+    studest() : person() {
+    }
+    <span class="hljs-keyword">virtual</span>~studest() = <span class="hljs-keyword">default</span>;
+
+    <span class="hljs-function"><span class="hljs-keyword">double</span> <span class="hljs-title">get_score</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>-&gt;score;
+    }
+
+    <span class="hljs-function">studest* <span class="hljs-title">set_score</span><span class="hljs-params">(<span class="hljs-keyword">double</span> score)</span> </span>{
+        <span class="hljs-keyword">this</span>-&gt;score = score;
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+    }
+<span class="hljs-keyword">private</span>:
+    <span class="hljs-keyword">double</span> score;
+};
+
+<span class="hljs-comment">//some code</span>
+
+server.set_function(&amp;mongols::sha1, <span class="hljs-string">&quot;sha1&quot;</span>);
+server.set_function(&amp;mongols::md5, <span class="hljs-string">&quot;md5&quot;</span>);
+
+server.set_class(
+            kaguya::UserdataMetatable&lt;person&gt;()
+            .setConstructors &lt; person()&gt;()
+            .addFunction(<span class="hljs-string">&quot;get_age&quot;</span>, &amp;person::get_age)
+            .addFunction(<span class="hljs-string">&quot;get_name&quot;</span>, &amp;person::get_name)
+            .addFunction(<span class="hljs-string">&quot;set_age&quot;</span>, &amp;person::set_age)
+            .addFunction(<span class="hljs-string">&quot;set_name&quot;</span>, &amp;person::set_name)
+            , <span class="hljs-string">&quot;person&quot;</span>);
+
+server.set_class(
+            kaguya::UserdataMetatable&lt;studest, person&gt;()
+            .setConstructors &lt; studest()&gt;()
+            .addFunction(<span class="hljs-string">&quot;get_score&quot;</span>, &amp;studest::get_score)
+            .addFunction(<span class="hljs-string">&quot;set_score&quot;</span>, &amp;studest::set_score)
+            , <span class="hljs-string">&quot;studest&quot;</span>);
+</code></pre>
+<pre><code class="lang-lua">
+
+<span class="hljs-keyword">local</span> template = <span class="hljs-built_in">require</span> <span class="hljs-string">&quot;resty.template&quot;</span>
+<span class="hljs-keyword">local</span> view=template.new(<span class="hljs-string">&apos;name: {{name}}\
+age: {{age}}\
+score: {{score}}\
+text:{{text}}\
+text_md5: {{md5}}\
+text_sha1: {{sha1}}&apos;</span>)
+
+<span class="hljs-keyword">local</span> text=<span class="hljs-string">&apos;hello,world&apos;</span>
+
+<span class="hljs-keyword">local</span> s=studest.new()
+s:set_score(<span class="hljs-number">74.6</span>):set_name(<span class="hljs-string">&quot;Jerry&quot;</span>):set_age(<span class="hljs-number">14</span>)
+
+view.name=s:get_name()
+view.age=s:get_age()
+view.score=s:get_score()
+view.text=text
+view.md5=md5(text)
+view.sha1=sha1(text)
+
+mongols_res:header(<span class="hljs-string">&apos;Content-Type&apos;</span>,<span class="hljs-string">&apos;text/plain;charset=UTF-8&apos;</span>)
+mongols_res:content(<span class="hljs-built_in">tostring</span>(view))
+mongols_res:status(<span class="hljs-number">200</span>)
+</code></pre>
+<p>&#x6240;&#x6709;&#xFF0C;&#x65E0;&#x9700;&#x5199;&#x52A8;&#x6001;&#x5E93;&#x6269;&#x5C55;&#x4E86;&#x3002;&#x662F;&#x4E0D;&#x662F;&#x592A;&#x65B9;&#x4FBF;&#xFF1F;</p>
 
                                 
                                 </section>
@@ -497,7 +596,7 @@ route:run(mongols_req,mongols_res)
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"lua","level":"1.1.7","depth":2,"next":{"title":"js","level":"1.1.8","depth":2,"path":"doc/js.md","ref":"doc/js.md","articles":[]},"previous":{"title":"leveldb","level":"1.1.6","depth":2,"path":"doc/leveldb.md","ref":"doc/leveldb.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/lua.md","mtime":"2018-12-03T11:59:09.492Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-12-12T09:31:26.169Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"lua","level":"1.1.7","depth":2,"next":{"title":"js","level":"1.1.8","depth":2,"path":"doc/js.md","ref":"doc/js.md","articles":[]},"previous":{"title":"leveldb","level":"1.1.6","depth":2,"path":"doc/leveldb.md","ref":"doc/leveldb.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/lua.md","mtime":"2018-12-14T01:31:41.601Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-12-14T01:39:45.972Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
