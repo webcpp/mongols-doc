@@ -208,11 +208,11 @@ mongols_res.status(200)
 - session
 - cache
 
-### 其他
+## 其他
 
 `mongols_module`对象实例下有个`read`方法，完整可读取文件。
 
-### 比较
+## 比较
 
 v8比duktape快，这是毫无疑义的。单纯执行复杂一点的代码，前者的效率可能是后者的几倍甚至十几倍。
 
@@ -247,7 +247,8 @@ http.createServer(function (request, response) {
 	}
 }).listen(8888);
 
-``
+```
+
 以上是个略复杂的nodejs例子。开启LRU缓存可使得吞吐率2千多提升至2万多。但是，同样的逻辑，用js_server实现：
 
 ```js
@@ -266,6 +267,7 @@ mongols_res.content(content)
 mongols_res.status(200)
 
 ```
+
 开启LRU缓存（仅仅1秒的缓存期）即可使得吞吐率从3百多提升至8万多。如果同时多进程化，吞吐率可高达13万以上。
 
-因此，完全不比纠结于v8与duktape的比较：决定性的因素是承载脚本引擎的服务器，而非脚本引擎本身。
+因此，完全不必纠结于v8与duktape的比较：决定性的因素是承载脚本引擎的服务器，而非脚本引擎本身。
