@@ -211,3 +211,61 @@ mongols_res.status(200)
 ### 其他
 
 `mongols_module`对象实例下有个`read`方法，完整可读取文件。
+
+### 比较
+
+v8比duktape快，这是毫无疑义的。单纯执行复杂一点的代码，前者的效率可能是后者的几倍甚至十几倍。
+
+然而，对web应用而言，承载js引擎的服务器并发性能，具有更大的意义。例如，当js_server和nodejs都使用LRU缓存提升吞吐率时，js_server的吞吐率就会数倍于nodejs。这是由服务器性能决定的。比如：
+
+```js
+
+var http = require('http');
+var md5=require('md5')
+var sha1=require('sha1')
+var studest=require('./studest')
+var handlebars = require('./handlebars')
+const QuickLRU = require('quick-lru');
+const lru = new QuickLRU({maxSize: 1000});
+
+
+http.createServer(function (request, response) {
+    response.writeHead(200, {'Content-Type': 'text/plain;charset=UTF-8'});
+
+	if(lru.has('key')){
+    	response.end(lru.get('key'));
+	}else{
+		var s=new studest()
+		s.set_name("Jerry")
+		s.set_age(14)
+		s.set_score(74.6)
+		var text='hello,world'
+		var tpl=handlebars.compile('name: {{name}}\nage: {{age}}\nscore: {{score}}\ntext:{{text}}\ntext_md5: {{md5}}\ntext_sha1: {{sha1}}')
+		var content=tpl({name:s.get_name(),age:s.get_age(),score:s.get_score(),text:text,md5:md5(text),sha1:sha1(text)})
+		lru.set('key',content)
+    	response.end(content)
+	}
+}).listen(8888);
+
+``
+以上是个略复杂的nodejs例子。开启LRU缓存可使得吞吐率2千多提升至2万多。但是，同样的逻辑，用js_server实现：
+
+```js
+
+var handlebars = require('handlebars')
+var s=new studest()
+s.set_name("Jerry")
+s.set_age(14)
+s.set_score(74.6)
+var text='hello,world'
+var tpl=handlebars.compile('name: {{name}}\nage: {{age}}\nscore: {{score}}\ntext:{{text}}\ntext_md5: {{md5}}\ntext_sha1: {{sha1}}')
+var content=tpl({name:s.get_name(),age:s.get_age(),score:s.get_score(),text:text,md5:md5(text),sha1:sha1(text)})
+mongols_module.free(s)
+mongols_res.header('Content-Type','text/plain;charset=UTF-8')
+mongols_res.content(content)
+mongols_res.status(200)
+
+```
+开启LRU缓存（仅仅1秒的缓存期）即可使得吞吐率从3百多提升至8万多。如果同时多进程化，吞吐率可高达13万以上。
+
+因此，完全不比纠结于v8与duktape的比较：决定性的因素是承载脚本引擎的服务器，而非脚本引擎本身。
