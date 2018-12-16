@@ -160,7 +160,7 @@ route:run(mongols_req,mongols_res)
 
 lua_server支持直接向服务器注册c/c++函数和类。例子:
 
-```c++
+```cpp
 
 class person {
 public:
@@ -179,7 +179,7 @@ public:
         return this;
     }
 
-    const std::string& get_name() {
+    const std::string& get_name() const{
         return this->name;
     }
 

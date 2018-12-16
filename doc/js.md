@@ -89,7 +89,7 @@ mongols_res.status(200)
 
 写动态库终究麻烦，js_server支持直接注册c/c++函数和类到服务器：
 
-```c++
+```cpp
 
 class person : public mongols::js_object {
 public:
@@ -108,7 +108,7 @@ public:
         return this;
     }
 
-    const std::string& get_name() {
+    const std::string& get_name() const{
         return this->name;
     }
 
