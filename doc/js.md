@@ -84,10 +84,51 @@ mongols_res.status(200)
 用`require`加载
 
 ### c/c++ 模块
+#### 动态库模块
 
-用`mongols_module.require`加载
+动态库可以用`mongols_module.require`加载:
+```cpp
+#include <mongols/lib/dukglue/duktape.h>
 
-写动态库终究麻烦，js_server支持直接注册c/c++函数和类到服务器：
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+    duk_ret_t adder(duk_context *ctx) {
+        int i;
+        int n = duk_get_top(ctx); /* #args */
+        double res = 0.0;
+
+        for (i = 0; i < n; i++) {
+            res += duk_to_number(ctx, i);
+        }
+
+        duk_push_number(ctx, res);
+        return 1; /* one return value */
+    }
+
+
+#ifdef __cplusplus
+}
+#endif
+
+```
+
+编译为libadder.so——编译时需使用`pkg-config --libs --cflags mongols`，然后使用：
+
+```js
+
+ var loaded = mongols_module.require('adder/libadder','adder')
+ mongols_res.header('Content-Type','text/plain;charset=UTF-8')
+ mongols_res.content(loaded?adder(1,2).toString():'failed load c module.')
+ mongols_res.status(200)
+
+```
+
+`mongols_module.require`方法的第一个参数加载路径，第二个参数是函数名。返回布尔值。
+
+#### 类和函数注入
+写动态库终究麻烦,需要熟悉duktape api。js_server支持直接注入c/c++函数和类到服务器：
 
 ```cpp
 
@@ -208,9 +249,36 @@ mongols_res.status(200)
 - session
 - cache
 
+## 单文件入口
+js_server支持单文件入口模式。方法是引入`route`模块，与lua_server的使用方法类似：
+
+```js
+
+var route = require('route').get_instance()
+
+route.add(['GET'], '^\/(hello|test)?\/?$', function (req, res, param) {
+    res.header('Content-Type', 'text/plain;charset=UTF8')
+    res.content(param.toString())
+    res.status(200)
+})
+
+route.add(['POST', 'PUT'], '^\/.*$', function (req, res, param) {
+    res.header('Content-Type', 'text/plain;charset=UTF8')
+    res.content(req.uri())
+    res.status(200)
+})
+
+
+route.run(mongols_req, mongols_res)
+
+
+
+```
+
+
 ## 其他
 
-`mongols_module`对象实例下有个`read`方法，完整可读取文件。
+`mongols_module`对象实例下有个`read`方法，可完整读取文件。
 
 ## 比较
 
@@ -249,7 +317,9 @@ http.createServer(function (request, response) {
 
 ```
 
-以上是个略复杂的nodejs例子。开启LRU缓存可使得吞吐率2千多提升至2万多。但是，同样的逻辑，用js_server实现：
+以上是个略复杂的nodejs例子。开启LRU缓存可使得吞吐率2千多提升至2万多。如果开启多进程模式，nodejs的吞吐率可达到4万多。
+
+但是，同样的逻辑，用js_server实现：
 
 ```js
 
@@ -268,6 +338,5 @@ mongols_res.status(200)
 
 ```
 
-开启LRU缓存（仅仅1秒的缓存期）即可使得吞吐率从3百多提升至8万多。如果同时多进程化，吞吐率可高达13万以上。
-
+开启LRU缓存（仅仅1秒的缓存期）即可使得吞吐率从3百多提升至8万多——nodejs多进程也没有js_server轻快。如果同时多进程化，吞吐率可高达13万以上。如果再比较内存消耗，则js_server的优势会更加明显：每个nodejs进行都需要40MB+的内存，而js_server每个进程只需3MB+的内存。
 因此，完全不必纠结于v8与duktape的比较：决定性的因素是承载脚本引擎的服务器，而非脚本引擎本身。
