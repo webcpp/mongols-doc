@@ -200,6 +200,6 @@ CHAISCRIPT_MODULE_EXPORT chaiscript::ModulePtr create_chaiscript_module_test() {
 
 ## 其他
 
-比较于lua_server和js_server,chai_server的性能属于中等偏上，。当然，开启lru缓存的话，三者没什么效率上的分别。
+比较于lua_server和js_server,chai_server的性能属于中等偏上。当然，开启lru缓存的话，三者没什么效率上的分别。
 
 因此从开发者的角度来看，选择lua,chai还是js，由开发者的品味决定。
