@@ -445,17 +445,15 @@ mongols_res.status(<span class="hljs-number">200</span>)
     }
     <span class="hljs-keyword">virtual</span>~person() = <span class="hljs-keyword">default</span>;
 
-    <span class="hljs-function">person* <span class="hljs-title">set_name</span><span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span>&amp; name)</span> </span>{
+    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">set_name</span><span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span>&amp; name)</span> </span>{
         <span class="hljs-keyword">this</span>-&gt;name = name;
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
     }
 
-    <span class="hljs-function">person* <span class="hljs-title">set_age</span><span class="hljs-params">(<span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span> age)</span> </span>{
+    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">set_age</span><span class="hljs-params">(<span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span> age)</span> </span>{
         <span class="hljs-keyword">this</span>-&gt;age = age;
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
     }
 
-    <span class="hljs-keyword">const</span> <span class="hljs-built_in">std</span>::<span class="hljs-function"><span class="hljs-built_in">string</span>&amp; <span class="hljs-title">get_name</span><span class="hljs-params">()</span> <span class="hljs-keyword">const</span></span>{
+    <span class="hljs-keyword">const</span> <span class="hljs-built_in">std</span>::<span class="hljs-function"><span class="hljs-built_in">string</span>&amp; <span class="hljs-title">get_name</span><span class="hljs-params">()</span> <span class="hljs-keyword">const</span> </span>{
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>-&gt;name;
     }
 
@@ -478,14 +476,12 @@ mongols_res.status(<span class="hljs-number">200</span>)
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>-&gt;score;
     }
 
-    <span class="hljs-function">studest* <span class="hljs-title">set_score</span><span class="hljs-params">(<span class="hljs-keyword">double</span> score)</span> </span>{
+    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">set_score</span><span class="hljs-params">(<span class="hljs-keyword">double</span> score)</span> </span>{
         <span class="hljs-keyword">this</span>-&gt;score = score;
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
     }
 <span class="hljs-keyword">private</span>:
     <span class="hljs-keyword">double</span> score;
 };
-
 <span class="hljs-comment">// some code</span>
 
 
@@ -507,7 +503,9 @@ server.register_function(&amp;mongols::sha1, <span class="hljs-string">&quot;sha
 <pre><code class="lang-javascript">
 <span class="hljs-keyword">var</span> handlebars = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;handlebars&apos;</span>)
 <span class="hljs-keyword">var</span> s=<span class="hljs-keyword">new</span> studest()
-s.set_name(<span class="hljs-string">&quot;Jerry&quot;</span>).set_age(<span class="hljs-number">14</span>).set_score(<span class="hljs-number">74.6</span>)
+s.set_name(<span class="hljs-string">&quot;Jerry&quot;</span>)
+s.set_age(<span class="hljs-number">14</span>)
+s.set_score(<span class="hljs-number">74.6</span>)
 <span class="hljs-keyword">var</span> text=<span class="hljs-string">&apos;hello,world&apos;</span>
 <span class="hljs-keyword">var</span> tpl=handlebars.compile(<span class="hljs-string">&apos;name: {{name}}\nage: {{age}}\nscore: {{score}}\ntext:{{text}}\ntext_md5: {{md5}}\ntext_sha1: {{sha1}}&apos;</span>)
 <span class="hljs-keyword">var</span> content=tpl({name:s.get_name(),age:s.get_age(),score:s.get_score(),text:text,md5:md5(text),sha1:sha1(text)})
@@ -661,7 +659,7 @@ mongols_res.status(<span class="hljs-number">200</span>)
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"js","level":"1.1.8","depth":2,"next":{"title":"chai","level":"1.1.9","depth":2,"path":"doc/chai.md","ref":"doc/chai.md","articles":[]},"previous":{"title":"lua","level":"1.1.7","depth":2,"path":"doc/lua.md","ref":"doc/lua.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/js.md","mtime":"2018-12-19T07:07:07.873Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-12-20T04:31:53.887Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"js","level":"1.1.8","depth":2,"next":{"title":"chai","level":"1.1.9","depth":2,"path":"doc/chai.md","ref":"doc/chai.md","articles":[]},"previous":{"title":"lua","level":"1.1.7","depth":2,"path":"doc/lua.md","ref":"doc/lua.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/js.md","mtime":"2018-12-20T07:06:46.045Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-12-20T07:07:34.461Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
