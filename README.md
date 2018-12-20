@@ -9,6 +9,7 @@ mongols是C++ 服务器基础设施库， 它的主要特性如下：
 - leveldb 服务器
 - lua 服务器
 - javascript 服务器
+- chaiscript 服务器
 - sqlite 服务器
 - medis 服务器
 
@@ -22,6 +23,8 @@ mongols是C++ 服务器基础设施库， 它的主要特性如下：
 这些模型统统支持，而且非常易于支持。
 
 mongols不依赖于任何事件库，其并发性能却远远强于著名的libevent、libev和libuv——这三个库已经过时啦！
+
+mongols支持三种脚本语言lua,js和chai,你的品味决定你的选择。对mongols而言，它们是无差异的。
 
 它还提供非常友好的开发接口，使得任何试图基于tcp、resp或http协议开发高性能网络服务器的开发者都能够轻易地完成工作。
 

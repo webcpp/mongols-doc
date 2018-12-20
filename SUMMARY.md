@@ -9,6 +9,7 @@
     - [leveldb](doc/leveldb.md)
     - [lua](doc/lua.md)
     - [js](doc/js.md)
+    - [chai](doc/chai.md)
     - [sqlite](doc/sqlite.md)
     - [medis](doc/medis.md)
     - [服务化](doc/daemon.md)

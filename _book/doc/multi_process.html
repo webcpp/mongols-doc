@@ -207,7 +207,20 @@
             
         </li>
     
-        <li class="chapter " data-level="1.1.9" data-path="sqlite.html">
+        <li class="chapter " data-level="1.1.9" data-path="chai.html">
+            
+                <a href="chai.html">
+            
+                    
+                    chai
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.10" data-path="sqlite.html">
             
                 <a href="sqlite.html">
             
@@ -220,7 +233,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.1.10" data-path="medis.html">
+        <li class="chapter " data-level="1.1.11" data-path="medis.html">
             
                 <a href="medis.html">
             
@@ -233,7 +246,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.1.11" data-path="daemon.html">
+        <li class="chapter " data-level="1.1.12" data-path="daemon.html">
             
                 <a href="daemon.html">
             
@@ -246,7 +259,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.1.12" data-path="multi_process.html">
+        <li class="chapter active" data-level="1.1.13" data-path="multi_process.html">
             
                 <a href="multi_process.html">
             
@@ -259,7 +272,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.1.13" data-path="others.html">
+        <li class="chapter " data-level="1.1.14" data-path="others.html">
             
                 <a href="others.html">
             
@@ -337,11 +350,6 @@
 <span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;</span></span>
 <span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;algorithm&gt;</span></span>
 
-
-<span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">signal_cb</span><span class="hljs-params">(<span class="hljs-keyword">int</span> sig)</span></span>;
-<span class="hljs-keyword">static</span> <span class="hljs-built_in">std</span>::<span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">pid_t</span>&gt; pids;
-<span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">set_signal</span><span class="hljs-params">()</span></span>;
-
 <span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-keyword">int</span>, <span class="hljs-keyword">char</span>**)</span> </span>{
     <span class="hljs-comment">//    daemon(1, 0);</span>
     <span class="hljs-keyword">auto</span> f = [](<span class="hljs-keyword">const</span> mongols::request &amp; req) {
@@ -359,61 +367,20 @@
     server.set_list_directory(<span class="hljs-literal">true</span>);
     server.set_enable_mmap(<span class="hljs-literal">true</span>);
 
-    <span class="hljs-built_in">std</span>::function&lt;<span class="hljs-keyword">void</span>() &gt; process_work = [&amp;]() {
+    <span class="hljs-built_in">std</span>::function&lt;<span class="hljs-keyword">void</span>(<span class="hljs-keyword">pthread_mutex_t</span>*, <span class="hljs-keyword">size_t</span>*) &gt; ff = [&amp;](<span class="hljs-keyword">pthread_mutex_t</span>* mtx, <span class="hljs-keyword">size_t</span> * data) {
         prctl(PR_SET_NAME, <span class="hljs-string">&quot;mongols: worker&quot;</span>);
         server.run(f);
     };
-    mongols::forker(<span class="hljs-built_in">std</span>::thread::hardware_concurrency(), process_work, pids);
-    set_signal();
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">size_t</span> i = <span class="hljs-number">0</span>; i &lt; pids.size(); ++i) {
-        mongols::process_bind_cpu(pids[i], i);
-    }
 
-    <span class="hljs-built_in">std</span>::function&lt;<span class="hljs-keyword">void</span>(<span class="hljs-keyword">pid_t</span>) &gt; refork = [&amp;](<span class="hljs-keyword">pid_t</span> pid) {
-        <span class="hljs-built_in">std</span>::<span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">int</span>&gt;::iterator p = <span class="hljs-built_in">std</span>::find(pids.begin(), pids.end(), pid);
-        <span class="hljs-keyword">if</span> (p != pids.end()) {
-            *p = <span class="hljs-number">-1</span> * pid;
-        }
-        mongols::forker(<span class="hljs-number">1</span>, process_work, pids);
+    <span class="hljs-built_in">std</span>::function&lt;<span class="hljs-keyword">bool</span>(<span class="hljs-keyword">int</span>) &gt; g = [&amp;](<span class="hljs-keyword">int</span> status) {
+        <span class="hljs-built_in">std</span>::<span class="hljs-built_in">cout</span> &lt;&lt; strsignal(WTERMSIG(status)) &lt;&lt; <span class="hljs-built_in">std</span>::<span class="hljs-built_in">endl</span>;
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
     };
-    <span class="hljs-keyword">pid_t</span> pid;
-    <span class="hljs-keyword">int</span> status;
-    <span class="hljs-keyword">while</span> ((pid = wait(&amp;status)) &gt; <span class="hljs-number">0</span>) {
-        <span class="hljs-keyword">if</span> (WIFSIGNALED(status)) {
-            <span class="hljs-keyword">if</span> (WCOREDUMP(status)) {
-                <span class="hljs-comment">//std::cout &lt;&lt; strsignal(WTERMSIG(status)) &lt;&lt; std::endl;</span>
-                <span class="hljs-comment">// or </span>
-                <span class="hljs-comment">// refork(pid);</span>
-            } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (WTERMSIG(status) == SIGHUP || WTERMSIG(status) == SIGSEGV || WTERMSIG(status) == SIGBUS) {
-                refork(pid);
-            }
-        }
-    }
+
+    mongols::multi_process main_precess;
+    main_precess.run(ff, g);
 
 
-}
-
-<span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">signal_cb</span><span class="hljs-params">(<span class="hljs-keyword">int</span> sig)</span> </span>{
-    <span class="hljs-keyword">switch</span> (sig) {
-        <span class="hljs-keyword">case</span> SIGTERM:
-        <span class="hljs-keyword">case</span> SIGHUP:
-        <span class="hljs-keyword">case</span> SIGQUIT:
-        <span class="hljs-keyword">case</span> SIGINT:
-            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span> &amp; i : pids) {
-                <span class="hljs-keyword">if</span> (i &gt; <span class="hljs-number">0</span>) {
-                    kill(i, sig);
-                }
-            }
-            <span class="hljs-keyword">break</span>;
-        <span class="hljs-keyword">default</span>:<span class="hljs-keyword">break</span>;
-    }
-}
-
-<span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">set_signal</span><span class="hljs-params">()</span> </span>{
-    <span class="hljs-built_in">std</span>::<span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">int</span>&gt; sigs = {SIGHUP, SIGTERM, SIGINT, SIGQUIT};
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">size_t</span> i = <span class="hljs-number">0</span>; i &lt; sigs.size(); ++i) {
-        signal(sigs[i], signal_cb);
-    }
 }
 </code></pre>
 <p>&#x591A;&#x8FDB;&#x7A0B;&#x5316;&#x6700;&#x5408;&#x9002;&#x7684;&#x573A;&#x666F;&#x662F;web_server&#xFF0C;&#x53EF;&#x4EE5;&#x663E;&#x8457;&#x63D0;&#x5347;&#x6027;&#x80FD;&#xFF1A;</p>
@@ -468,7 +435,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"多进程化","level":"1.1.12","depth":2,"next":{"title":"其他","level":"1.1.13","depth":2,"path":"doc/others.md","ref":"doc/others.md","articles":[]},"previous":{"title":"服务化","level":"1.1.11","depth":2,"path":"doc/daemon.md","ref":"doc/daemon.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/multi_process.md","mtime":"2018-12-19T03:52:31.941Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-12-19T07:07:31.752Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"多进程化","level":"1.1.13","depth":2,"next":{"title":"其他","level":"1.1.14","depth":2,"path":"doc/others.md","ref":"doc/others.md","articles":[]},"previous":{"title":"服务化","level":"1.1.12","depth":2,"path":"doc/daemon.md","ref":"doc/daemon.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/multi_process.md","mtime":"2018-12-20T01:17:11.558Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-12-20T01:35:20.612Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
