@@ -115,6 +115,9 @@ mongols_res:status(200)
 
 ```
 
+以后还会内置一些好用常用的第三方插件，目前仅内置了lua-cjson。
+
+
 ## 单文件入口
 
 单文件入口模式是web编程中常见的模式。默认情况下，lua_server没有开启对该模式的支持。欲开启此一支持，使用方法`set_enable_bootstrap`。
