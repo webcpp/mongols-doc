@@ -115,7 +115,82 @@ mongols_res:status(200)
 
 ```
 
-以后还会内置一些好用常用的第三方插件，目前仅内置了lua-cjson。
+为了方便json处理，我内置了一个基于jsoncpp的类mongols_json，API列表如下：
+- set
+- get
+- append
+- parse_string
+- parse_file
+- as_xxx
+    - string
+    - bool
+    - double
+    - long
+- is_xxx
+    - string
+    - bool
+    - double
+    - long
+    - object
+    - array
+- size
+- to_string
+
+具体用法参考下例：
+
+```lua
+local cjson=require('cjson')
+local j = mongols_json.new()
+local json_str=[[
+{
+"employees": [
+{ "firstName":"John" , "lastName":"Doe" },
+{ "firstName":"Anna" , "lastName":"Smith" },
+{ "firstName":"Peter" , "lastName":"Jones" }
+]
+}
+]]
+
+j:parse_string(json_str)
+print(j:to_string())
+
+local employees=j:get('employees')
+local item=mongols_json.new()
+item:set('firstName','Hello')
+item:set('lastName','World')
+employees:append(item)
+
+if employees:is_array() then 
+    local size=employees:size()
+    for i= 0,size-1 do
+        local iter=employees:get(i)
+        print(iter:get('firstName'):as_string()..' : ' ..iter:get('lastName'):as_string())
+    end
+end
+
+j:set('employees',employees)
+j:set('node1','test')
+j:set('node2',true)
+j:set('node3',3.1415926)
+j:set('node4',100)
+print(j:to_string())
+
+
+local value = { true, { foo = "bar" } ,{1,2,3,'test',3.2}}
+local json_text = cjson.encode(value)
+print(json_text)
+
+local mj=mongols_json.new()
+mj:parse_string(json_text)
+print(mj:to_string())
+
+
+```
+
+
+mongols_json不认识Lua的表类型，但lua-cjson认识。所以我内置了lua-cjson。以后，还会内置一些好用常用的第三方插件。
+
+
 
 
 ## 单文件入口

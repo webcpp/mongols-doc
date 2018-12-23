@@ -433,7 +433,79 @@ mongols_res:header(<span class="hljs-string">&apos;Content-Type&apos;</span>,<sp
 
 mongols_res:status(<span class="hljs-number">200</span>)
 </code></pre>
-<p>&#x4EE5;&#x540E;&#x8FD8;&#x4F1A;&#x5185;&#x7F6E;&#x4E00;&#x4E9B;&#x597D;&#x7528;&#x5E38;&#x7528;&#x7684;&#x7B2C;&#x4E09;&#x65B9;&#x63D2;&#x4EF6;&#xFF0C;&#x76EE;&#x524D;&#x4EC5;&#x5185;&#x7F6E;&#x4E86;lua-cjson&#x3002;</p>
+<p>&#x4E3A;&#x4E86;&#x65B9;&#x4FBF;json&#x5904;&#x7406;&#xFF0C;&#x6211;&#x5185;&#x7F6E;&#x4E86;&#x4E00;&#x4E2A;&#x57FA;&#x4E8E;jsoncpp&#x7684;&#x7C7B;mongols_json&#xFF0C;API&#x5217;&#x8868;&#x5982;&#x4E0B;&#xFF1A;</p>
+<ul>
+<li>set</li>
+<li>get</li>
+<li>append</li>
+<li>parse_string</li>
+<li>parse_file</li>
+<li>as_xxx<ul>
+<li>string</li>
+<li>bool</li>
+<li>double</li>
+<li>long</li>
+</ul>
+</li>
+<li>is_xxx<ul>
+<li>string</li>
+<li>bool</li>
+<li>double</li>
+<li>long</li>
+<li>object</li>
+<li>array</li>
+</ul>
+</li>
+<li>size</li>
+<li>to_string</li>
+</ul>
+<p>&#x5177;&#x4F53;&#x7528;&#x6CD5;&#x53C2;&#x8003;&#x4E0B;&#x4F8B;&#xFF1A;</p>
+<pre><code class="lang-lua"><span class="hljs-keyword">local</span> cjson=<span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;cjson&apos;</span>)
+<span class="hljs-keyword">local</span> j = mongols_json.new()
+<span class="hljs-keyword">local</span> json_str=<span class="hljs-string">[[
+{
+&quot;employees&quot;: [
+{ &quot;firstName&quot;:&quot;John&quot; , &quot;lastName&quot;:&quot;Doe&quot; },
+{ &quot;firstName&quot;:&quot;Anna&quot; , &quot;lastName&quot;:&quot;Smith&quot; },
+{ &quot;firstName&quot;:&quot;Peter&quot; , &quot;lastName&quot;:&quot;Jones&quot; }
+]
+}
+]]</span>
+
+j:parse_string(json_str)
+<span class="hljs-built_in">print</span>(j:to_string())
+
+<span class="hljs-keyword">local</span> employees=j:get(<span class="hljs-string">&apos;employees&apos;</span>)
+<span class="hljs-keyword">local</span> item=mongols_json.new()
+item:set(<span class="hljs-string">&apos;firstName&apos;</span>,<span class="hljs-string">&apos;Hello&apos;</span>)
+item:set(<span class="hljs-string">&apos;lastName&apos;</span>,<span class="hljs-string">&apos;World&apos;</span>)
+employees:append(item)
+
+<span class="hljs-keyword">if</span> employees:is_array() <span class="hljs-keyword">then</span> 
+    <span class="hljs-keyword">local</span> size=employees:size()
+    <span class="hljs-keyword">for</span> i= <span class="hljs-number">0</span>,size<span class="hljs-number">-1</span> <span class="hljs-keyword">do</span>
+        <span class="hljs-keyword">local</span> iter=employees:get(i)
+        <span class="hljs-built_in">print</span>(iter:get(<span class="hljs-string">&apos;firstName&apos;</span>):as_string()..<span class="hljs-string">&apos; : &apos;</span> ..iter:get(<span class="hljs-string">&apos;lastName&apos;</span>):as_string())
+    <span class="hljs-keyword">end</span>
+<span class="hljs-keyword">end</span>
+
+j:set(<span class="hljs-string">&apos;employees&apos;</span>,employees)
+j:set(<span class="hljs-string">&apos;node1&apos;</span>,<span class="hljs-string">&apos;test&apos;</span>)
+j:set(<span class="hljs-string">&apos;node2&apos;</span>,<span class="hljs-keyword">true</span>)
+j:set(<span class="hljs-string">&apos;node3&apos;</span>,<span class="hljs-number">3.1415926</span>)
+j:set(<span class="hljs-string">&apos;node4&apos;</span>,<span class="hljs-number">100</span>)
+<span class="hljs-built_in">print</span>(j:to_string())
+
+
+<span class="hljs-keyword">local</span> value = { <span class="hljs-keyword">true</span>, { foo = <span class="hljs-string">&quot;bar&quot;</span> } ,{<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-string">&apos;test&apos;</span>,<span class="hljs-number">3.2</span>}}
+<span class="hljs-keyword">local</span> json_text = cjson.encode(value)
+<span class="hljs-built_in">print</span>(json_text)
+
+<span class="hljs-keyword">local</span> mj=mongols_json.new()
+mj:parse_string(json_text)
+<span class="hljs-built_in">print</span>(mj:to_string())
+</code></pre>
+<p>mongols_json&#x4E0D;&#x8BA4;&#x8BC6;Lua&#x7684;&#x8868;&#x7C7B;&#x578B;&#xFF0C;&#x4F46;lua-cjson&#x8BA4;&#x8BC6;&#x3002;&#x6240;&#x4EE5;&#x6211;&#x5185;&#x7F6E;&#x4E86;lua-cjson&#x3002;&#x4EE5;&#x540E;&#xFF0C;&#x8FD8;&#x4F1A;&#x5185;&#x7F6E;&#x4E00;&#x4E9B;&#x597D;&#x7528;&#x5E38;&#x7528;&#x7684;&#x7B2C;&#x4E09;&#x65B9;&#x63D2;&#x4EF6;&#x3002;</p>
 <h2 id="&#x5355;&#x6587;&#x4EF6;&#x5165;&#x53E3;">&#x5355;&#x6587;&#x4EF6;&#x5165;&#x53E3;</h2>
 <p>&#x5355;&#x6587;&#x4EF6;&#x5165;&#x53E3;&#x6A21;&#x5F0F;&#x662F;web&#x7F16;&#x7A0B;&#x4E2D;&#x5E38;&#x89C1;&#x7684;&#x6A21;&#x5F0F;&#x3002;&#x9ED8;&#x8BA4;&#x60C5;&#x51B5;&#x4E0B;&#xFF0C;lua_server&#x6CA1;&#x6709;&#x5F00;&#x542F;&#x5BF9;&#x8BE5;&#x6A21;&#x5F0F;&#x7684;&#x652F;&#x6301;&#x3002;&#x6B32;&#x5F00;&#x542F;&#x6B64;&#x4E00;&#x652F;&#x6301;&#xFF0C;&#x4F7F;&#x7528;&#x65B9;&#x6CD5;<code>set_enable_bootstrap</code>&#x3002;</p>
 <p><code>example</code>&#x4E0B;&#x6709;&#x4F8B;&#x5B50;&#x4EE3;&#x7801;&#xFF0C;&#x53EF;&#x53C2;&#x8003;&#xFF1A;</p>
@@ -610,7 +682,7 @@ mongols_res:status(<span class="hljs-number">200</span>)
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"lua","level":"1.1.7","depth":2,"next":{"title":"js","level":"1.1.8","depth":2,"path":"doc/js.md","ref":"doc/js.md","articles":[]},"previous":{"title":"leveldb","level":"1.1.6","depth":2,"path":"doc/leveldb.md","ref":"doc/leveldb.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/lua.md","mtime":"2018-12-22T08:31:46.704Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-12-22T08:32:30.345Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"lua","level":"1.1.7","depth":2,"next":{"title":"js","level":"1.1.8","depth":2,"path":"doc/js.md","ref":"doc/js.md","articles":[]},"previous":{"title":"leveldb","level":"1.1.6","depth":2,"path":"doc/leveldb.md","ref":"doc/leveldb.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/lua.md","mtime":"2018-12-23T00:26:02.776Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-12-23T00:42:14.224Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
