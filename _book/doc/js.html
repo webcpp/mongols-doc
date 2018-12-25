@@ -435,8 +435,65 @@ mongols_res.status(<span class="hljs-number">200</span>)
  mongols_res.status(<span class="hljs-number">200</span>)
 </code></pre>
 <p><code>mongols_module.require</code>&#x65B9;&#x6CD5;&#x7684;&#x7B2C;&#x4E00;&#x4E2A;&#x53C2;&#x6570;&#x52A0;&#x8F7D;&#x8DEF;&#x5F84;&#xFF0C;&#x7B2C;&#x4E8C;&#x4E2A;&#x53C2;&#x6570;&#x662F;&#x51FD;&#x6570;&#x540D;&#x3002;&#x8FD4;&#x56DE;&#x5E03;&#x5C14;&#x503C;&#x3002;</p>
+<p>&#x4E5F;&#x53EF;&#x4EE5;&#x5728;&#x52A8;&#x6001;&#x5E93;&#x4E2D;&#x6CE8;&#x518C;c++&#x51FD;&#x6570;&#x6216;&#x8005;&#x7C7B;&#x3002;&#x65B9;&#x6CD5;&#x662F;&#x5148;&#x5982;&#x4E0A;&#x6CE8;&#x518C;&#x666E;&#x901A;&#x7684;c&#x51FD;&#x6570;&#xFF0C;&#x7136;&#x540E;&#x5728;&#x8BE5;&#x51FD;&#x6570;&#x4E2D;&#x6CE8;&#x518C;c++&#x51FD;&#x6570;&#x548C;&#x7C7B;&#x3002;&#x4F8B;&#x5982;&#xFF1A;</p>
+<pre><code class="lang-cpp">
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;string&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;mongols/lib/dukglue/dukglue.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;mongols/lib/dukglue/duktape.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;mongols/js_server.hpp&gt;</span></span>
+
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-string">&quot;dukglue/duktape.h&quot;</span></span>
+
+<span class="hljs-keyword">class</span> demo : <span class="hljs-keyword">public</span> mongols::js_object {
+<span class="hljs-keyword">public</span>:
+    demo() = <span class="hljs-keyword">default</span>;
+    <span class="hljs-keyword">virtual</span>~demo() = <span class="hljs-keyword">default</span>;
+
+    <span class="hljs-built_in">std</span>::<span class="hljs-function"><span class="hljs-built_in">string</span> <span class="hljs-title">echo</span><span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span>&amp; text)</span> </span>{
+        <span class="hljs-keyword">return</span> text;
+    }
+
+    <span class="hljs-keyword">static</span> <span class="hljs-keyword">bool</span> loaded;
+};
+
+<span class="hljs-keyword">bool</span> demo::loaded = <span class="hljs-literal">false</span>;
+
+<span class="hljs-meta">#<span class="hljs-meta-keyword">ifdef</span> __cplusplus</span>
+<span class="hljs-keyword">extern</span> <span class="hljs-string">&quot;C&quot;</span> {
+<span class="hljs-meta">#<span class="hljs-meta-keyword">endif</span></span>
+
+    <span class="hljs-keyword">duk_ret_t</span> cpp(duk_context *ctx) {
+        <span class="hljs-keyword">if</span> (!demo::loaded) {
+            dukglue_register_constructor&lt;demo&gt;(ctx, <span class="hljs-string">&quot;demo&quot;</span>);
+            dukglue_register_method(ctx, &amp;demo::echo, <span class="hljs-string">&quot;echo&quot;</span>);
+            demo::loaded = <span class="hljs-literal">true</span>;
+        }
+        <span class="hljs-keyword">if</span> (demo::loaded) {
+            duk_push_true(ctx);
+        } <span class="hljs-keyword">else</span> {
+            duk_push_false(ctx);
+        }
+        <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>; <span class="hljs-comment">/* one return value */</span>
+    }
+
+<span class="hljs-meta">#<span class="hljs-meta-keyword">ifdef</span> __cplusplus</span>
+}
+<span class="hljs-meta">#<span class="hljs-meta-keyword">endif</span></span>
+</code></pre>
+<p>&#x8C03;&#x7528;&#x65B9;&#x6CD5;&#xFF0C;&#x5148;&#x7528;<code>mongols_module.require</code>&#x52A0;&#x8F7D;&#x52A8;&#x6001;&#x5E93;&#xFF0C;&#x7136;&#x540E;&#x8C03;&#x7528;c&#x51FD;&#x6570;&#x6CE8;&#x518C;c++&#x7C7B;&#x548C;&#x51FD;&#x6570;&#xFF1A;</p>
+<pre><code class="lang-javascript">
+<span class="hljs-keyword">var</span> loaded = mongols_module.require(<span class="hljs-string">&apos;cpp/libcpp&apos;</span>, <span class="hljs-string">&apos;cpp&apos;</span>)
+<span class="hljs-keyword">var</span> registered = cpp()
+<span class="hljs-keyword">if</span> (loaded &amp;&amp; registered) {
+    <span class="hljs-keyword">var</span> a = <span class="hljs-keyword">new</span> demo()
+    mongols_res.header(<span class="hljs-string">&apos;Content-Type&apos;</span>, <span class="hljs-string">&apos;text/plain;charset=UTF-8&apos;</span>)
+    mongols_res.content(a.echo(<span class="hljs-string">&apos;hello,cpp class&apos;</span>))
+    mongols_res.status(<span class="hljs-number">200</span>)
+    mongols_module.free(a)
+}
+</code></pre>
 <h4 id="&#x7C7B;&#x548C;&#x51FD;&#x6570;&#x6CE8;&#x5165;">&#x7C7B;&#x548C;&#x51FD;&#x6570;&#x6CE8;&#x5165;</h4>
-<p>&#x5199;&#x52A8;&#x6001;&#x5E93;&#x7EC8;&#x7A76;&#x9EBB;&#x70E6;,&#x9700;&#x8981;&#x719F;&#x6089;duktape api&#x3002;js_server&#x652F;&#x6301;&#x76F4;&#x63A5;&#x6CE8;&#x5165;c/c++&#x51FD;&#x6570;&#x548C;&#x7C7B;&#x5230;&#x670D;&#x52A1;&#x5668;&#xFF1A;</p>
+<p>js_server&#x8FD8;&#x652F;&#x6301;&#x76F4;&#x63A5;&#x6CE8;&#x5165;c/c++&#x51FD;&#x6570;&#x548C;&#x7C7B;&#x5230;&#x670D;&#x52A1;&#x5668;&#xFF1A;</p>
 <pre><code class="lang-cpp">
 <span class="hljs-keyword">class</span> person : <span class="hljs-keyword">public</span> mongols::js_object {
 <span class="hljs-keyword">public</span>:
@@ -659,7 +716,7 @@ mongols_res.status(<span class="hljs-number">200</span>)
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"js","level":"1.1.8","depth":2,"next":{"title":"chai","level":"1.1.9","depth":2,"path":"doc/chai.md","ref":"doc/chai.md","articles":[]},"previous":{"title":"lua","level":"1.1.7","depth":2,"path":"doc/lua.md","ref":"doc/lua.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/js.md","mtime":"2018-12-20T07:06:46.045Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-12-23T00:42:14.224Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"js","level":"1.1.8","depth":2,"next":{"title":"chai","level":"1.1.9","depth":2,"path":"doc/chai.md","ref":"doc/chai.md","articles":[]},"previous":{"title":"lua","level":"1.1.7","depth":2,"path":"doc/lua.md","ref":"doc/lua.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/js.md","mtime":"2018-12-25T22:44:18.255Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-12-25T22:45:33.305Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

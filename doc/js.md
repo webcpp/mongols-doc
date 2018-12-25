@@ -127,8 +127,73 @@ extern "C" {
 
 `mongols_module.require`方法的第一个参数加载路径，第二个参数是函数名。返回布尔值。
 
+也可以在动态库中注册c++函数或者类。方法是先如上注册普通的c函数，然后在该函数中注册c++函数和类。例如：
+
+```cpp
+
+#include <string>
+#include <mongols/lib/dukglue/dukglue.h>
+#include <mongols/lib/dukglue/duktape.h>
+#include <mongols/js_server.hpp>
+
+#include "dukglue/duktape.h"
+
+class demo : public mongols::js_object {
+public:
+    demo() = default;
+    virtual~demo() = default;
+
+    std::string echo(const std::string& text) {
+        return text;
+    }
+
+    static bool loaded;
+};
+
+bool demo::loaded = false;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+    duk_ret_t cpp(duk_context *ctx) {
+        if (!demo::loaded) {
+            dukglue_register_constructor<demo>(ctx, "demo");
+            dukglue_register_method(ctx, &demo::echo, "echo");
+            demo::loaded = true;
+        }
+        if (demo::loaded) {
+            duk_push_true(ctx);
+        } else {
+            duk_push_false(ctx);
+        }
+        return 1; /* one return value */
+    }
+
+#ifdef __cplusplus
+}
+#endif
+
+```
+
+调用方法，先用`mongols_module.require`加载动态库，然后调用c函数注册c++类和函数：
+```javascript
+
+var loaded = mongols_module.require('cpp/libcpp', 'cpp')
+var registered = cpp()
+if (loaded && registered) {
+    var a = new demo()
+    mongols_res.header('Content-Type', 'text/plain;charset=UTF-8')
+    mongols_res.content(a.echo('hello,cpp class'))
+    mongols_res.status(200)
+    mongols_module.free(a)
+}
+
+
+```
+
 #### 类和函数注入
-写动态库终究麻烦,需要熟悉duktape api。js_server支持直接注入c/c++函数和类到服务器：
+js_server还支持直接注入c/c++函数和类到服务器：
 
 ```cpp
 
