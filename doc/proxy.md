@@ -4,6 +4,8 @@ tcp_proxy_server 主要是为需要反向代理和负载均衡的场景准备的
 
 它既能做tcp代理，也能作http代理。内置负载均衡算法为轮询法。
 
+## 反向代理
+
 来看一个http反向代理的例子：
 
 
@@ -86,4 +88,27 @@ console.log('Server running at http://127.0.0.1:'+port+'/');
 
 
 实际上，从 web server 到 reverse proxy，对比于mongols，nginx其实是一款很慢的服务器软件。
+
+## 安全防护
+
+tcp_proxy_server可配置连接级的安全防护，通过`run`方法的参数。该参数是一个需要返回布尔值functional,返回false则意味着直接关闭连接。
+
+该functional以类`client_t`为参数。开发者可从该参数获取连接的系统唯一标识符`sid`，连接建立时间`t`，该连接已经发生数据的次数`count`，以及服务器保持在线的连接总数`u_size`。有了这些量，开发者很轻易即可写出负责安全防护的functional,比如上例中的`f`可重写如下:
+
+```cpp
+
+    auto f = [](const mongols::tcp_server::client_t & client) {
+        if(client.u_size>100000){
+            return false;
+        }
+        if(client.count/difftime(time(0),client.t)>50){
+            return false;
+        }
+        return true;
+    };
+
+```
+现在，`f`表示：如果服务器总连接数超过100000，或者单个连接发送数据的频率超过每秒50次，就关闭当前连接。
+
+关闭连接时，对tcp代理返回空字符串，对http代理返回403错误。开发者可通过`set_default_content`方法设置默认返回值。
 
