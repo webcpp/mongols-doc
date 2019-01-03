@@ -1,0 +1,89 @@
+# 代理服务器
+
+tcp_proxy_server 主要是为需要反向代理和负载均衡的场景准备的。
+
+它既能做tcp代理，也能作http代理。内置负载均衡算法为轮询法。
+
+来看一个http反向代理的例子：
+
+
+```cpp
+
+#include <unistd.h>
+#include <sys/wait.h>
+#include <sys/signal.h>
+#include <sys/prctl.h>
+
+#include <mongols/util.hpp>
+#include <mongols/tcp_proxy_server.hpp>
+
+#include <cstring>
+#include <iostream>
+#include <functional>
+
+int main(int, char**) {
+    //    daemon(1, 0);
+    auto f = [](const mongols::tcp_server::client_t & client) {
+        return true;
+    };
+    int port = 9090;
+    const char* host = "127.0.0.1";
+
+    mongols::tcp_proxy_server server(host, port, 5000, 8192, 0/*2*/);
+
+    server.set_enable_http_mode(true);
+    server.set_enable_http_lru_cache(true);
+    server.set_http_lru_cache_expires(1);
+    server.set_default_http_content();
+
+    //see example/nodejs
+    server.set_back_server(host, 8888);
+    server.set_back_server(host, 8889);
+
+    //    server.run(f);
+
+
+    std::function<void(pthread_mutex_t*, size_t*) > ff = [&](pthread_mutex_t* mtx, size_t * data) {
+        server.run(f);
+    };
+
+    std::function<bool(int) > g = [&](int status) {
+        std::cout << strsignal(WTERMSIG(status)) << std::endl;
+        return false;
+    };
+
+    mongols::multi_process main_process;
+    main_process.run(ff, g);
+}
+
+
+
+```
+
+上例以多进程方式运行一个http反向代理服务器，服务器本身监听9090端口，代理两个后端服务器，后端服务器端口分别是8888和8889。
+
+两个后端服务器都是输出helloworld的nodejs程序，代码很简单：
+
+```javascript
+
+var http = require('http');
+var port = 8888;//8889
+
+http.createServer(function (request, response) {
+    response.writeHead(200, {'Content-Type': 'text/plain'});
+
+
+    response.end('Hello World\n');
+}).listen(port);
+
+console.log('Server running at http://127.0.0.1:'+port+'/');
+
+```
+
+同样的后端，同样多的工作进程，如果比较于nginx的proxy_pass方案，无论是否开启缓存，mongols的并发性能都要强于nginx：
+
+![tcp_proxy_serverVSnginx_proxy_pass.png](image/tcp_proxy_serverVSnginx_proxy_pass.png)
+
+
+实际上，从 web server 到 reverse proxy，对比于mongols，nginx其实是一款很慢的服务器软件。
+
