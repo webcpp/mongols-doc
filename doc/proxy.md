@@ -89,9 +89,15 @@ console.log('Server running at http://127.0.0.1:'+port+'/');
 
 实际上，从 web server 到 reverse proxy，对比于mongols，nginx其实是一款很慢的服务器软件。
 
+## 缓存加速
+
+仅对http代理有效。
+
+tcp_proxy_server通过lru算法+过期时间的策略实现加速。因为缓存在内存中，非常快。只有当请求方法、URI和参数都相同的请求，才会对应到同一个缓存内容。
+
 ## 安全防护
 
-tcp_proxy_server可配置连接级的安全防护，通过`run`方法的参数。该参数是一个需要返回布尔值functional,返回false则意味着直接关闭连接。
+tcp_proxy_server可配置连接级的安全防护，通过`run`方法的参数。该参数是一个需要返回布尔值的functional,返回false则意味着直接关闭连接。
 
 该functional以类`client_t`为参数。开发者可从该参数获取连接的系统唯一标识符`sid`，连接建立时间`t`，该连接已经发生数据的次数`count`，以及服务器保持在线的连接总数`u_size`。有了这些量，开发者很轻易即可写出负责安全防护的functional,比如上例中的`f`可重写如下:
 
