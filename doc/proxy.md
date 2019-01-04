@@ -99,11 +99,14 @@ tcp_proxy_server通过lru算法+过期时间的策略实现加速。因为缓存
 
 tcp_proxy_server可配置连接级的安全防护，通过`run`方法的参数。该参数是一个需要返回布尔值的functional,返回false则意味着直接关闭连接。
 
-该functional以类`client_t`为参数。开发者可从该参数获取连接的系统唯一标识符`sid`，连接建立时间`t`，该连接已经发生数据的次数`count`，以及服务器保持在线的连接总数`u_size`。有了这些量，开发者很轻易即可写出负责安全防护的functional,比如上例中的`f`可重写如下:
+该functional以类`client_t`为参数。开发者可从该参数获取连接的系统唯一标识符`sid`，连接建立时间`t`，该连接已经发送数据的次数`count`，该连接的ip，以及服务器保持在线的连接总数`u_size`。有了这些量，开发者很轻易即可写出负责安全防护的functional,比如上例中的`f`可重写如下:
 
 ```cpp
 
     auto f = [](const mongols::tcp_server::client_t & client) {
+        if(client.ip=="x.x.x.x"){
+            return false;
+        }
         if(client.u_size>100000){
             return false;
         }
@@ -114,7 +117,7 @@ tcp_proxy_server可配置连接级的安全防护，通过`run`方法的参数�
     };
 
 ```
-现在，`f`表示：如果服务器总连接数超过100000，或者单个连接发送数据的频率超过每秒50次，就关闭当前连接。
+现在，`f`表示：如果服务器总连接数超过100000，或者单个连接发送数据的频率超过每秒50次，或者当前连接ip为`x.x.x.x`，就关闭当前连接。
 
 关闭连接时，对tcp代理返回空字符串，对http代理返回403错误。开发者可通过`set_default_content`方法设置默认返回值。
 
