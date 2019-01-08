@@ -28,6 +28,11 @@ int main(int, char**) {
     auto f = [](const mongols::tcp_server::client_t & client) {
         return true;
     };
+
+    auto h = [&](const mongols::request & req) {
+        return true;
+    };
+
     int port = 9090;
     const char* host = "127.0.0.1";
 
@@ -42,11 +47,11 @@ int main(int, char**) {
     server.set_backend_server(host, 8888);
     server.set_backend_server(host, 8889);
 
-    //    server.run(f);
+    //    server.run(f,h);
 
 
     std::function<void(pthread_mutex_t*, size_t*) > ff = [&](pthread_mutex_t* mtx, size_t * data) {
-        server.run(f);
+        server.run(f, h);
     };
 
     std::function<bool(int) > g = [&](int status) {
@@ -56,8 +61,6 @@ int main(int, char**) {
 
     mongols::multi_process main_process;
     main_process.run(ff, g);
-}
-
 
 
 ```
@@ -118,6 +121,9 @@ tcp_proxy_server可配置连接级的安全防护，通过`run`方法的参数�
 
 ```
 现在，`f`表示：如果服务器总连接数超过100000，或者单个连接发送数据的频率超过每秒50次，或者当前连接ip为`x.x.x.x`，就关闭当前连接。
+
+如果开启http代理模式，还可以配置请求过滤的functional。例如上例中的`h`，可根据HTTP请求头信息实现自定义过滤。
+
 
 关闭连接时，对tcp代理返回空字符串，对http代理返回403错误。开发者可通过`set_default_content`方法设置默认返回值。
 
