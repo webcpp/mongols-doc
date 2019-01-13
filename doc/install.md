@@ -22,7 +22,7 @@ CXX=clang++
 
 ## 使用
 
-很简单：`pkg-config --libs --cflags mongols`。
+很简单：`pkg-config --libs --cflags mongols openssl`。
 
 
 ## 例子
