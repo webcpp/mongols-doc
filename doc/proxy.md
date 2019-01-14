@@ -125,5 +125,5 @@ tcp_proxy_server可配置连接级的安全防护，通过`run`方法的参数�
 如果开启http代理模式，还可以配置请求过滤的functional。例如上例中的`h`，可根据HTTP请求头信息实现自定义过滤。
 
 
-关闭连接时，对tcp代理返回空字符串，对http代理返回403错误。开发者可通过`set_default_content`方法设置默认返回值。
+关闭连接时，对tcp代理返回`close`字符串，对http代理返回403错误。开发者可通过`set_default_content`方法设置默认返回值。
 
