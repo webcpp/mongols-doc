@@ -4,7 +4,7 @@ tcp_proxy_server 主要是为需要反向代理和负载均衡的场景准备的
 
 它既能做tcp代理，也能作http代理。内置负载均衡算法为轮询法。
 
-## 反向代理
+## HTTP反向代理
 
 来看一个http反向代理的例子：
 
@@ -38,7 +38,7 @@ int main(int, char**) {
 
     mongols::tcp_proxy_server server(host, port, 5000, 8192, 0/*2*/);
 
-    server.set_enable_http_mode(true);
+
     server.set_enable_http_lru_cache(true);
     server.set_http_lru_cache_expires(1);
     server.set_default_http_content();
@@ -46,6 +46,9 @@ int main(int, char**) {
     //see example/nodejs
     server.set_backend_server(host, 8888);
     server.set_backend_server(host, 8889);
+    if (!server.set_openssl("openssl/localhost.crt", "openssl/localhost.key")) {
+        return -1;
+    }
 
     //    server.run(f,h);
 
@@ -61,6 +64,9 @@ int main(int, char**) {
 
     mongols::multi_process main_process;
     main_process.run(ff, g);
+}
+
+
 
 
 ```
@@ -126,4 +132,47 @@ tcp_proxy_server可配置连接级的安全防护，通过`run`方法的参数�
 
 
 关闭连接时，对tcp代理返回`close`字符串，对http代理返回403错误。开发者可通过`set_default_content`方法设置默认返回值。
+
+## TCP 反向代理
+
+例子:
+
+```
+#include <unistd.h>
+#include <sys/wait.h>
+#include <sys/signal.h>
+#include <sys/prctl.h>
+
+#include <mongols/util.hpp>
+#include <mongols/tcp_proxy_server.hpp>
+
+#include <cstring>
+#include <iostream>
+#include <functional>
+
+int main(int, char**) {
+    //    daemon(1, 0);
+    auto f = [](const mongols::tcp_server::client_t & client) {
+        return true;
+    };
+
+    int port = 9090;
+    const char* host = "127.0.0.1";
+
+    mongols::tcp_proxy_server server(host, port, 5000, 8192, 0/*2*/);
+
+    server.set_enable_tcp_send_to_other(true);
+    //see example/nodejs
+    server.set_backend_server(host, 8886);
+    server.set_backend_server(host, 8887);
+    if (!server.set_openssl("openssl/localhost.crt", "openssl/localhost.key")) {
+        return -1;
+    }
+
+    server.run(f);
+
+}
+
+
+```
 
