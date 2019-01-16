@@ -4,6 +4,8 @@ tcp_proxy_server 主要是为需要反向代理和负载均衡的场景准备的
 
 它既能做tcp代理，也能作http代理。内置负载均衡算法为轮询法。
 
+注意：http代理暂时仅支持http协议的后端服务器。
+
 ## HTTP反向代理
 
 来看一个http反向代理的例子：
@@ -82,8 +84,6 @@ var port = 8888;//8889
 
 http.createServer(function (request, response) {
     response.writeHead(200, {'Content-Type': 'text/plain'});
-
-
     response.end('Hello World\n');
 }).listen(port);
 
@@ -176,3 +176,4 @@ int main(int, char**) {
 
 ```
 
+`set_enable_tcp_send_to_other`决定消息是否转发其他在线客户端。
