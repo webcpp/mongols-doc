@@ -1,5 +1,7 @@
 # mongols 简介
 
+![mongols.png](doc/image/mongols.png)
+
 mongols是C++ 服务器基础设施库， 它的主要特性如下：
 
 - tcp 服务器
@@ -23,7 +25,7 @@ mongols是C++ 服务器基础设施库， 它的主要特性如下：
 
 这些模型统统支持，而且非常易于支持。
 
-![mongols.png](doc/image/mongols.png)
+
 
 mongols不依赖于任何事件库，其并发性能却远远强于著名的libevent、libev和libuv——这三个库已经过时啦！
 
