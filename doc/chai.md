@@ -1,4 +1,7 @@
 # chai 服务器
+
+考虑到c++11的普遍性和chaiscript语言本身的小众性，mongols-v1.6.0之后将不在支持。
+
 chaiscript是一种对C++程序员非常友好的脚本语言。具体用法参考:[https://github.com/ChaiScript/ChaiScript/blob/develop/cheatsheet.md](https://github.com/ChaiScript/ChaiScript/blob/develop/cheatsheet.md)
 
 它直接支持脚本模块和C++模块，极为方便。可惜普及程度不高，很多c++程序员甚至不知道它能干什么。现在，它能像lua或者js一样，服务于web开发了。
