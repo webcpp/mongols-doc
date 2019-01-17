@@ -23,6 +23,8 @@ mongols是C++ 服务器基础设施库， 它的主要特性如下：
 
 这些模型统统支持，而且非常易于支持。
 
+![mongols.png](image/mongols.png)
+
 mongols不依赖于任何事件库，其并发性能却远远强于著名的libevent、libev和libuv——这三个库已经过时啦！
 
 mongols支持三种脚本语言lua,js和chai,你的品味决定你的选择。对mongols而言，它们是无差异的。

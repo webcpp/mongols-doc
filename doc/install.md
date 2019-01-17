@@ -1,5 +1,8 @@
 # 依赖
 
+- linux
+- gcc(c11) 
+- g++(c++11) 
 - openssl 开发库
 
 # 安装
