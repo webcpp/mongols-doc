@@ -35,6 +35,6 @@ int main(int,char**)
 
 ```
 
-对于多核系统，当然之选是tcp_threading_server。
+
 
 `run`方法需要一个handler函数，可以是lambda。这个函数给予开发者任意处置客户端及其输入和输出的自由。通过这个函数，开发者几乎可以完全控制服务器的每一次I/O。
