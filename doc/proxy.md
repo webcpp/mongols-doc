@@ -73,7 +73,7 @@ int main(int, char**) {
 
 ```
 
-上例以多进程方式运行一个http反向代理服务器，服务器本身监听9090端口，代理两个后端服务器，后端服务器端口分别是8888和8889。
+上例以多进程方式运行一个http反向代理服务器，服务器本身监听9090端口，代理两个后端服务器，后端服务器端口分别是8888和8889。如果访问后端需要安全连接，可通过`set_backend_server`的第三个参数（bool值）进行配置，默认是`false`即无需使用安全连接。
 
 两个后端服务器都是输出helloworld的nodejs程序，代码很简单：
 
@@ -97,6 +97,8 @@ console.log('Server running at http://127.0.0.1:'+port+'/');
 
 
 实际上，从 web server 到 reverse proxy，对比于mongols，nginx其实是一款很慢的服务器软件。
+
+
 
 ## 缓存加速
 
