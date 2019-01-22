@@ -2,7 +2,7 @@
 
 mongols主要是网络库，其他一切设施均直接或间接为此而存在。
 
-使用是`pkg-config --libs --cflags mongols` 即可。
+使用是`pkg-config --libs --cflags mongols openssl` 即可。
 
 ## 线程池
 
@@ -53,6 +53,4 @@ RESP协议处理
 
 ## 性能优化建议
 
-开启缓存：`set_enable_cache`或`set_enable_lru_cache`。这个不是一般有效，是非常有效。短短5秒的lru缓存有效期，即可令lua_server和js_server并发性能放大很多倍：lua_server一般是2-5倍,js_server一般是几十倍。
-
-duktape还要加油啊。
+开启缓存：`set_enable_cache`或`set_enable_lru_cache`。这个不是一般有效，是非常有效。
