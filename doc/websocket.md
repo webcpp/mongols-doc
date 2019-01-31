@@ -31,6 +31,91 @@ int main(int,char**){
 ```
 以上代码中的`f`是一个handler,它是实现开发者自行处理消息的关键。以上实现是说，如果客户端发送`close`消息到服务器，服务器就关闭它的连接，并且不转发该消息；除此而外，服务器会保持连接，并转发消息到所有在线客户端。这是走第一条路径的一个例子，它没有实现聊天群组功能和其他特性。
 
+浏览器测试代码:
+
+```html
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>WebSocket Test</title>
+</head>
+
+<body>
+  <h2>WebSocket Test</h2>
+
+  <div id="output"></div>
+  <script language="javascript" type="text/javascript">
+
+    var wsUri = "ws://127.0.0.1:9090/";
+    var output;
+
+
+    function init() {
+      output = document.getElementById("output");
+      testWebSocket();
+      var i = 0, max_i = 1000;
+      setInterval(function () {
+        if (i < max_i) {
+          doSend('websocket test ' + i)
+          i++;
+        }
+      }, 500)
+    }
+
+    function testWebSocket() {
+      websocket = new WebSocket(wsUri);
+      websocket.onopen = function (evt) { onOpen(evt) };
+      websocket.onclose = function (evt) { onClose(evt) };
+      websocket.onmessage = function (evt) { onMessage(evt) };
+      websocket.onerror = function (evt) { onError(evt) };
+    }
+
+    function onOpen(evt) {
+      writeToScreen("CONNECTED");
+      doSend("WebSocket rocks");
+    }
+
+    function onClose(evt) {
+      writeToScreen("DISCONNECTED");
+    }
+
+    function onMessage(evt) {
+      writeToScreen('<span style="color: blue;">RESPONSE: ' + evt.data + '</span>');
+    }
+
+    function onError(evt) {
+      writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data);
+    }
+
+    function doSend(message) {
+      writeToScreen("SENT: " + message);
+      websocket.send(message);
+    }
+
+    function writeToScreen(message) {
+      var pre = document.createElement("p");
+      pre.style.wordWrap = "break-word";
+      pre.innerHTML = message;
+      if (output.childNodes.length == 0) {
+        output.appendChild(pre);
+      } else {
+        output.replaceChild(pre, output.childNodes[0]);
+      }
+    }
+
+    window.addEventListener("load", init, false);
+
+  </script>
+</body>
+
+</html>
+
+
+```
+
 走第二条路径就简单多了。没有参数的 `run`可调用内置的群组管理机制，开发者仅仅在前端使用javascript即可完成对群组的控制和管理。是不是太方便！
 
 怎么用？每一次用javascript服务器发送的消息应该是一个用`JSON.stringify`处理的json数据。该数据应该包含以下是个字段：

@@ -389,6 +389,86 @@
 }
 </code></pre>
 <p>&#x4EE5;&#x4E0A;&#x4EE3;&#x7801;&#x4E2D;&#x7684;<code>f</code>&#x662F;&#x4E00;&#x4E2A;handler,&#x5B83;&#x662F;&#x5B9E;&#x73B0;&#x5F00;&#x53D1;&#x8005;&#x81EA;&#x884C;&#x5904;&#x7406;&#x6D88;&#x606F;&#x7684;&#x5173;&#x952E;&#x3002;&#x4EE5;&#x4E0A;&#x5B9E;&#x73B0;&#x662F;&#x8BF4;&#xFF0C;&#x5982;&#x679C;&#x5BA2;&#x6237;&#x7AEF;&#x53D1;&#x9001;<code>close</code>&#x6D88;&#x606F;&#x5230;&#x670D;&#x52A1;&#x5668;&#xFF0C;&#x670D;&#x52A1;&#x5668;&#x5C31;&#x5173;&#x95ED;&#x5B83;&#x7684;&#x8FDE;&#x63A5;&#xFF0C;&#x5E76;&#x4E14;&#x4E0D;&#x8F6C;&#x53D1;&#x8BE5;&#x6D88;&#x606F;&#xFF1B;&#x9664;&#x6B64;&#x800C;&#x5916;&#xFF0C;&#x670D;&#x52A1;&#x5668;&#x4F1A;&#x4FDD;&#x6301;&#x8FDE;&#x63A5;&#xFF0C;&#x5E76;&#x8F6C;&#x53D1;&#x6D88;&#x606F;&#x5230;&#x6240;&#x6709;&#x5728;&#x7EBF;&#x5BA2;&#x6237;&#x7AEF;&#x3002;&#x8FD9;&#x662F;&#x8D70;&#x7B2C;&#x4E00;&#x6761;&#x8DEF;&#x5F84;&#x7684;&#x4E00;&#x4E2A;&#x4F8B;&#x5B50;&#xFF0C;&#x5B83;&#x6CA1;&#x6709;&#x5B9E;&#x73B0;&#x804A;&#x5929;&#x7FA4;&#x7EC4;&#x529F;&#x80FD;&#x548C;&#x5176;&#x4ED6;&#x7279;&#x6027;&#x3002;</p>
+<p>&#x6D4F;&#x89C8;&#x5668;&#x6D4B;&#x8BD5;&#x4EE3;&#x7801;:</p>
+<pre><code class="lang-html">
+<span class="hljs-meta">&lt;!DOCTYPE html&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">html</span>&gt;</span>
+
+<span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">charset</span>=<span class="hljs-string">&quot;utf-8&quot;</span> /&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>WebSocket Test<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span>
+
+<span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">h2</span>&gt;</span>WebSocket Test<span class="hljs-tag">&lt;/<span class="hljs-name">h2</span>&gt;</span>
+
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;output&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">language</span>=<span class="hljs-string">&quot;javascript&quot;</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text/javascript&quot;</span>&gt;</span><span class="javascript">
+
+    <span class="hljs-keyword">var</span> wsUri = <span class="hljs-string">&quot;ws://127.0.0.1:9090/&quot;</span>;
+    <span class="hljs-keyword">var</span> output;
+
+
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">init</span>(<span class="hljs-params"></span>) </span>{
+      output = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">&quot;output&quot;</span>);
+      testWebSocket();
+      <span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, max_i = <span class="hljs-number">1000</span>;
+      setInterval(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+        <span class="hljs-keyword">if</span> (i &lt; max_i) {
+          doSend(<span class="hljs-string">&apos;websocket test &apos;</span> + i)
+          i++;
+        }
+      }, <span class="hljs-number">500</span>)
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">testWebSocket</span>(<span class="hljs-params"></span>) </span>{
+      websocket = <span class="hljs-keyword">new</span> WebSocket(wsUri);
+      websocket.onopen = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">evt</span>) </span>{ onOpen(evt) };
+      websocket.onclose = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">evt</span>) </span>{ onClose(evt) };
+      websocket.onmessage = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">evt</span>) </span>{ onMessage(evt) };
+      websocket.onerror = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">evt</span>) </span>{ onError(evt) };
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">onOpen</span>(<span class="hljs-params">evt</span>) </span>{
+      writeToScreen(<span class="hljs-string">&quot;CONNECTED&quot;</span>);
+      doSend(<span class="hljs-string">&quot;WebSocket rocks&quot;</span>);
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">onClose</span>(<span class="hljs-params">evt</span>) </span>{
+      writeToScreen(<span class="hljs-string">&quot;DISCONNECTED&quot;</span>);
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">onMessage</span>(<span class="hljs-params">evt</span>) </span>{
+      writeToScreen(<span class="hljs-string">&apos;&lt;span style=&quot;color: blue;&quot;&gt;RESPONSE: &apos;</span> + evt.data + <span class="hljs-string">&apos;&lt;/span&gt;&apos;</span>);
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">onError</span>(<span class="hljs-params">evt</span>) </span>{
+      writeToScreen(<span class="hljs-string">&apos;&lt;span style=&quot;color: red;&quot;&gt;ERROR:&lt;/span&gt; &apos;</span> + evt.data);
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">doSend</span>(<span class="hljs-params">message</span>) </span>{
+      writeToScreen(<span class="hljs-string">&quot;SENT: &quot;</span> + message);
+      websocket.send(message);
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">writeToScreen</span>(<span class="hljs-params">message</span>) </span>{
+      <span class="hljs-keyword">var</span> pre = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">&quot;p&quot;</span>);
+      pre.style.wordWrap = <span class="hljs-string">&quot;break-word&quot;</span>;
+      pre.innerHTML = message;
+      <span class="hljs-keyword">if</span> (output.childNodes.length == <span class="hljs-number">0</span>) {
+        output.appendChild(pre);
+      } <span class="hljs-keyword">else</span> {
+        output.replaceChild(pre, output.childNodes[<span class="hljs-number">0</span>]);
+      }
+    }
+
+    <span class="hljs-built_in">window</span>.addEventListener(<span class="hljs-string">&quot;load&quot;</span>, init, <span class="hljs-literal">false</span>);
+
+  </span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
+
+<span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span>
+</code></pre>
 <p>&#x8D70;&#x7B2C;&#x4E8C;&#x6761;&#x8DEF;&#x5F84;&#x5C31;&#x7B80;&#x5355;&#x591A;&#x4E86;&#x3002;&#x6CA1;&#x6709;&#x53C2;&#x6570;&#x7684; <code>run</code>&#x53EF;&#x8C03;&#x7528;&#x5185;&#x7F6E;&#x7684;&#x7FA4;&#x7EC4;&#x7BA1;&#x7406;&#x673A;&#x5236;&#xFF0C;&#x5F00;&#x53D1;&#x8005;&#x4EC5;&#x4EC5;&#x5728;&#x524D;&#x7AEF;&#x4F7F;&#x7528;javascript&#x5373;&#x53EF;&#x5B8C;&#x6210;&#x5BF9;&#x7FA4;&#x7EC4;&#x7684;&#x63A7;&#x5236;&#x548C;&#x7BA1;&#x7406;&#x3002;&#x662F;&#x4E0D;&#x662F;&#x592A;&#x65B9;&#x4FBF;&#xFF01;</p>
 <p>&#x600E;&#x4E48;&#x7528;&#xFF1F;&#x6BCF;&#x4E00;&#x6B21;&#x7528;javascript&#x670D;&#x52A1;&#x5668;&#x53D1;&#x9001;&#x7684;&#x6D88;&#x606F;&#x5E94;&#x8BE5;&#x662F;&#x4E00;&#x4E2A;&#x7528;<code>JSON.stringify</code>&#x5904;&#x7406;&#x7684;json&#x6570;&#x636E;&#x3002;&#x8BE5;&#x6570;&#x636E;&#x5E94;&#x8BE5;&#x5305;&#x542B;&#x4EE5;&#x4E0B;&#x662F;&#x4E2A;&#x5B57;&#x6BB5;&#xFF1A;</p>
 <ul>
@@ -442,7 +522,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"websocket","level":"1.1.4","depth":2,"next":{"title":"web","level":"1.1.5","depth":2,"path":"doc/web.md","ref":"doc/web.md","articles":[]},"previous":{"title":"HTTP","level":"1.1.3","depth":2,"path":"doc/http.md","ref":"doc/http.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/websocket.md","mtime":"2018-10-22T22:59:57.241Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-01-22T08:25:54.934Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"websocket","level":"1.1.4","depth":2,"next":{"title":"web","level":"1.1.5","depth":2,"path":"doc/web.md","ref":"doc/web.md","articles":[]},"previous":{"title":"HTTP","level":"1.1.3","depth":2,"path":"doc/http.md","ref":"doc/http.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/websocket.md","mtime":"2019-01-31T09:25:23.027Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-01-31T09:26:54.784Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
