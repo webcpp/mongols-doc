@@ -127,4 +127,4 @@ int main(int,char**){
 
 其他字段为自选。服务器收到数据后，会解析该数据，根据以上四个字段作相应处理，并返回该数据。
 
-具体实现，可参考[demo](https://github.com/webcpp/fusheng)。
+基本实现，可参考[demo](https://github.com/webcpp/fusheng),基本体验可访问：[浮生beta](https://fusheng.hi-nginx.com/)
