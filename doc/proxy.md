@@ -121,7 +121,8 @@ tcp_proxy_server可配置连接级的安全防护，通过`run`方法的参数�
         if(client.u_size>100000){
             return false;
         }
-        if(client.count/difftime(time(0),client.t)>50){
+        double diff = difftime(time(0), client.t);
+        if(diff > 0 && client.count/diff>50){
             return false;
         }
         return true;

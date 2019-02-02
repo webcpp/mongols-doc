@@ -128,3 +128,11 @@ int main(int,char**){
 其他字段为自选。服务器收到数据后，会解析该数据，根据以上四个字段作相应处理，并返回该数据。
 
 基本实现，可参考[demo](https://github.com/webcpp/fusheng),基本体验可访问：[浮生beta](https://fusheng.hi-nginx.com/)
+
+
+## 安全
+
+ws_server自带安全检查方法。
+通过`set_enable_origin_check`方法启用`Origin`HTTP头部检查，默认不检查。该方法需配合`set_origin`方法来配置连接请求需要匹配的`Origin`值。
+
+另外，`set_max_send_limit`方法可配置每一连接每秒发送消息的最大频率，默认值是5，即最多每秒5次消息发送。
