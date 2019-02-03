@@ -190,7 +190,36 @@ print(mj:to_string())
 
 mongols_json不认识Lua的表类型，但lua-cjson认识。所以我内置了lua-cjson。以后，还会内置一些好用常用的第三方插件。
 
+已内置的第三方插件包括:cjson和lfs。
 
+此外，我还内置了一个tcp客户端类`mongols_tcp_client`,支持openssl。其api列表如下:
+- ok
+- send
+- recv
+
+具体用法可参考：
+
+```lua
+
+mongols_res:header('Content-Type','text/plain;charset=UTF-8')
+mongols_res:status(200)
+local host="www.baidu.com"
+local port=443
+local enable_ssl =true
+local cli=mongols_tcp_client.new(host,port,enable_ssl)
+local req="GET / HTTP/1.1\r\n\r\n"
+
+if cli:ok() then
+    if cli:send(req) then
+        mongols_res:content(cli:recv(8096))
+    else
+        mongols_res:content("send failed.")
+    end
+else
+    mongols_res:content("connection failed.")
+end
+
+```
 
 
 ## 单文件入口
