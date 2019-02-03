@@ -46,23 +46,38 @@ int main(int,char**){
 <body>
   <h2>WebSocket Test</h2>
 
-  <div id="output"></div>
+
+  <div id="req_output"></div><br/>
+  <div id="res_output"></div><br/>
+  <div id="err_output"></div><br/>
+
   <script language="javascript" type="text/javascript">
 
-    var wsUri = "ws://127.0.0.1:9090/";
-    var output;
-
+    var wsUri = "ws://127.0.0.1:9090";
+    var req_output,res_output,err_output;
+	var j;
 
     function init() {
-      output = document.getElementById("output");
+      req_output = document.getElementById("req_output");
+	  res_output = document.getElementById('res_output');
+	  err_output = document.getElementById('err_output')
       testWebSocket();
       var i = 0, max_i = 1000;
-      setInterval(function () {
-        if (i < max_i) {
-          doSend('websocket test ' + i)
-          i++;
-        }
-      }, 500)
+      j=setInterval(function () {
+        	if (i < max_i) {
+				var data = {};
+            	data.gid = 0;
+            	data.uid = 0;
+            	data.gfilter = [];
+            	data.ufilter = [];
+            	data.name = 'Bugger';
+            	data.message = "websocket test: "+ i;
+            	data.room = 'cpp';
+            	data.time = ((new Date()).toLocaleString());
+          		doSend((JSON.stringify(data)))
+          		i++;
+        	}
+      }, 10)
     }
 
     function testWebSocket() {
@@ -74,35 +89,36 @@ int main(int,char**){
     }
 
     function onOpen(evt) {
-      writeToScreen("CONNECTED");
+      writeToScreen("CONNECTED",err_output);
       doSend("WebSocket rocks");
     }
 
     function onClose(evt) {
-      writeToScreen("DISCONNECTED");
+	  clearInterval(j);
+      writeToScreen("DISCONNECTED",err_output);
     }
 
     function onMessage(evt) {
-      writeToScreen('<span style="color: blue;">RESPONSE: ' + evt.data + '</span>');
+      writeToScreen('<span style="color: blue;">RESPONSE: ' + evt.data + '</span>',res_output);
     }
 
     function onError(evt) {
-      writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data);
+      writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data,err_output);
     }
 
     function doSend(message) {
-      writeToScreen("SENT: " + message);
+      writeToScreen("SENT: " + message,req_output);
       websocket.send(message);
     }
 
-    function writeToScreen(message) {
+    function writeToScreen(message,ele) {
       var pre = document.createElement("p");
       pre.style.wordWrap = "break-word";
       pre.innerHTML = message;
-      if (output.childNodes.length == 0) {
-        output.appendChild(pre);
+      if (ele.childNodes.length == 0) {
+        ele.appendChild(pre);
       } else {
-        output.replaceChild(pre, output.childNodes[0]);
+        ele.replaceChild(pre, ele.childNodes[0]);
       }
     }
 
