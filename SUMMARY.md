@@ -16,4 +16,5 @@
     - [服务化](doc/daemon.md)
     - [多进程化](doc/multi_process.md)
     - [openssl](doc/openssl.md)
+    - [压缩](doc/compress.md)
     - [其他](doc/others.md)
