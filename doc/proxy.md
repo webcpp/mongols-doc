@@ -108,6 +108,8 @@ tcp_proxy_server通过lru算法+过期时间的策略实现加速。因为缓存
 
 ## 安全防护
 
+所有对tcp_server的安全配置对tcp_proxy_server也是有效的。当然，你也可以更进一步，自行配置更细致的安全防护。
+
 tcp_proxy_server可配置连接级的安全防护，通过`run`方法的参数。该参数是一个需要返回布尔值的functional,返回false则意味着直接关闭连接。
 
 该functional以类`client_t`为参数。开发者可从该参数获取连接的系统唯一标识符`sid`，连接建立时间`t`，该连接已经发送数据的次数`count`，该连接的ip，以及服务器保持在线的连接总数`u_size`。有了这些量，开发者很轻易即可写出负责安全防护的functional,比如上例中的`f`可重写如下:
@@ -121,15 +123,11 @@ tcp_proxy_server可配置连接级的安全防护，通过`run`方法的参数�
         if(client.u_size>100000){
             return false;
         }
-        double diff = difftime(time(0), client.t);
-        if(diff > 0 && client.count/diff>50){
-            return false;
-        }
         return true;
     };
 
 ```
-现在，`f`表示：如果服务器总连接数超过100000，或者单个连接发送数据的频率超过每秒50次，或者当前连接ip为`x.x.x.x`，就关闭当前连接。
+现在，`f`表示：如果服务器总连接数超过100000,或者当前连接ip为`x.x.x.x`，就关闭当前连接。
 
 如果开启http代理模式，还可以配置请求过滤的functional。例如上例中的`h`，可根据HTTP请求头信息实现自定义过滤。
 
