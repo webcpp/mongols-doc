@@ -42,13 +42,26 @@ int main(int,char**)
 
 ## 安全
 
-tcp 服务器及其他所有基于它构建的服务器，都内置ip黑名单机制。该机制无需手写ip黑名单，而是根据以下三个静态变量配置自动发现、更新恶意ip并及时拒绝它们:
+### 黑名单机制
+该机制无需手写ip黑名单，而是根据以下三个静态变量配置自动发现、更新恶意ip并及时拒绝它们:
 
 - tcp_server::backlist_size，黑名单最大长度，默认1024
 - tcp_server::max_connection_limit，单个ip每秒能够发送连接请求的最大数量，默认30
 - tcp_server::backlist_timeout，被拒绝ip被认为存在恶意行为的过期时间，默认86400秒,即整整一天
 
 该机制默认并未开启。如果需要，只需通过方法`set_enable_blacklist`设置`true`即可。
+
+### 发送频率限制机制
+该机制限制通过配置以下两个静态变量识别恶意行为：
+
+- tcp_server::min_send_limit，每秒最小消息发送次数，默认1
+- tcp_server::max_send_limit，每秒最大消息发送次数，默认5
+
+
+该机制默认并未开启。如果需要，只需通过方法`set_enable_security_check`设置`true`即可。
+
+### 长连接过期机制
+该机制通过配置静态变量`tcp_server::max_connection_keepalive`，限制长连接过期时间，默认60秒。
 
 
 

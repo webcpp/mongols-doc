@@ -151,4 +151,4 @@ int main(int,char**){
 ws_server自带安全检查方法。
 通过`set_enable_origin_check`方法启用`Origin`HTTP头部检查，默认不检查。该方法需配合`set_origin`方法来配置连接请求需要匹配的`Origin`值。
 
-另外，`set_max_send_limit`方法可配置每一连接每秒发送消息的最大频率，默认值是5，即最多每秒5次消息发送。
+另外，所有对tcp_server进行的安全配置对ws_server都是有效的。
