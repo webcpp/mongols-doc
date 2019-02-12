@@ -52,9 +52,8 @@ int main(int,char**)
 该机制默认并未开启。如果需要，只需通过方法`set_enable_blacklist`设置`true`即可。
 
 ### 发送频率限制机制
-该机制限制通过配置以下两个静态变量识别恶意行为：
+该机制限制通过配置以下静态变量识别恶意行为：
 
-- tcp_server::min_send_limit，每秒最小消息发送次数，默认0
 - tcp_server::max_send_limit，每秒最大消息发送次数，默认5
 
 
