@@ -64,3 +64,24 @@ int main(int,char**)
 
 
 
+## 压力测试
+
+`example`下有个ping-pong压测程序`tcp_server_benchmark`，可测试tcp_server的并发吞吐能力。
+
+注意，测试时应当把上例中的`send_to_other`设置为`false`。
+
+另外，推荐使用`gnomon`进行测试计量。
+
+比如：`./tcp_server_benchmark --host 127.0.0.1 --port 9090 --client 20000 --loop 5000000 --buffer 2048 --ssl 0 | gnomon --high`
+
+下图是与`muduo`的`pingpong_server`的压测比较图，mongols(单线程)在9090端口，muduo(4线程)在9999端口：
+
+![tcp_server_benchmark](image/tcp_server_benchmark.png)
+
+从耗时数值来看，mongols的优势并不明显。但是若结合CPU消耗和内存占用来看，则mongols的优势非常明显：
+
+- CPU消耗: mongols < 28% , muduo > 54%
+- 内存占用: mongols < 5MB, muduo > 60MB
+
+
+
