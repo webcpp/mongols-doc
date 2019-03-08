@@ -66,7 +66,7 @@ RESP协议处理
 
 对于wrk，则是如下:
 
-- 短连接:  `wrk -t4 -d30s -c1000  http://localhost:9090/nginx.html`
+- 短连接: `wrk -t4 -d30s -c1000  http://localhost:9090/nginx.html`
 - 长连接: `wrk -t4 -d30s -c1000 -H'Connection: keep-alive' http://localhost:9090/nginx.html`
 
 等你需要测试长连接性能时，务必添加HEAD：`Connection: keep-alive`,否则你测得的就是短连接性能。
