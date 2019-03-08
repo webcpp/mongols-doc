@@ -68,7 +68,7 @@ int main(int,char**)
 
 `example`下有个ping-pong压测程序`tcp_server_benchmark`，可测试tcp_server的并发吞吐能力。
 
-注意，测试时应当把上例中的`send_to_other`设置为`false`。
+注意，测试时应当把上例中的`send_to_other`设置为`false`，并且最大buffer值不应超过tcp_server的配置值，在上例中，是默认值8192——如果需要测试更大的buffer,则需加大tcp_server的buffer。
 
 另外，推荐使用`gnomon`进行测试计量。
 
