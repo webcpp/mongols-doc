@@ -54,3 +54,18 @@ RESP协议处理
 ## 性能优化建议
 
 开启缓存：`set_enable_cache`或`set_enable_lru_cache`。这个不是一般有效，是非常有效。
+
+## 关于http 服务器和web 服务器的压力测试
+
+在使用ab或者wrk等压力测试软件时，请务必严格区分短连接和长连接。mongols默认短连接。对长连接仅仅通过HEAD:`Connection: keep-alive`识别,任何字母或者字母大小写方面的差异都将不能建立长连接而自动改为短连接。
+
+因此，对于ab,好的例子是这样的：
+
+- 短连接： `ab -c2000 -n50000  http://localhost:9090/nginx.html`
+- 长连接： `ab -kc2000 -n50000 -H'Connection: keep-alive' http://localhost:9090/nginx.html`
+
+对于wrk，则是如下:
+- 短连接:  `wrk -t4 -d30s -c1000  http://localhost:9090/nginx.html`
+- 长连接： `wrk -t4 -d30s -c1000 -H'Connection: keep-alive' http://localhost:9090/nginx.html`
+
+等你需要测试长连接性能时，务必添加HEAD：`Connection: keep-alive`,否则你测得的就是短连接性能。
