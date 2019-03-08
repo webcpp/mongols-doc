@@ -61,12 +61,14 @@ RESP协议处理
 
 因此，对于ab,好的例子是这样的：
 
-- 短连接： `ab -c2000 -n50000  http://localhost:9090/nginx.html`
+- 短连接： `ab -c2000 -n50000  -H'Connection: close' http://localhost:9090/nginx.html`
+
 - 长连接： `ab -kc2000 -n50000 -H'Connection: keep-alive' http://localhost:9090/nginx.html`
 
 对于wrk，则是如下:
 
-- 短连接: `wrk -t4 -d30s -c1000  http://localhost:9090/nginx.html`
+- 短连接: `wrk -t4 -d30s -c1000 -H'Connection: close'  http://localhost:9090/nginx.html`
+
 - 长连接: `wrk -t4 -d30s -c1000 -H'Connection: keep-alive' http://localhost:9090/nginx.html`
 
 等你需要测试长连接性能时，务必添加HEAD：`Connection: keep-alive`,否则你测得的就是短连接性能。
