@@ -72,3 +72,5 @@ RESP协议处理
 - 长连接: `wrk -t4 -d30s -c1000 -H'Connection: keep-alive' http://localhost:9090/nginx.html`
 
 等你需要测试长连接性能时，务必添加HEAD：`Connection: keep-alive`,否则你测得的就是短连接性能。
+
+mongols-1.6.8以后版本，对建立长连接的处理做了微调，无需在压测时特别添加HEAD：`Connection: keep-alive`。
