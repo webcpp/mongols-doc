@@ -17,4 +17,5 @@
     - [多进程化](doc/multi_process.md)
     - [openssl](doc/openssl.md)
     - [压缩](doc/compress.md)
+    - [python](doc/python.md)
     - [其他](doc/others.md)
