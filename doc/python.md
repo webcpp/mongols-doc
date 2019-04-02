@@ -1,6 +1,8 @@
 # python 绑定
 
-为了在python中运用mongols，我提供了一个pymongols。它现在仅仅包括http_server。仓库在[pymongols](https://github.com/webcpp/pymongols)
+为了在python中运用mongols，我提供了一个pymongols。它现在仅仅包括http_server。
+
+仓库在[pymongols](https://github.com/webcpp/pymongols)
 
 
 ## 依赖
@@ -9,9 +11,11 @@
 
 ## 安装
 
+很简单，`cd pymongols && make clean && make && sudo make install`
+
 修改`Makefile`中的`PYVERSION`变量即可轻松适配开发者版本。
 
-很简单，`cd pymongols && make clean && make && sudo make install`
+
 
 ## API
 
@@ -103,7 +107,8 @@ Percentage of the requests served within a certain time (ms)
 ```
 
 ## 路由组件
-这个组件依赖于pymongols,在`mongols_route.py`目录中，用`sudo python3 setup.py install`安装。
+
+这个组件依赖于pymongols,在`mongols_route.py`目录中，用`sudo python3 setup.py install`或者`sudo python2 setup.py install`安装。
 
 
 ## example
