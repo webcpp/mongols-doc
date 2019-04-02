@@ -9,6 +9,8 @@
 
 ## 安装
 
+修改`Makefile`中的`PYVERSION`变量即可轻松适配开发者版本。
+
 很简单，`cd pymongols && make clean && make && sudo make install`
 
 ## API
