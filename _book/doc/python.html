@@ -388,7 +388,7 @@
                                 <section class="normal markdown-section">
                                 
                                 <h1 id="python-&#x7ED1;&#x5B9A;">python &#x7ED1;&#x5B9A;</h1>
-<p>&#x4E3A;&#x4E86;&#x5728;python&#x4E2D;&#x8FD0;&#x7528;mongols&#xFF0C;&#x6211;&#x63D0;&#x4F9B;&#x4E86;&#x4E00;&#x4E2A;pymongols&#x3002;&#x5B83;&#x73B0;&#x5728;&#x4EC5;&#x4EC5;&#x5305;&#x62EC;http_server&#x3002;</p>
+<p>&#x4E3A;&#x4E86;&#x5728;python&#x4E2D;&#x8FD0;&#x7528;mongols&#xFF0C;&#x6211;&#x63D0;&#x4F9B;&#x4E86;&#x4E00;&#x4E2A;pymongols&#x3002;&#x5B83;&#x5305;&#x62EC;http_server&#x548C;web_server&#x3002;</p>
 <p>&#x4ED3;&#x5E93;&#x5728;<a href="https://github.com/webcpp/pymongols" target="_blank">pymongols</a></p>
 <h2 id="&#x4F9D;&#x8D56;">&#x4F9D;&#x8D56;</h2>
 <ul>
@@ -433,6 +433,7 @@ server = pymongols.http_server(config[<span class="hljs-string">&apos;host&apos;
 server.run(req_filter,res_filter)
 </code></pre>
 <h2 id="&#x6027;&#x80FD;">&#x6027;&#x80FD;</h2>
+<h3 id="httpserver">http_server</h3>
 <p>pymongols&#x5355;&#x8FDB;&#x7A0B;&#x5DF2;&#x6781;&#x5FEB;&#xFF0C;&#x8FD8;&#x539F;&#x751F;&#x652F;&#x6301;&#x591A;&#x8FDB;&#x7A0B;(&#x4ECE;verion-0.6.7&#x5F00;&#x59CB;)&#x3002;&#x5728;python&#x754C;&#xFF0C;&#x5B83;&#x5E94;&#x8BE5;&#x662F;&#x6700;&#x5FEB;&#x7684;&#x4E86;&#x3002;</p>
 <pre><code class="lang-text">
 Server Software:        mongols/1.6.8
@@ -453,6 +454,28 @@ Requests per second:    111341.22 [#/sec] (mean)
 Time per request:       8.981 [ms] (mean)
 Time per request:       0.009 [ms] (mean, across all concurrent requests)
 Transfer rate:          14787.51 [Kbytes/sec] received
+</code></pre>
+<h3 id="webserver">web_server</h3>
+<p>&#x591F;&#x5FEB;&#x591F;&#x8F7B;&#xFF1A;</p>
+<pre><code class="lang-txt">
+Server Software:        mongols/1.6.8
+Server Hostname:        localhost
+Server Port:            9090
+
+Document Path:          /nginx.html
+Document Length:        1165 bytes
+
+Concurrency Level:      1000
+Time taken for tests:   0.908 seconds
+Complete requests:      100000
+Failed requests:        0
+Keep-Alive requests:    100000
+Total transferred:      127800000 bytes
+HTML transferred:       116500000 bytes
+Requests per second:    110073.36 [#/sec] (mean)
+Time per request:       9.085 [ms] (mean)
+Time per request:       0.009 [ms] (mean, across all concurrent requests)
+Transfer rate:          137376.72 [Kbytes/sec] received
 </code></pre>
 <h2 id="&#x8DEF;&#x7531;&#x7EC4;&#x4EF6;">&#x8DEF;&#x7531;&#x7EC4;&#x4EF6;</h2>
 <p>&#x8FD9;&#x4E2A;&#x7EC4;&#x4EF6;&#x4F9D;&#x8D56;&#x4E8E;pymongols,&#x5728;<code>mongols_route.py</code>&#x76EE;&#x5F55;&#x4E2D;&#xFF0C;&#x7528;<code>sudo python3 setup.py install</code>&#x6216;&#x8005;<code>sudo python2 setup.py install</code>&#x5B89;&#x88C5;&#x3002;</p>
@@ -501,7 +524,7 @@ Transfer rate:          14787.51 [Kbytes/sec] received
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"python","level":"1.1.17","depth":2,"next":{"title":"其他","level":"1.1.18","depth":2,"path":"doc/others.md","ref":"doc/others.md","articles":[]},"previous":{"title":"压缩","level":"1.1.16","depth":2,"path":"doc/compress.md","ref":"doc/compress.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/python.md","mtime":"2019-04-03T04:26:15.935Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-04-03T04:26:37.188Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"python","level":"1.1.17","depth":2,"next":{"title":"其他","level":"1.1.18","depth":2,"path":"doc/others.md","ref":"doc/others.md","articles":[]},"previous":{"title":"压缩","level":"1.1.16","depth":2,"path":"doc/compress.md","ref":"doc/compress.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/python.md","mtime":"2019-04-03T12:27:47.505Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-04-03T12:28:20.606Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

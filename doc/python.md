@@ -1,6 +1,6 @@
 # python 绑定
 
-为了在python中运用mongols，我提供了一个pymongols。它现在仅仅包括http_server。
+为了在python中运用mongols，我提供了一个pymongols。它包括http_server和web_server。
 
 仓库在[pymongols](https://github.com/webcpp/pymongols)
 
@@ -59,6 +59,8 @@ server.run(req_filter,res_filter)
 
 ## 性能
 
+### http_server 
+
 pymongols单进程已极快，还原生支持多进程(从verion-0.6.7开始)。在python界，它应该是最快的了。
 
 ```text
@@ -81,6 +83,34 @@ Requests per second:    111341.22 [#/sec] (mean)
 Time per request:       8.981 [ms] (mean)
 Time per request:       0.009 [ms] (mean, across all concurrent requests)
 Transfer rate:          14787.51 [Kbytes/sec] received
+
+
+```
+
+### web_server
+
+够快够轻：
+
+```txt
+
+Server Software:        mongols/1.6.8
+Server Hostname:        localhost
+Server Port:            9090
+
+Document Path:          /nginx.html
+Document Length:        1165 bytes
+
+Concurrency Level:      1000
+Time taken for tests:   0.908 seconds
+Complete requests:      100000
+Failed requests:        0
+Keep-Alive requests:    100000
+Total transferred:      127800000 bytes
+HTML transferred:       116500000 bytes
+Requests per second:    110073.36 [#/sec] (mean)
+Time per request:       9.085 [ms] (mean)
+Time per request:       0.009 [ms] (mean, across all concurrent requests)
+Transfer rate:          137376.72 [Kbytes/sec] received
 
 
 ```
