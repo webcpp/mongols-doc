@@ -456,6 +456,33 @@ Time per request:       0.009 [ms] (mean, across all concurrent requests)
 Transfer rate:          14787.51 [Kbytes/sec] received
 </code></pre>
 <h3 id="webserver">web_server</h3>
+<p>&#x4F8B;&#x5B50;:</p>
+<pre><code class="lang-python">
+<span class="hljs-keyword">import</span> pymongols
+
+
+config = {}
+config[<span class="hljs-string">&apos;host&apos;</span>] = <span class="hljs-string">&apos;127.0.0.1&apos;</span>
+config[<span class="hljs-string">&apos;port&apos;</span>] = <span class="hljs-number">9090</span>
+config[<span class="hljs-string">&apos;timeout&apos;</span>] = <span class="hljs-number">5000</span>
+config[<span class="hljs-string">&apos;buffer_size&apos;</span>] = <span class="hljs-number">8192</span>
+config[<span class="hljs-string">&apos;thread_size&apos;</span>] = <span class="hljs-number">0</span>
+config[<span class="hljs-string">&apos;max_body_size&apos;</span>] = <span class="hljs-number">4096</span>
+config[<span class="hljs-string">&apos;max_event_size&apos;</span>] = <span class="hljs-number">64</span>
+
+
+server = pymongols.web_server(config[<span class="hljs-string">&apos;host&apos;</span>], config[<span class="hljs-string">&apos;port&apos;</span>], config[<span class="hljs-string">&apos;timeout&apos;</span>], config[<span class="hljs-string">&apos;buffer_size&apos;</span>],
+                              config[<span class="hljs-string">&apos;thread_size&apos;</span>], config[<span class="hljs-string">&apos;max_body_size&apos;</span>], config[<span class="hljs-string">&apos;max_event_size&apos;</span>])
+
+server.set_root_path(<span class="hljs-string">&quot;html&quot;</span>)
+server.set_mime_type_file(<span class="hljs-string">&quot;html/mime.conf&quot;</span>)
+server.set_list_directory(<span class="hljs-keyword">True</span>)
+server.set_enable_mmap(<span class="hljs-keyword">True</span>)
+<span class="hljs-comment">#server.set_enable_daemon(True)</span>
+<span class="hljs-comment">#server.set_pidfile(&quot;test4.pid&quot;)</span>
+
+server.run()
+</code></pre>
 <p>&#x591F;&#x5FEB;&#x591F;&#x8F7B;&#xFF1A;</p>
 <pre><code class="lang-txt">
 Server Software:        mongols/1.6.8
@@ -524,7 +551,7 @@ Transfer rate:          137376.72 [Kbytes/sec] received
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"python","level":"1.1.17","depth":2,"next":{"title":"其他","level":"1.1.18","depth":2,"path":"doc/others.md","ref":"doc/others.md","articles":[]},"previous":{"title":"压缩","level":"1.1.16","depth":2,"path":"doc/compress.md","ref":"doc/compress.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/python.md","mtime":"2019-04-03T12:27:47.505Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-04-03T12:28:20.606Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"python","level":"1.1.17","depth":2,"next":{"title":"其他","level":"1.1.18","depth":2,"path":"doc/others.md","ref":"doc/others.md","articles":[]},"previous":{"title":"压缩","level":"1.1.16","depth":2,"path":"doc/compress.md","ref":"doc/compress.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/python.md","mtime":"2019-04-03T12:31:22.544Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-04-03T12:31:38.234Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
