@@ -154,4 +154,4 @@ Transfer rate:          137376.72 [Kbytes/sec] received
 
 ## example
 
-`test`目录下有三个例子，可做参考。
+`test`目录下有几个例子，可做参考。
