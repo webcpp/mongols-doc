@@ -19,7 +19,7 @@
 
 ## API
 
-参考`pymongols.cpp`，大体含义跟c++版http_server差不多，略有不同。
+参考`pymongols.cpp`，大体含义跟c++版http_server和web_server差不多，略有不同。
 
 ## 用法
 
