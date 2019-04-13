@@ -87,7 +87,7 @@ Transfer rate:          14787.51 [Kbytes/sec] received
 
 ```
 
-我都不屑于与tornado之流相比较，它们太太太太太次了。
+我都不屑于与tornado之流相比较，它们太太太太太次了——恕我不能理解那些高级python程序员的心情。
 
 ### web_server
 
