@@ -61,7 +61,7 @@ server.run(req_filter,res_filter)
 
 ### http_server 
 
-pymongols单进程已极快，还原生支持多进程(从verion-0.6.7开始)。在python界，它应该是最快的了。
+pymongols单进程已极快，还原生支持多进程(从verion-0.1.7开始)。在python界，它应该是最快的了。
 
 ```text
 
