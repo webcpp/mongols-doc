@@ -507,6 +507,85 @@ Transfer rate:          137376.72 [Kbytes/sec] received
 </code></pre>
 <h2 id="&#x8DEF;&#x7531;&#x7EC4;&#x4EF6;">&#x8DEF;&#x7531;&#x7EC4;&#x4EF6;</h2>
 <p>&#x8FD9;&#x4E2A;&#x7EC4;&#x4EF6;&#x4F9D;&#x8D56;&#x4E8E;pymongols,&#x5728;<code>mongols_route.py</code>&#x76EE;&#x5F55;&#x4E2D;&#xFF0C;&#x7528;<code>sudo python3 setup.py install</code>&#x6216;&#x8005;<code>sudo python2 setup.py install</code>&#x5B89;&#x88C5;&#x3002;</p>
+<p>&#x4F8B;&#x5B50;&#xFF1A;</p>
+<pre><code class="lang-python">
+<span class="hljs-keyword">import</span> pymongols
+<span class="hljs-keyword">from</span> mongols_route <span class="hljs-keyword">import</span> application, template
+
+<span class="hljs-keyword">import</span> os
+
+app = application()
+
+
+<span class="hljs-meta">@app.route(r&apos;^/test/?$&apos;, [&apos;GET&apos;])</span>
+<span class="hljs-meta">@app.route(r&quot;^/$&quot;, [&apos;GET&apos;])</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">hello_world</span><span class="hljs-params">(req, res, param)</span>:</span>
+    res.set_header(<span class="hljs-string">&apos;Content-Type&apos;</span>, <span class="hljs-string">&apos;text/plain;charset=utf-8&apos;</span>)
+    res.content = <span class="hljs-string">&apos;hello,world&apos;</span>
+    res.status = <span class="hljs-number">200</span>
+
+
+<span class="hljs-meta">@app.route(r&quot;^/client/?$&quot;, [&apos;GET&apos;, &apos;POST&apos;])</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">client</span><span class="hljs-params">(req, res, param)</span>:</span>
+    res.content = <span class="hljs-string">&apos;{}&lt;br&gt;{}&lt;br&gt;{}&lt;br&gt;{}&lt;br&gt;{}&apos;</span>.format(
+        req.client, req.method, req.uri, req.user_agent, req.param)
+    res.status = <span class="hljs-number">200</span>
+
+
+<span class="hljs-meta">@app.route(r&quot;^/hello/(?P&lt;who&gt;\w+)?$&quot;, [&apos;GET&apos;])</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">hello</span><span class="hljs-params">(req, res, param)</span>:</span>
+    res.content = <span class="hljs-string">&apos;{}={}&apos;</span>.format(<span class="hljs-string">&apos;who&apos;</span>, param[<span class="hljs-string">&apos;who&apos;</span>])
+    res.status = <span class="hljs-number">200</span>
+
+
+<span class="hljs-meta">@app.route(r&apos;^/template/(?P&lt;name&gt;\w+)/(?P&lt;age&gt;\d+)/?$&apos;, [&apos;GET&apos;])</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">tpl</span><span class="hljs-params">(req, res, param)</span>:</span>
+    param[<span class="hljs-string">&apos;title&apos;</span>] = <span class="hljs-string">&apos;&#x6D4B;&#x8BD5; jinja2 template&apos;</span>
+    tpl_engine = template(os.path.join(os.getcwd(), <span class="hljs-string">&apos;python/templates&apos;</span>))
+    res.content = tpl_engine.file_render(<span class="hljs-string">&apos;b.html&apos;</span>, param)
+    res.status = <span class="hljs-number">200</span>
+
+
+<span class="hljs-meta">@app.route(r&apos;^/session/?$&apos;, [&apos;GET&apos;])</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">sess</span><span class="hljs-params">(req, res, param)</span>:</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-string">&apos;test&apos;</span> <span class="hljs-keyword">in</span> req.session:
+        res.set_session(<span class="hljs-string">&apos;test&apos;</span>, str(int(req.session[<span class="hljs-string">&apos;test&apos;</span>])+<span class="hljs-number">1</span>))
+        res.content = req.session[<span class="hljs-string">&apos;test&apos;</span>]
+    <span class="hljs-keyword">else</span>:
+        res.set_session(<span class="hljs-string">&apos;test&apos;</span>, <span class="hljs-string">&apos;0&apos;</span>)
+        res.content = <span class="hljs-string">&apos;null&apos;</span>
+    res.status = <span class="hljs-number">200</span>
+
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">req_filter</span><span class="hljs-params">(req)</span>:</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">True</span>
+
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">res_filter</span><span class="hljs-params">(req, res)</span>:</span>
+    app.run(req, res)
+
+
+config = {}
+config[<span class="hljs-string">&apos;host&apos;</span>] = <span class="hljs-string">&apos;127.0.0.1&apos;</span>
+config[<span class="hljs-string">&apos;port&apos;</span>] = <span class="hljs-number">9090</span>
+config[<span class="hljs-string">&apos;timeout&apos;</span>] = <span class="hljs-number">5000</span>
+config[<span class="hljs-string">&apos;buffer_size&apos;</span>] = <span class="hljs-number">8192</span>
+config[<span class="hljs-string">&apos;thread_size&apos;</span>] = <span class="hljs-number">0</span>
+config[<span class="hljs-string">&apos;max_body_size&apos;</span>] = <span class="hljs-number">4096</span>
+config[<span class="hljs-string">&apos;max_event_size&apos;</span>] = <span class="hljs-number">64</span>
+
+
+server = pymongols.http_server(config[<span class="hljs-string">&apos;host&apos;</span>], config[<span class="hljs-string">&apos;port&apos;</span>], config[<span class="hljs-string">&apos;timeout&apos;</span>], config[<span class="hljs-string">&apos;buffer_size&apos;</span>],
+                               config[<span class="hljs-string">&apos;thread_size&apos;</span>], config[<span class="hljs-string">&apos;max_body_size&apos;</span>], config[<span class="hljs-string">&apos;max_event_size&apos;</span>])
+
+<span class="hljs-comment"># server.set_enable_daemon(True)</span>
+<span class="hljs-comment"># server.set_pidfile(&quot;test2.pid&quot;)</span>
+<span class="hljs-comment"># server.set_enable_lru_cache(True)</span>
+<span class="hljs-comment"># server.set_lru_cache_expires(1)</span>
+server.set_enable_session(<span class="hljs-keyword">True</span>)
+
+server.run(req_filter, res_filter)
+</code></pre>
 <h2 id="example">example</h2>
 <p><code>test</code>&#x76EE;&#x5F55;&#x4E0B;&#x6709;&#x51E0;&#x4E2A;&#x4F8B;&#x5B50;&#xFF0C;&#x53EF;&#x505A;&#x53C2;&#x8003;&#x3002;</p>
 
@@ -552,7 +631,7 @@ Transfer rate:          137376.72 [Kbytes/sec] received
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"python","level":"1.1.17","depth":2,"next":{"title":"其他","level":"1.1.18","depth":2,"path":"doc/others.md","ref":"doc/others.md","articles":[]},"previous":{"title":"压缩","level":"1.1.16","depth":2,"path":"doc/compress.md","ref":"doc/compress.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/python.md","mtime":"2019-04-16T13:11:47.078Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-04-16T13:12:17.702Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"python","level":"1.1.17","depth":2,"next":{"title":"其他","level":"1.1.18","depth":2,"path":"doc/others.md","ref":"doc/others.md","articles":[]},"previous":{"title":"压缩","level":"1.1.16","depth":2,"path":"doc/compress.md","ref":"doc/compress.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/python.md","mtime":"2019-04-20T23:28:34.973Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-04-20T23:29:05.746Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
