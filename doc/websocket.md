@@ -175,28 +175,39 @@ int main(int, char**)
 首先是服务器代码:
 
 ```cpp
+
 #include <fstream>
+#include <mongols/util.hpp>
 #include <mongols/ws_server.hpp>
 
 int main(int, char**)
 {
     int port = 9090;
     const char* host = "127.0.0.1";
-    mongols::ws_server server(host, port, 5000, 8096, std::thread::hardware_concurrency() /*0*/);
+    mongols::ws_server server(host, port, 5000, 8192, std::thread::hardware_concurrency() /*0*/);
     //    if (!server.set_openssl("openssl/localhost.crt", "openssl/localhost.key")) {
     //        return -1;
     //    }
 
-    auto f = [](const std::string& input, bool& keepalive, bool& send_to_other, mongols::tcp_server::client_t& client, mongols::tcp_server::filter_handler_function& send_to_other_filter, mongols::ws_server::ws_message_t& ws_msg_type) -> std::string {
+    std::unordered_map<size_t, std::pair<std::string, std::ofstream>> file_manage;
+
+    auto f = [&](const std::string& input, bool& keepalive, bool& send_to_other, mongols::tcp_server::client_t& client, mongols::tcp_server::filter_handler_function& send_to_other_filter, mongols::ws_server::ws_message_t& ws_msg_type) -> std::string {
         keepalive = KEEPALIVE_CONNECTION;
         send_to_other = false;
         if (ws_msg_type == mongols::ws_server::ws_message_t::BINARY) {
-            std::ofstream of("html/upload.bin", std::ios::binary | std::ios::out);
-            of << input;
+            file_manage[client.sid].second << input;
             ws_msg_type = mongols::ws_server::ws_message_t::TEXT;
-            return "upload success";
+            return "continue";
         }
-
+        std::vector<std::string> v = mongols::split(input, ':');
+        if (v.size() > 1) {
+            file_manage[client.sid].first = v.back();
+            file_manage[client.sid].second = std::ofstream("upload/" + file_manage[client.sid].first, std::ios::binary | std::ios::out | std::ios::ate);
+            return "start upload";
+        }
+        if (input == "upload success") {
+            file_manage.erase(client.sid);
+        }
         return input;
     };
     //server.set_enable_origin_check(true);
@@ -226,24 +237,50 @@ int main(int, char**)
     <form id="frm1">
         <input type="file" id="myFile">
     </form>
+    <div id='tag'>上传进度: <strong>0%</strong></div>
     <div id="log"></div>
-    <script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.min.js"></script>
+    <script src="http://cdn.bootcss.com/jquery/3.4.0/jquery.min.js"></script>
     <script language="javascript" type="text/javascript">
 
-        var wsUri = "ws://127.0.0.1:9090";
+        var ws, ws_uri = "ws://127.0.0.1:9090";
 
-
-        function formReset() {
-            document.getElementById("frm1").reset();
+        var tag = $('#tag>strong');
+        var default_step = 5;
+        var upload_info = {
+            size: 0, name: '', uploaded: 0, step: default_step
         }
+        var file;
 
+        function upload(upload_info) {
+            if (upload_info.uploaded + upload_info.step > upload_info.size) {
+                upload_info.step = upload_info.size - upload_info.uploaded;
+            }
+            var buffer = file.slice(upload_info.uploaded, upload_info.uploaded + upload_info.step)
 
+            var reader = new FileReader();
+            reader.readAsArrayBuffer(buffer);
 
+            reader.onload = function (e) {
+                ws.send(e.target.result);
+                // log('<<正在上传数据...');
+            }
+
+            reader.onloadend = function (e) {
+                tag.html(upload_info.uploaded / upload_info.size * 100 + '%');
+                upload_info.uploaded = upload_info.uploaded + upload_info.step;
+            }
+        }
         $('#myFile').on('change', function (event) {
-            var ws = new WebSocket(wsUri);
+            file = document.getElementById("myFile").files[0];
+            upload_info.size = file.size;
+            upload_info.name = file.name;
+            upload_info.uploaded = 0;
+            upload_info.step = default_step;
+            // console.log(upload_info);
+            ws = new WebSocket(ws_uri);
             ws.onopen = function () {
                 log('<<已连接上！');
-                ws.send("start upload");
+                ws.send("name:" + upload_info.name);
             }
 
             ws.onclose = function () {
@@ -251,31 +288,26 @@ int main(int, char**)
             }
 
             ws.onmessage = function (e) {
-                log(">>收到服务器消息:" + e.data + "\n");
+                // log(">>收到服务器消息:" + e.data + "\n");
                 if (e.data == 'start upload') {
                     log('<<开始上传文件');
-                    var file = document.getElementById("myFile").files[0];
 
-                    var reader = new FileReader();
-                    reader.readAsArrayBuffer(file);
+                    upload(upload_info);
 
-                    reader.onload = function (e) {
-                        ws.send(e.target.result);
-                        log('<<正在上传数据...');
+                } else if (e.data == 'continue') {
+                    if (upload_info.size > upload_info.uploaded) {
+                        upload(upload_info);
+                    } else {
+                        ws.send('upload success');
                     }
-
                 } else if (e.data == 'upload success') {
                     log('<<上传完成');
-                    formReset();
+                    tag.html(upload_info.uploaded / upload_info.size * 100 + '%');
                     ws.close();
                 }
-
-
-
             }
 
         });
-
         function log(text) {
             $("#log").append(text + "<br/>");
         }
@@ -286,7 +318,9 @@ int main(int, char**)
 </html>
 
 ```
-注意：服务器构造时配置的缓冲大小(构造函数第四个参数,默认值是8192)会限制能够上传的文件大小；对于较大文件，较好的方法不是增加缓冲配置，而是分片上传。
+以上代码给出一个利用websocket进行文件分片上传的基本实现。该实现不限文件大小，只要合理配置`default_step`即分片大小，再大的文件也可轻松上传。
+
+注意：分片大小应该小于服务器缓冲大小，一般不能超过(服务器缓冲大小-100)。分片大小越大，上传越快。
 
 ## 安全
 
