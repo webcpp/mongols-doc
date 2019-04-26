@@ -329,3 +329,6 @@ ws_server自带安全检查方法。
 
 另外，所有对tcp_server进行的安全配置对ws_server都是有效的。
 
+## 关于客户端
+
+不要使用firefox等非chrome系浏览器测试、调试websocket应用，如果你不想莫名其妙地恼火、头疼的话。
