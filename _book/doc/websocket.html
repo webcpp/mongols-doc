@@ -571,7 +571,7 @@ int main(int, char**)
             return &quot;continue&quot;;
         }
         std::vector&lt;std::string&gt; v = mongols::split(input, &apos;:&apos;);
-        if (v.size() &gt; 1) {
+        if (v.size() &gt; 1 &amp;&amp; v[0] == &quot;name&quot;) {
             file_manage[client.sid].first = v.back();
             file_manage[client.sid].second = std::ofstream(&quot;upload/&quot; + file_manage[client.sid].first, std::ios::binary | std::ios::out | std::ios::ate);
             return &quot;start upload&quot;;
@@ -601,86 +601,93 @@ int main(int, char**)
 <span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">h2</span>&gt;</span>WebSocket Update File Test<span class="hljs-tag">&lt;/<span class="hljs-name">h2</span>&gt;</span>
 
-    <span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;frm1&quot;</span>&gt;</span>
-        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;file&quot;</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;myFile&quot;</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&apos;upload_form&apos;</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;file&quot;</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;my_file&quot;</span> <span class="hljs-attr">multiple</span>&gt;</span>
     <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&apos;tag&apos;</span>&gt;</span>&#x4E0A;&#x4F20;&#x8FDB;&#x5EA6;: <span class="hljs-tag">&lt;<span class="hljs-name">strong</span>&gt;</span>0%<span class="hljs-tag">&lt;/<span class="hljs-name">strong</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">ul</span> <span class="hljs-attr">id</span>=<span class="hljs-string">box</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;log&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;http://cdn.bootcss.com/jquery/3.4.0/jquery.min.js&quot;</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">language</span>=<span class="hljs-string">&quot;javascript&quot;</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text/javascript&quot;</span>&gt;</span><span class="javascript">
 
-        <span class="hljs-keyword">var</span> ws, ws_uri = <span class="hljs-string">&quot;ws://127.0.0.1:9090&quot;</span>;
+        <span class="hljs-keyword">var</span> ws = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Array</span>(), ws_uri = <span class="hljs-string">&quot;ws://127.0.0.1:9090&quot;</span>;
+        <span class="hljs-keyword">var</span> tpl = <span class="hljs-string">&quot;&lt;li&gt;&lt;div&gt;&#x540D;&#x79F0;&#xFF1A;&lt;strong class=&apos;name&apos;&gt;NULL&lt;/strong&gt; &#x4FE1;&#x606F;&#xFF1A;&lt;strong class=&apos;info&apos;&gt;&#x51C6;&#x5907;&lt;/strong&gt; &#x8FDB;&#x5EA6;: &lt;strong class=&apos;tag&apos;&gt;0%&lt;/strong&gt; &#x8017;&#x65F6;&#xFF1A;&lt;strong class=&apos;time&apos;&gt;0 ms&lt;/strong&gt;&lt;/div&gt;&lt;/li&gt;&quot;</span>
+        <span class="hljs-keyword">var</span> tag, ttag, info, fname, box = $(<span class="hljs-string">&apos;#box&apos;</span>)
+        <span class="hljs-keyword">var</span> default_step = <span class="hljs-number">8092</span>;
+        <span class="hljs-keyword">var</span> upload_info = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Array</span>()
+        <span class="hljs-keyword">var</span> files;
 
-        <span class="hljs-keyword">var</span> tag = $(<span class="hljs-string">&apos;#tag&gt;strong&apos;</span>);
-        <span class="hljs-keyword">var</span> default_step = <span class="hljs-number">5</span>;
-        <span class="hljs-keyword">var</span> upload_info = {
-            size: <span class="hljs-number">0</span>, name: <span class="hljs-string">&apos;&apos;</span>, uploaded: <span class="hljs-number">0</span>, step: default_step
-        }
-        <span class="hljs-keyword">var</span> file;
-
-        <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">upload</span>(<span class="hljs-params">upload_info</span>) </span>{
-            <span class="hljs-keyword">if</span> (upload_info.uploaded + upload_info.step &gt; upload_info.size) {
-                upload_info.step = upload_info.size - upload_info.uploaded;
+        <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">upload</span>(<span class="hljs-params">i</span>) </span>{
+            <span class="hljs-keyword">if</span> (upload_info[i].uploaded + upload_info[i].step &gt; upload_info[i].size) {
+                upload_info[i].step = upload_info[i].size - upload_info[i].uploaded;
             }
-            <span class="hljs-keyword">var</span> buffer = file.slice(upload_info.uploaded, upload_info.uploaded + upload_info.step)
+            <span class="hljs-keyword">var</span> buffer = files[i].slice(upload_info[i].uploaded, upload_info[i].uploaded + upload_info[i].step)
 
             <span class="hljs-keyword">var</span> reader = <span class="hljs-keyword">new</span> FileReader();
             reader.readAsArrayBuffer(buffer);
 
             reader.onload = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">e</span>) </span>{
-                ws.send(e.target.result);
-                <span class="hljs-comment">// log(&apos;&lt;&lt;&#x6B63;&#x5728;&#x4E0A;&#x4F20;&#x6570;&#x636E;...&apos;);</span>
+                ws[i].send(e.target.result);
+                info.eq(i).html(<span class="hljs-string">&apos;&#x6B63;&#x5728;&#x4E0A;&#x4F20;&#x6570;&#x636E;&apos;</span>);
             }
 
             reader.onloadend = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">e</span>) </span>{
-                tag.html(upload_info.uploaded / upload_info.size * <span class="hljs-number">100</span> + <span class="hljs-string">&apos;%&apos;</span>);
-                upload_info.uploaded = upload_info.uploaded + upload_info.step;
+                tag.eq(i).html(upload_info[i].uploaded / upload_info[i].size * <span class="hljs-number">100</span> + <span class="hljs-string">&apos;%&apos;</span>);
+                upload_info[i].uploaded = upload_info[i].uploaded + upload_info[i].step;
             }
         }
-        $(<span class="hljs-string">&apos;#myFile&apos;</span>).on(<span class="hljs-string">&apos;change&apos;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">event</span>) </span>{
-            file = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">&quot;myFile&quot;</span>).files[<span class="hljs-number">0</span>];
-            upload_info.size = file.size;
-            upload_info.name = file.name;
-            upload_info.uploaded = <span class="hljs-number">0</span>;
-            upload_info.step = default_step;
-            <span class="hljs-comment">// console.log(upload_info);</span>
-            ws = <span class="hljs-keyword">new</span> WebSocket(ws_uri);
-            ws.onopen = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
-                log(<span class="hljs-string">&apos;&lt;&lt;&#x5DF2;&#x8FDE;&#x63A5;&#x4E0A;&#xFF01;&apos;</span>);
-                ws.send(<span class="hljs-string">&quot;name:&quot;</span> + upload_info.name);
+        $(<span class="hljs-string">&apos;#my_file&apos;</span>).on(<span class="hljs-string">&apos;change&apos;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">event</span>) </span>{
+            files = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">&quot;my_file&quot;</span>).files;
+            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; files.length; ++i) {
+                upload_info.push({ size: files[i].size, name: files[i].name, uploaded: <span class="hljs-number">0</span>, step: default_step, t: <span class="hljs-number">0</span> })
+                box.append(tpl)
+                ws.push(<span class="hljs-keyword">new</span> WebSocket(ws_uri))
             }
+            tag = $(<span class="hljs-string">&apos;.tag&apos;</span>);
+            ttag = $(<span class="hljs-string">&apos;.time&apos;</span>);
+            info = $(<span class="hljs-string">&apos;.info&apos;</span>);
+            fname = $(<span class="hljs-string">&apos;.name&apos;</span>);
 
-            ws.onclose = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
-                log(<span class="hljs-string">&apos;&lt;&lt;&#x8FDE;&#x63A5;&#x5DF2;&#x5173;&#x95ED;&#xFF01;&apos;</span>);
-            }
-
-            ws.onmessage = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">e</span>) </span>{
-                <span class="hljs-comment">// log(&quot;&gt;&gt;&#x6536;&#x5230;&#x670D;&#x52A1;&#x5668;&#x6D88;&#x606F;:&quot; + e.data + &quot;\n&quot;);</span>
-                <span class="hljs-keyword">if</span> (e.data == <span class="hljs-string">&apos;start upload&apos;</span>) {
-                    log(<span class="hljs-string">&apos;&lt;&lt;&#x5F00;&#x59CB;&#x4E0A;&#x4F20;&#x6587;&#x4EF6;&apos;</span>);
-
-                    upload(upload_info);
-
-                } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.data == <span class="hljs-string">&apos;continue&apos;</span>) {
-                    <span class="hljs-keyword">if</span> (upload_info.size &gt; upload_info.uploaded) {
-                        upload(upload_info);
-                    } <span class="hljs-keyword">else</span> {
-                        ws.send(<span class="hljs-string">&apos;upload success&apos;</span>);
-                    }
-                } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.data == <span class="hljs-string">&apos;upload success&apos;</span>) {
-                    log(<span class="hljs-string">&apos;&lt;&lt;&#x4E0A;&#x4F20;&#x5B8C;&#x6210;&apos;</span>);
-                    tag.html(upload_info.uploaded / upload_info.size * <span class="hljs-number">100</span> + <span class="hljs-string">&apos;%&apos;</span>);
-                    ws.close();
+            ws.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">item, j</span>) </span>{
+                fname.eq(j).html(files[j].name);
+                ws[j].onopen = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+                    info.eq(j).html(<span class="hljs-string">&apos;&#x5DF2;&#x8FDE;&#x63A5;&#x4E0A;&apos;</span>);
+                    ws[j].send(<span class="hljs-string">&quot;name:&quot;</span> + upload_info[j].name);
                 }
-            }
+
+                ws[j].onclose = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+                    info.eq(j).html(<span class="hljs-string">&apos;&#x8FDE;&#x63A5;&#x5DF2;&#x5173;&#x95ED;&apos;</span>);
+                }
+
+                ws[j].onmessage = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">e</span>) </span>{
+                    <span class="hljs-keyword">if</span> (e.data == <span class="hljs-string">&apos;start upload&apos;</span>) {
+                        info.eq(j).html(<span class="hljs-string">&apos;&#x5F00;&#x59CB;&#x4E0A;&#x4F20;&#x6587;&#x4EF6;&apos;</span>);
+                        upload_info[j].t = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>().getTime();
+                        upload(j);
+
+                    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.data == <span class="hljs-string">&apos;continue&apos;</span>) {
+                        <span class="hljs-keyword">if</span> (upload_info[j].size &gt; upload_info[j].uploaded) {
+                            ttag.eq(j).html((<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>().getTime() - upload_info[j].t) + <span class="hljs-string">&quot; ms&quot;</span>);
+                            upload(j);
+                        } <span class="hljs-keyword">else</span> {
+                            ws[j].send(<span class="hljs-string">&apos;upload success&apos;</span>);
+                        }
+                    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.data == <span class="hljs-string">&apos;upload success&apos;</span>) {
+                        info.eq(j).html(<span class="hljs-string">&apos;&#x4E0A;&#x4F20;&#x5B8C;&#x6210;&apos;</span>);
+                        tag.eq(j).html(upload_info[j].uploaded / upload_info[j].size * <span class="hljs-number">100</span> + <span class="hljs-string">&apos; %&apos;</span>);
+                        ttag.eq(j).html((<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>().getTime() - upload_info[j].t) + <span class="hljs-string">&quot; ms&quot;</span>);
+                        ws[j].close();
+                    }
+                }
+            });
 
         });
-        <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">log</span>(<span class="hljs-params">text</span>) </span>{
-            $(<span class="hljs-string">&quot;#log&quot;</span>).append(text + <span class="hljs-string">&quot;&lt;br/&gt;&quot;</span>);
-        }
 
     </span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 <span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
+
+<span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span>
 
 <span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span>
 </code></pre>
@@ -735,7 +742,7 @@ int main(int, char**)
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"websocket","level":"1.1.4","depth":2,"next":{"title":"web","level":"1.1.5","depth":2,"path":"doc/web.md","ref":"doc/web.md","articles":[]},"previous":{"title":"HTTP","level":"1.1.3","depth":2,"path":"doc/http.md","ref":"doc/http.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/websocket.md","mtime":"2019-04-26T16:05:06.797Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-04-26T16:06:30.787Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"websocket","level":"1.1.4","depth":2,"next":{"title":"web","level":"1.1.5","depth":2,"path":"doc/web.md","ref":"doc/web.md","articles":[]},"previous":{"title":"HTTP","level":"1.1.3","depth":2,"path":"doc/http.md","ref":"doc/http.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/websocket.md","mtime":"2019-05-02T05:29:18.868Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-05-02T05:30:51.732Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
