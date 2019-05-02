@@ -322,8 +322,6 @@ int main(int, char**)
 
 </html>
 
-</html>
-
 ```
 以上代码给出一个利用websocket进行文件分片上传的基本实现。该实现不限文件大小，只要合理配置`default_step`即分片大小，再大的文件也可轻松上传。
 
