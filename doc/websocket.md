@@ -159,7 +159,7 @@ int main(int, char**)
 
 走第二条路径就简单多了。没有参数的 `run`可调用内置的群组管理机制，开发者仅仅在前端使用javascript即可完成对群组的控制和管理。是不是太方便！
 
-怎么用？每一次用javascript服务器发送的消息应该是一个用`JSON.stringify`处理的json数据。该数据应该包含以下是个字段：
+怎么用？每一次用javascript向服务器发送的消息应该是一个用`JSON.stringify`处理的json数据。该数据应该包含以下是个字段：
 
 - uid，表示连接id，默认是0。
 - gid, 表示连接所属群组id或群组id数组，默认是0。如果需退出某群组，用负的gid表示即可。
@@ -177,6 +177,7 @@ int main(int, char**)
 ```cpp
 
 #include <fstream>
+#include <memory>
 #include <mongols/util.hpp>
 #include <mongols/ws_server.hpp>
 
@@ -189,20 +190,20 @@ int main(int, char**)
     //        return -1;
     //    }
 
-    std::unordered_map<size_t, std::pair<std::string, std::ofstream>> file_manage;
+    std::unordered_map<size_t, std::pair<std::string, std::shared_ptr<std::ofstream>>> file_manage;
 
     auto f = [&](const std::string& input, bool& keepalive, bool& send_to_other, mongols::tcp_server::client_t& client, mongols::tcp_server::filter_handler_function& send_to_other_filter, mongols::ws_server::ws_message_t& ws_msg_type) -> std::string {
         keepalive = KEEPALIVE_CONNECTION;
         send_to_other = false;
         if (ws_msg_type == mongols::ws_server::ws_message_t::BINARY) {
-            file_manage[client.sid].second << input;
+            *file_manage[client.sid].second << input;
             ws_msg_type = mongols::ws_server::ws_message_t::TEXT;
             return "continue";
         }
         std::vector<std::string> v = mongols::split(input, ':');
         if (v.size() > 1 && v[0] == "name") {
             file_manage[client.sid].first = v.back();
-            file_manage[client.sid].second = std::ofstream("upload/" + file_manage[client.sid].first, std::ios::binary | std::ios::out | std::ios::ate);
+            file_manage[client.sid].second = std::make_shared<std::ofstream>("upload/" + file_manage[client.sid].first, std::ios::binary | std::ios::out | std::ios::ate);
             return "start upload";
         }
         if (input == "upload success") {
@@ -210,7 +211,7 @@ int main(int, char**)
         }
         return input;
     };
-    //server.set_enable_origin_check(true);
+    //server.set_enable_origin_check(true);./
     //server.set_origin("http://localhost");
     //server.set_max_send_limit(5);
     server.run(f);
