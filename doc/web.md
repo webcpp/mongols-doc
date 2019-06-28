@@ -38,6 +38,10 @@ web_server可以通过`set_enable_mmap`来启用内存映射读取，在某些�
 
 ![ab_web](image/ab_web.png)
 
-mongols比nginx(1 worker)更快——mongols并发2000也比nginx并发1000更快！
+mongols比nginx(1 worker)更快:
 
-![mongolsVSnginx](image/mongolsVSnginx.png)
+![mongolsVSnginx_1](image/mongolsVSnginx_1.png)
+
+![mongolsVSnginx_2](image/mongolsVSnginx_2.png)
+
+![mongolsVSnginx_3](image/mongolsVSnginx_3.png)
