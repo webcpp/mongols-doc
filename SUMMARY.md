@@ -12,7 +12,7 @@
     - [chai](doc/chai.md)
     - [sqlite](doc/sqlite.md)
     - [medis](doc/medis.md)
-    - [反向代理](doc/proxy.md)
+    - [负载均衡](doc/proxy.md)
     - [服务化](doc/daemon.md)
     - [多进程化](doc/multi_process.md)
     - [openssl](doc/openssl.md)
