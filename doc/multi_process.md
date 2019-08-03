@@ -62,6 +62,8 @@ int main(int, char**) {
 
 ![nginxVSmongols.png](image/nginxVSmongols.png)
 
+![mongolsVSnginx_4_worker.png](image/mongolsVSnginx_4_worker.png)
+
 以上测试使用4个工作进程，对比于使用同样数目工作进程的nginx，更胜一筹。如果你有兴趣用更大压力测试，你会发现，比如我用wrk测试，20000并发以上，随着并发数的增加nginx的弱势会越来越明显。实际上，在同等使用单进程的情况下，mongols也比nginx更快更稳定！
 
 ## 子进程重启
