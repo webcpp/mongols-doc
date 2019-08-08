@@ -38,6 +38,84 @@ http_server的并发性能非常好，远高于常见的基于libevent、libev�
 
 ![mongols](image/wrk_http.png)
 
+比如我用libevent2写个最基本的http服务器作为对比，代码如下：
+
+```cpp
+
+#include <cstring>
+#include <event2/buffer.h>
+#include <event2/event.h>
+#include <event2/http.h>
+#include <iostream>
+#include <signal.h>
+
+static struct event_config* server_config = 0;
+static struct event_base* server_event = 0;
+static struct evhttp* server = 0;
+static const char* host = "127.0.0.1";
+static int port = 8080;
+static inline void signal_normal_cb(int sig);
+static inline void generic_request_handler(struct evhttp_request* req, void* arg);
+
+int main(int, char**)
+{
+    server_config = event_config_new();
+    event_config_set_flag(server_config, EVENT_BASE_FLAG_NOLOCK);
+    event_config_set_flag(server_config, EVENT_BASE_FLAG_EPOLL_USE_CHANGELIST);
+
+    server_event = event_base_new_with_config(server_config);
+    server = evhttp_new(server_event);
+
+    evhttp_bind_socket(server, host, port);
+    evhttp_set_gencb(server, generic_request_handler, NULL);
+    evhttp_set_default_content_type(server, "text/plain;charset=UTF-8");
+    evhttp_set_timeout(server, 60);
+
+    signal(SIGHUP, signal_normal_cb);
+    signal(SIGTERM, signal_normal_cb);
+    signal(SIGINT, signal_normal_cb);
+    signal(SIGQUIT, signal_normal_cb);
+
+    event_base_dispatch(server_event);
+    evhttp_free(server);
+    event_base_free(server_event);
+    event_config_free(server_config);
+
+    return 0;
+}
+
+static inline void signal_normal_cb(int sig)
+{
+    struct timeval delay = { 1, 0 };
+    switch (sig) {
+    case SIGTERM:
+    case SIGHUP:
+    case SIGQUIT:
+    case SIGINT:
+        if (server_event && !event_base_loopexit(server_event, &delay)) {
+        }
+        break;
+    }
+}
+static inline void generic_request_handler(struct evhttp_request* ev_req, void* arg)
+{
+    struct evbuffer* ev_res = evhttp_request_get_output_buffer(ev_req);
+    struct evkeyvalq *ev_output_headers = evhttp_request_get_output_headers(ev_req),
+                     *ev_input_headers = evhttp_request_get_input_headers(ev_req);
+    const struct evhttp_uri* ev_uri = evhttp_request_get_evhttp_uri(ev_req);
+
+    evhttp_add_header(ev_output_headers, "Server", "libevent2");
+    evbuffer_add(ev_res, "hello,world", 11);
+    evhttp_send_reply(ev_req, 200, "OK", ev_res);
+}
+
+
+```
+用ab或者wrk压测该http服务器，如图:
+
+![libevet_http_server](image/libevent_http_server.png)
+
+不仅比mongols慢得多，而且内存消耗几乎十倍于mongols。
 
 ## 使用路由机制
 

@@ -415,6 +415,78 @@
 <p>http_server&#x7684;&#x5E76;&#x53D1;&#x6027;&#x80FD;&#x975E;&#x5E38;&#x597D;&#xFF0C;&#x8FDC;&#x9AD8;&#x4E8E;&#x5E38;&#x89C1;&#x7684;&#x57FA;&#x4E8E;libevent&#x3001;libev&#x6216;&#x8005;libuv&#x7684;&#x5176;&#x4ED6;http&#x670D;&#x52A1;&#x5668;:</p>
 <p><img src="image/ab_http.png" alt="ab_http"></p>
 <p><img src="image/wrk_http.png" alt="mongols"></p>
+<p>&#x6BD4;&#x5982;&#x6211;&#x7528;libevent2&#x5199;&#x4E2A;&#x6700;&#x57FA;&#x672C;&#x7684;http&#x670D;&#x52A1;&#x5668;&#x4F5C;&#x4E3A;&#x5BF9;&#x6BD4;&#xFF0C;&#x4EE3;&#x7801;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre><code class="lang-cpp">
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cstring&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;event2/buffer.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;event2/event.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;event2/http.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;signal.h&gt;</span></span>
+
+<span class="hljs-keyword">static</span> <span class="hljs-keyword">struct</span> event_config* server_config = <span class="hljs-number">0</span>;
+<span class="hljs-keyword">static</span> <span class="hljs-keyword">struct</span> event_base* server_event = <span class="hljs-number">0</span>;
+<span class="hljs-keyword">static</span> <span class="hljs-keyword">struct</span> evhttp* server = <span class="hljs-number">0</span>;
+<span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>* host = <span class="hljs-string">&quot;127.0.0.1&quot;</span>;
+<span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span> port = <span class="hljs-number">8080</span>;
+<span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">inline</span> <span class="hljs-keyword">void</span> <span class="hljs-title">signal_normal_cb</span><span class="hljs-params">(<span class="hljs-keyword">int</span> sig)</span></span>;
+<span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">inline</span> <span class="hljs-keyword">void</span> <span class="hljs-title">generic_request_handler</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> evhttp_request* req, <span class="hljs-keyword">void</span>* arg)</span></span>;
+
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-keyword">int</span>, <span class="hljs-keyword">char</span>**)</span>
+</span>{
+    server_config = event_config_new();
+    event_config_set_flag(server_config, EVENT_BASE_FLAG_NOLOCK);
+    event_config_set_flag(server_config, EVENT_BASE_FLAG_EPOLL_USE_CHANGELIST);
+
+    server_event = event_base_new_with_config(server_config);
+    server = evhttp_new(server_event);
+
+    evhttp_bind_socket(server, host, port);
+    evhttp_set_gencb(server, generic_request_handler, <span class="hljs-literal">NULL</span>);
+    evhttp_set_default_content_type(server, <span class="hljs-string">&quot;text/plain;charset=UTF-8&quot;</span>);
+    evhttp_set_timeout(server, <span class="hljs-number">60</span>);
+
+    signal(SIGHUP, signal_normal_cb);
+    signal(SIGTERM, signal_normal_cb);
+    signal(SIGINT, signal_normal_cb);
+    signal(SIGQUIT, signal_normal_cb);
+
+    event_base_dispatch(server_event);
+    evhttp_free(server);
+    event_base_free(server_event);
+    event_config_free(server_config);
+
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+
+<span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">inline</span> <span class="hljs-keyword">void</span> <span class="hljs-title">signal_normal_cb</span><span class="hljs-params">(<span class="hljs-keyword">int</span> sig)</span>
+</span>{
+    <span class="hljs-keyword">struct</span> timeval delay = { <span class="hljs-number">1</span>, <span class="hljs-number">0</span> };
+    <span class="hljs-keyword">switch</span> (sig) {
+    <span class="hljs-keyword">case</span> SIGTERM:
+    <span class="hljs-keyword">case</span> SIGHUP:
+    <span class="hljs-keyword">case</span> SIGQUIT:
+    <span class="hljs-keyword">case</span> SIGINT:
+        <span class="hljs-keyword">if</span> (server_event &amp;&amp; !event_base_loopexit(server_event, &amp;delay)) {
+        }
+        <span class="hljs-keyword">break</span>;
+    }
+}
+<span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">inline</span> <span class="hljs-keyword">void</span> <span class="hljs-title">generic_request_handler</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> evhttp_request* ev_req, <span class="hljs-keyword">void</span>* arg)</span>
+</span>{
+    <span class="hljs-keyword">struct</span> evbuffer* ev_res = evhttp_request_get_output_buffer(ev_req);
+    <span class="hljs-keyword">struct</span> evkeyvalq *ev_output_headers = evhttp_request_get_output_headers(ev_req),
+                     *ev_input_headers = evhttp_request_get_input_headers(ev_req);
+    <span class="hljs-keyword">const</span> <span class="hljs-keyword">struct</span> evhttp_uri* ev_uri = evhttp_request_get_evhttp_uri(ev_req);
+
+    evhttp_add_header(ev_output_headers, <span class="hljs-string">&quot;Server&quot;</span>, <span class="hljs-string">&quot;libevent2&quot;</span>);
+    evbuffer_add(ev_res, <span class="hljs-string">&quot;hello,world&quot;</span>, <span class="hljs-number">11</span>);
+    evhttp_send_reply(ev_req, <span class="hljs-number">200</span>, <span class="hljs-string">&quot;OK&quot;</span>, ev_res);
+}
+</code></pre>
+<p>&#x7528;ab&#x6216;&#x8005;wrk&#x538B;&#x6D4B;&#x8BE5;http&#x670D;&#x52A1;&#x5668;&#xFF0C;&#x5982;&#x56FE;:</p>
+<p><img src="image/libevent_http_server.png" alt="libevet_http_server"></p>
+<p>&#x4E0D;&#x4EC5;&#x6BD4;mongols&#x6162;&#x5F97;&#x591A;&#xFF0C;&#x800C;&#x4E14;&#x5185;&#x5B58;&#x6D88;&#x8017;&#x51E0;&#x4E4E;&#x5341;&#x500D;&#x4E8E;mongols&#x3002;</p>
 <h2 id="&#x4F7F;&#x7528;&#x8DEF;&#x7531;&#x673A;&#x5236;">&#x4F7F;&#x7528;&#x8DEF;&#x7531;&#x673A;&#x5236;</h2>
 <p>http_server&#x53EF;&#x4EE5;&#x50CF;&#x4E00;&#x4E9B;web&#x5F00;&#x53D1;&#x6846;&#x67B6;&#x4E00;&#x6837;&#xFF0C;&#x901A;&#x8FC7;&#x6DFB;&#x52A0;&#x8DEF;&#x7531;&#x6620;&#x5C04;&#x6765;&#x652F;&#x6301;&#x4E1A;&#x52A1;&#x903B;&#x8F91;&#xFF1A;</p>
 <pre><code class="lang-cpp">
@@ -476,7 +548,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"HTTP","level":"1.1.3","depth":2,"next":{"title":"websocket","level":"1.1.4","depth":2,"path":"doc/websocket.md","ref":"doc/websocket.md","articles":[]},"previous":{"title":"TCP","level":"1.1.2","depth":2,"path":"doc/tcp.md","ref":"doc/tcp.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/http.md","mtime":"2019-03-27T23:15:46.553Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-08-03T10:23:57.312Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"HTTP","level":"1.1.3","depth":2,"next":{"title":"websocket","level":"1.1.4","depth":2,"path":"doc/websocket.md","ref":"doc/websocket.md","articles":[]},"previous":{"title":"TCP","level":"1.1.2","depth":2,"path":"doc/tcp.md","ref":"doc/tcp.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/http.md","mtime":"2019-08-08T02:24:36.820Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-08-08T02:24:59.002Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
