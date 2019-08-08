@@ -80,7 +80,7 @@ int main(int, char**) {
 
 ## 多进程化其他网络库
 
-mongols配备的多进程化工具是通用的，可用于其他网络库的多进程化。这里给出一个libevent的例子，其实只需在[](https://mongols.hi-nginx.com/doc/http.html)中的libevent例子里稍微添加几行代码：
+mongols配备的多进程化工具是通用的，可用于其他网络库的多进程化。这里给出一个libevent的例子，其实只需在[这里](https://mongols.hi-nginx.com/doc/http.html)中的libevent例子里稍微添加几行代码：
 
 ```cpp
 
