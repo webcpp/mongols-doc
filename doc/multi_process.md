@@ -78,3 +78,93 @@ int main(int, char**) {
 
 不过话说回来，mongols提供的服务器在单进程情况下，性能已经非常优越了。在多数情况下，无需做多进程化即可满足——还能避免无谓的复杂代码。
 
+## 多进程化其他网络库
+
+mongols配备的多进程化工具是通用的，可用于其他网络库的多进程化。这里给出一个libevent的例子，其实只需在[](https://mongols.hi-nginx.com/doc/http.html)中的libevent例子里稍微添加几行代码：
+
+```cpp
+
+#include <cstring>
+#include <event2/buffer.h>
+#include <event2/event.h>
+#include <event2/http.h>
+#include <iostream>
+#include <mongols/util.hpp>
+#include <signal.h>
+
+static struct event_config* server_config = 0;
+static struct event_base* server_event = 0;
+static struct evhttp* server = 0;
+static const char* host = "127.0.0.1";
+static int port = 8080;
+static inline void signal_normal_cb(int sig);
+static inline void generic_request_handler(struct evhttp_request* req, void* arg);
+
+int main(int, char**)
+{
+    server_config = event_config_new();
+    event_config_set_flag(server_config, EVENT_BASE_FLAG_NOLOCK);
+    event_config_set_flag(server_config, EVENT_BASE_FLAG_EPOLL_USE_CHANGELIST);
+
+    server_event = event_base_new_with_config(server_config);
+    server = evhttp_new(server_event);
+
+    evhttp_bind_socket(server, host, port);
+
+    evhttp_set_gencb(server, generic_request_handler, NULL);
+    evhttp_set_default_content_type(server, "text/plain;charset=UTF-8");
+    evhttp_set_timeout(server, 60);
+
+    std::function<void(pthread_mutex_t*, size_t*)> ff = [&](pthread_mutex_t* mtx, size_t* data) {
+        signal(SIGHUP, signal_normal_cb);
+        signal(SIGTERM, signal_normal_cb);
+        signal(SIGINT, signal_normal_cb);
+        signal(SIGQUIT, signal_normal_cb);
+
+        event_base_dispatch(server_event);
+        evhttp_free(server);
+        event_base_free(server_event);
+        event_config_free(server_config);
+    };
+
+    std::function<bool(int)> g = [&](int status) {
+        return false;
+    };
+
+    mongols::multi_process main_process;
+    main_process.run(ff, g);
+
+    return 0;
+}
+
+static inline void signal_normal_cb(int sig)
+{
+    struct timeval delay = { 1, 0 };
+    switch (sig) {
+    case SIGTERM:
+    case SIGHUP:
+    case SIGQUIT:
+    case SIGINT:
+        if (server_event && !event_base_loopexit(server_event, &delay)) {
+        }
+        break;
+    }
+}
+static inline void generic_request_handler(struct evhttp_request* ev_req, void* arg)
+{
+    struct evbuffer* ev_res = evhttp_request_get_output_buffer(ev_req);
+    struct evkeyvalq *ev_output_headers = evhttp_request_get_output_headers(ev_req),
+                     *ev_input_headers = evhttp_request_get_input_headers(ev_req);
+    const struct evhttp_uri* ev_uri = evhttp_request_get_evhttp_uri(ev_req);
+
+    evhttp_add_header(ev_output_headers, "Server", "libevent2");
+    evbuffer_add(ev_res, "hello,world", 11);
+    evhttp_send_reply(ev_req, 200, "OK", ev_res);
+}
+
+
+```
+
+该例子像mongols一样，也支持子进程重启！
+
+多进程化的libevent例子自然会有更好的性能表现。但是，libevent在单进程下的性能极限只有这么多——所以即使已经多进程化，该例子的吞吐率还是没有赶上单进程的mongols的http_server例子，实际上还差不少呢！
