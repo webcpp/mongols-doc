@@ -29,6 +29,9 @@ int main(int, char**) {
 
 ![medis_server](image/medis.png)
 
+上图分别对get和set命令进行测试。上:redis，下:medis。提示：medis是硬盘读写，而redis是内存读写。
+
+
 # 提示
 
 - 高热数据应该保存放在内存，低热数据应该保存在硬盘，中热数据按读多还是写多相机选择内存或硬盘。
