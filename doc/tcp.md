@@ -63,7 +63,7 @@ int main(int,char**)
 该机制通过配置静态变量`tcp_server::max_connection_keepalive`，限制长连接过期时间，默认60秒。
 
 ### 白名单机制
-该机制提供两种配置IP地址白名单的方法：（1）通过`set_whitelist`方法和`del_whitelist`方法，（2）通过`set_whitelist_file`方法。推荐使用后者：新建一个专属目录比如`etc`，在里面新建一个纯文本文件例如`etc/whitelist.txt`；然后逐行写下合法IP地址；最后把该文件地址传递给`set_whitelist_file`方法。当`etc/whitelist.txt`文件被修改时，服务器会自动升级内存中的白名单，无需重启服务器。
+该机制提供两种配置IP地址白名单的方法：（1）通过`set_whitelist`方法和`del_whitelist`方法，（2）通过`set_whitelist_file`方法。推荐使用后者：新建一个专属目录比如`etc`，在里面新建一个纯文本文件例如`etc/whitelist.txt`；然后逐行写下合法IP地址的正则表达式(`#`号开头的行表示注释)；最后把该文件地址传递给`set_whitelist_file`方法。当`etc/whitelist.txt`文件被修改时，服务器会自动升级内存中的白名单，无需重启服务器。
 
 当然，使用第一种方法控制白名单也是可行的。
 
