@@ -140,3 +140,7 @@ http_server可以像一些web开发框架一样，通过添加路由映射来支
 `add_route`方法第一个参数是业务支持的`method`列表，第二个参数是`uri`需匹配的正则模式，第三个参数则是业务逻辑`handler`。业务`handler`的第三个参数是通过google RE2库进行计算获得的匹配正则模式的`group`。通过这种方式，http_server看起来像个灵活的框架。
 
 `run_with_route`的参数是`f`用了过滤客户端，与`run`方法的第一个参数具有相同的含义。
+
+## 关于文件上传支持
+
+强烈建议采用mongols包含的[websocket](doc/websocket.html)服务器进行部署。原因有二：其一、效率更高，其二、授权可能冲突。http服务器内嵌的文件上传支持库MPFDParser已经被原作者删除，不复存在，其原授权为GPLv3，且其代码已经被我修正，与mongols的MPLv2授权可能发生冲突。后续版本的http服务器可能不再包含支持文件上传的代码。
