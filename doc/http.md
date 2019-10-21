@@ -143,4 +143,4 @@ http_server可以像一些web开发框架一样，通过添加路由映射来支
 
 ## 关于文件上传支持
 
-强烈建议采用mongols包含的[websocket](websocket.html)服务器进行部署。原因有二：其一、效率更高，其二、授权可能冲突。http服务器内嵌的文件上传支持库MPFDParser已经被原作者删除，不复存在，其原授权为GPLv3和LGPL，且其代码已经被我修正，与mongols的MPLv2授权可能发生冲突。后续版本的http服务器可能不再包含支持文件上传的代码。
+强烈建议采用mongols包含的[websocket](websocket.html)服务器进行部署，效率高得多，不受文件大小限制。
