@@ -7,6 +7,7 @@ mongols-1.7.1以后版本不再支持以duktape引擎实现的javascript服务�
 来看例子：
 ```cpp
 #include <mongols/qjs_server.hpp>
+#include <mongols/util.hpp>
 
 int main(int, char**)
 {
