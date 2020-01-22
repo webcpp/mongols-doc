@@ -402,7 +402,7 @@
                                 
                                 <h1 id="qjs-&#x670D;&#x52A1;&#x5668;">qjs &#x670D;&#x52A1;&#x5668;</h1>
 <p>mongols-1.7.1&#x4EE5;&#x540E;&#x7248;&#x672C;&#x4E0D;&#x518D;&#x652F;&#x6301;&#x4EE5;duktape&#x5F15;&#x64CE;&#x5B9E;&#x73B0;&#x7684;javascript&#x670D;&#x52A1;&#x5668;&#x3002;</p>
-<p>&#x4F46;&#x662F;&#xFF0C;&#x81EA;mongols-1.8.0&#x5F00;&#x59CB;&#xFF0C;&#x65B0;&#x589E;&#x4E00;&#x4E2A;&#x57FA;&#x4E8E;quickjs&#x5F15;&#x64CE;&#x7684;&#x65B0;&#x7684;javascript&#x670D;&#x52A1;&#x5668;&#x3002;</p>
+<p>&#x4F46;&#x662F;&#xFF0C;&#x81EA;mongols-1.8.0&#x5F00;&#x59CB;&#xFF0C;&#x65B0;&#x589E;&#x4E00;&#x4E2A;&#x57FA;&#x4E8E;quickjs&#x5F15;&#x64CE;&#x7684;&#x65B0;&#x7684;javascript&#x670D;&#x52A1;&#x5668;&#x3002;&#x6027;&#x80FD;&#x8F83;&#x4E4B;&#x4EE5;&#x524D;&#xFF0C;&#x6709;&#x8F83;&#x5927;&#x63D0;&#x5347;&#x3002;</p>
 <p>&#x6765;&#x770B;&#x4F8B;&#x5B50;&#xFF1A;</p>
 <pre><code class="lang-cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;mongols/qjs_server.hpp&gt;</span></span>
 
@@ -414,16 +414,30 @@
         <span class="hljs-title">server</span><span class="hljs-params">(host, port, <span class="hljs-number">5000</span>, <span class="hljs-number">8192</span>, <span class="hljs-number">0</span> <span class="hljs-comment">/*2*/</span>)</span></span>;
     server.set_root_path(<span class="hljs-string">&quot;html/qjs&quot;</span>);
     server.set_enable_bootstrap(<span class="hljs-literal">true</span>);
-    server.set_enable_lru_cache(<span class="hljs-literal">true</span>);
+    server.set_enable_lru_cache(<span class="hljs-literal">false</span>);
     server.set_lru_cache_expires(<span class="hljs-number">1</span>);
     <span class="hljs-comment">//    if (!server.set_openssl(&quot;openssl/localhost.crt&quot;, &quot;openssl/localhost.key&quot;)) {</span>
     <span class="hljs-comment">//        return -1;</span>
     <span class="hljs-comment">//    }</span>
 
-    server.set_shutdown([&amp;]() {
-        <span class="hljs-built_in">std</span>::<span class="hljs-built_in">cout</span> &lt;&lt; <span class="hljs-string">&quot;process &quot;</span> &lt;&lt; getpid() &lt;&lt; <span class="hljs-string">&quot; exit.\n&quot;</span>;
-    });
-    server.run();
+    <span class="hljs-comment">// server.set_shutdown([&amp;]() {</span>
+    <span class="hljs-comment">//     std::cout &lt;&lt; &quot;process &quot; &lt;&lt; getpid() &lt;&lt; &quot; exit.\n&quot;;</span>
+    <span class="hljs-comment">// });</span>
+    <span class="hljs-comment">// server.run();</span>
+
+    <span class="hljs-built_in">std</span>::function&lt;<span class="hljs-keyword">void</span>(<span class="hljs-keyword">pthread_mutex_t</span>*, <span class="hljs-keyword">size_t</span>*)&gt; ff = [&amp;](<span class="hljs-keyword">pthread_mutex_t</span>* mtx, <span class="hljs-keyword">size_t</span>* data) {
+        server.set_shutdown([&amp;]() {
+            <span class="hljs-built_in">std</span>::<span class="hljs-built_in">cout</span> &lt;&lt; <span class="hljs-string">&quot;process &quot;</span> &lt;&lt; getpid() &lt;&lt; <span class="hljs-string">&quot; exit.\n&quot;</span>;
+        });
+        server.run();
+    };
+
+    <span class="hljs-built_in">std</span>::function&lt;<span class="hljs-keyword">bool</span>(<span class="hljs-keyword">int</span>)&gt; g = [&amp;](<span class="hljs-keyword">int</span> status) {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    };
+
+    mongols::multi_process main_process;
+    main_process.run(ff, g);
 }
 </code></pre>
 <pre><code class="lang-js"><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> std <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;std&quot;</span>;
@@ -435,6 +449,18 @@ mongols.status(<span class="hljs-number">200</span>);
 mongols.header(<span class="hljs-string">&apos;Content-Type&apos;</span>, <span class="hljs-string">&apos;text/plain&apos;</span>);
 mongols.content(<span class="hljs-string">&quot;hello,world\n&quot;</span>);
 </code></pre>
+<p>&#x7B80;&#x5355;&#x7684;<code>hello,world</code>&#x6D4B;&#x8BD5;&#x5982;&#x4E0B;&#xFF1A;
+<img src="image/qjs_server_ab.png" alt="qjs_server_ab">
+<img src="image/qjs_server_wrk.png" alt="qjs_server_wrk"></p>
+<h2 id="&#x4F18;&#x5316;">&#x4F18;&#x5316;</h2>
+<p>qjs_server&#x901A;&#x8FC7;&#x4E24;&#x4E2A;&#x9759;&#x6001;&#x53D8;&#x91CF;&#x8C03;&#x6574;&#x670D;&#x52A1;&#x5668;&#x5DE5;&#x4F5C;&#x72B6;&#x6001;&#x3002;</p>
+<h3 id="qjsservermemorylimit"><code>qjs_server::memory_limit</code></h3>
+<p>&#x9ED8;&#x8BA4;&#x503C;&#x662F;1GB&#x3002;&#x5B83;&#x8D1F;&#x8D23;&#x914D;&#x7F6E;quickjs&#x8FD0;&#x884C;&#x65F6;&#x80FD;&#x591F;&#x4F7F;&#x7528;&#x7684;&#x6700;&#x5927;&#x5185;&#x5B58;&#x91CF;&#x3002;&#x56E0;&#x4E3A;&#x6BCF;&#x4E00;&#x5DE5;&#x4F5C;&#x8FDB;&#x7A0B;&#x914D;&#x6709;&#x4E00;&#x4E2A;&#x8FD0;&#x884C;&#x65F6;&#xFF0C;&#x6240;&#x4EE5;&#x914D;&#x7F6E;&#x6B64;&#x503C;&#x65F6;&#x9700;&#x8981;&#x8003;&#x8651;&#x673A;&#x5668;&#x7684;&#x786C;&#x4EF6;&#x7EA6;&#x675F;&#x3002;&#x901A;&#x5E38;&#x9ED8;&#x8BA4;&#x503C;&#x5373;&#x53EF;&#x3002;</p>
+<h3 id="qjsserverctxcalledlimit"><code>qjs_server::ctx_called_limit</code></h3>
+<p>&#x9ED8;&#x8BA4;&#x503C;&#x662F;10240&#x3002;&#x5B83;&#x8D1F;&#x8D23;&#x914D;&#x7F6E;&#x6BCF;&#x4E00;quickjs&#x8FD0;&#x884C;&#x65F6;&#x4E0A;&#x4E0B;&#x6587;&#x88AB;&#x4F7F;&#x7528;&#x7684;&#x6B21;&#x6570;&#x3002;&#x503C;&#x8FC7;&#x5C0F;&#x4F1A;&#x5BFC;&#x81F4;&#x6548;&#x7387;&#x4E0B;&#x964D;&#xFF0C;&#x503C;&#x8FC7;&#x5927;&#x5219;&#x53EF;&#x80FD;&#x5BFC;&#x81F4;&#x5185;&#x5B58;&#x4F7F;&#x7528;&#x4E0A;&#x5347;&#x3002;&#x901A;&#x5E38;&#x9ED8;&#x8BA4;&#x503C;&#x5373;&#x53EF;&#x3002;&#x914D;&#x7F6E;&#x65F6;&#xFF0C;&#x9700;&#x4E0E;<code>qjs_server::memory_limit</code>&#x534F;&#x8C03;&#x3002;</p>
+<h3 id="&#x5F00;&#x542F;lru&#x7F13;&#x5B58;&#x673A;&#x5236;">&#x5F00;&#x542F;lru&#x7F13;&#x5B58;&#x673A;&#x5236;</h3>
+<p>&#x8C03;&#x7528;<code>set_enable_lru_cache</code>&#x65B9;&#x6CD5;&#xFF0C;&#x53C2;&#x6570;&#x4E3A;<code>true</code>&#x5373;&#x53EF;&#x3002;&#x6B64;&#x6CD5;&#x751A;&#x5999;&#x3002;1&#x79D2;&#x7684;&#x8FC7;&#x671F;&#x65F6;&#x95F4;&#xFF0C;&#x5373;&#x53EF;&#x4EE4;&#x670D;&#x52A1;&#x5668;&#x529F;&#x529B;&#x5927;&#x589E;&#x3002;&#x5982;&#x4E0B;&#x56FE;&#xFF1A;
+<img src="image/qjs_server_wrk_lru.png" alt="qjs_server_wrk_lru"></p>
 <h2 id="api">api</h2>
 <h3 id="request">request</h3>
 <ul>
@@ -460,6 +486,9 @@ mongols.content(<span class="hljs-string">&quot;hello,world\n&quot;</span>);
 <li>session</li>
 <li>cache</li>
 </ul>
+<h2 id="&#x6BD4;&#x8F83;">&#x6BD4;&#x8F83;</h2>
+<p>quickjs&#x5F15;&#x64CE;&#x662F;&#x4E00;&#x4E2A;&#x65B0;&#x7684;javascript&#x5F15;&#x64CE;&#x3002;&#x5B83;&#x5177;&#x5907;&#x5F88;&#x591A;&#x4F18;&#x70B9;&#x548C;&#x65B0;&#x7279;&#x6027;&#x3002;&#x5176;&#x7EFC;&#x5408;&#x6027;&#x80FD;&#x6216;&#x8BB8;&#x4E0D;&#x53CA;V8&#x3002;</p>
+<p>&#x4F46;&#x4ECE;&#x670D;&#x52A1;&#x5668;&#x5E76;&#x53D1;&#x6027;&#x80FD;&#x7684;&#x89D2;&#x5EA6;&#x6765;&#x8BF4;&#xFF0C;qjs_server&#x4F18;&#x4E8E;nodejs&#x662F;&#x6BEB;&#x65E0;&#x7591;&#x4E49;&#x7684;&#x3002;</p>
 
                                 
                                 </section>
@@ -503,7 +532,7 @@ mongols.content(<span class="hljs-string">&quot;hello,world\n&quot;</span>);
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"qjs","level":"1.1.9","depth":2,"next":{"title":"chai","level":"1.1.10","depth":2,"path":"doc/chai.md","ref":"doc/chai.md","articles":[]},"previous":{"title":"js","level":"1.1.8","depth":2,"path":"doc/js.md","ref":"doc/js.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/qjs.md","mtime":"2020-01-22T04:48:02.871Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-01-22T04:53:13.154Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"qjs","level":"1.1.9","depth":2,"next":{"title":"chai","level":"1.1.10","depth":2,"path":"doc/chai.md","ref":"doc/chai.md","articles":[]},"previous":{"title":"js","level":"1.1.8","depth":2,"path":"doc/js.md","ref":"doc/js.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/qjs.md","mtime":"2020-01-22T23:52:02.840Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-01-22T23:52:55.809Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
