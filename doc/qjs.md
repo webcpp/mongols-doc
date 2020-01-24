@@ -101,10 +101,10 @@ qjs_server通过两个静态变量调整服务器工作状态。
 
 quickjs引擎是一个新的javascript引擎。它具备很多优点和新特性。其综合性能或许不及V8。
 
-但从服务器并发性能的角度来说，qjs_server优于nodejs是毫无疑义的。
+但从服务器并发性能的角度来说，qjs_server仍可优于nodejs。
 
 
-qjs_server不仅比nodejs强，而且比较于hi-nginx-duktape，亦可占上风：
+比较于hi-nginx-duktape，qjs_server亦可占上风：
 ![qjs_serverVShi-nginx-duktape](image/qjs_serverVShi-nginx.png)
 
 hi-nginx-duktape配置如下：
