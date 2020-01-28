@@ -101,7 +101,7 @@ qjs_server通过两个静态变量调整服务器工作状态。
 
 quickjs引擎是一个新的javascript引擎。它具备很多优点和新特性。其综合性能不及V8。此点自然会在一定程度上拖累qjs_server。
 
-不过，综合来看，qjs_server仍可优于nodejs。以号称最快nodejs框架fastify为例，在同样使用默认路由器和多进程的情况下:以ab压测，qjs_server优于fastify;以wrk压测，fastify略优于qjs_server，但后者完成度优于前者。如果不使用默认路由器，则qjs_server可完胜fastify。
+不过，qjs_server仍可优于nodejs——即使是号称最快nodejs框架fastify，也只能甘拜下风。
 
 
 比较于hi-nginx-duktape，qjs_server亦可占上风：
