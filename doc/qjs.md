@@ -97,6 +97,10 @@ qjs_server通过两个静态变量调整服务器工作状态。
 - session
 - cache
 
+## 模块
+
+quickjs原版内置三个模块：std、os和bjson，并且启用了数学扩展。我为其添加了三个内置模块：hash、crypto和mongols。qjs_server建立在mongols模块之上。hash模块提供md5、sha1、sha256和sha512计算，crypto模块提供AES加密服务。
+
 ## 比较
 
 quickjs引擎是一个新的javascript引擎。它具备很多优点和新特性。其综合性能不及V8。此点自然会在一定程度上拖累qjs_server。
