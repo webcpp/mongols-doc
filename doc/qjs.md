@@ -101,6 +101,40 @@ qjs_server通过两个静态变量调整服务器工作状态。
 
 quickjs原版内置三个模块：std、os和bjson，并且启用了数学扩展。我为其添加了三个内置模块：hash、crypto和mongols。qjs_server建立在mongols模块之上。hash模块提供md5、sha1、sha256和sha512计算，crypto模块提供AES加密服务。
 
+## 路由
+
+qjs_server提供一个默认的路由器。使用方法如下：
+
+```javascript
+import * as mongols from "mongols";
+import { crypto } from "crypto";
+import route from "./lib/route.mjs"
+
+var r = route.get_instance();
+
+r.get('^/$', function (m, param) {
+  m.status(200);
+  m.header('Content-Type', 'text/plain;charset=utf-8');
+  m.content('hello,world\n');
+});
+
+r.get('^/(.*)/?$', function (m, param) {
+  m.header('Content-Type', 'text/plain;charset=UTF8')
+  m.content(m.method() + '\n' + m.uri() + '\n' + param.toString())
+  m.status(200)
+});
+
+var route_test = function (m) {
+  r.run(m)
+};
+
+
+export default route_test;
+```
+路由器支持各种HTTP方法，具体可参考`example/html/qjs/test/lib/route.mjs`。
+
+如果有更好的路由器实现，欢迎替换。
+
 ## 比较
 
 quickjs引擎是一个新的javascript引擎。它具备很多优点和新特性。其综合性能不及V8。此点自然会在一定程度上拖累qjs_server。
