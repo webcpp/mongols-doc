@@ -520,8 +520,49 @@ r.get(<span class="hljs-string">&apos;^/(.*)/?$&apos;</span>, <span class="hljs-
 <p>&#x5982;&#x679C;&#x6709;&#x66F4;&#x597D;&#x7684;&#x8DEF;&#x7531;&#x5668;&#x5B9E;&#x73B0;&#xFF0C;&#x6B22;&#x8FCE;&#x66FF;&#x6362;&#x3002;</p>
 <h2 id="&#x6BD4;&#x8F83;">&#x6BD4;&#x8F83;</h2>
 <p>quickjs&#x5F15;&#x64CE;&#x662F;&#x4E00;&#x4E2A;&#x65B0;&#x7684;javascript&#x5F15;&#x64CE;&#x3002;&#x5B83;&#x5177;&#x5907;&#x5F88;&#x591A;&#x4F18;&#x70B9;&#x548C;&#x65B0;&#x7279;&#x6027;&#x3002;&#x5176;&#x7EFC;&#x5408;&#x6027;&#x80FD;&#x4E0D;&#x53CA;V8&#x3002;&#x6B64;&#x70B9;&#x81EA;&#x7136;&#x4F1A;&#x5728;&#x4E00;&#x5B9A;&#x7A0B;&#x5EA6;&#x4E0A;&#x62D6;&#x7D2F;qjs_server&#x3002;</p>
-<p>&#x4E0D;&#x8FC7;&#xFF0C;qjs_server&#x4ECD;&#x53EF;&#x4F18;&#x4E8E;nodejs&#x2014;&#x2014;&#x5373;&#x4F7F;&#x662F;&#x53F7;&#x79F0;&#x6700;&#x5FEB;nodejs&#x6846;&#x67B6;fastify&#xFF0C;&#x4E5F;&#x53EA;&#x80FD;&#x7518;&#x62DC;&#x4E0B;&#x98CE;&#x3002;</p>
-<p>&#x6BD4;&#x8F83;&#x4E8E;hi-nginx-duktape&#xFF0C;qjs_server&#x4EA6;&#x53EF;&#x5360;&#x4E0A;&#x98CE;&#xFF1A;
+<p>&#x4E0D;&#x8FC7;&#xFF0C;qjs_server&#x4ECD;&#x53EF;&#x4F18;&#x4E8E;nodejs&#x2014;&#x2014;&#x4EE5;nodejs&#x6846;&#x67B6;fastify&#x4E3A;&#x4F8B;:</p>
+<pre><code class="lang-javascript"><span class="hljs-keyword">const</span> cluster = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;cluster&apos;</span>);
+<span class="hljs-keyword">const</span> numCPUs = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;os&apos;</span>).cpus().length;
+<span class="hljs-comment">// Require the framework and instantiate it</span>
+<span class="hljs-keyword">const</span> fastify = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;fastify&apos;</span>)({ logger: <span class="hljs-literal">false</span> })
+
+
+
+<span class="hljs-keyword">if</span> (cluster.isMaster) {
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`Master <span class="hljs-subst">${process.pid}</span> is running`</span>);
+
+  <span class="hljs-comment">// Fork workers.</span>
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; numCPUs; i++) {
+    cluster.fork();
+  }
+
+} <span class="hljs-keyword">else</span> {
+
+  <span class="hljs-comment">// Declare a route</span>
+  fastify.get(<span class="hljs-string">&apos;/&apos;</span>, <span class="hljs-keyword">async</span> (request, reply) =&gt; {
+    reply.header(<span class="hljs-string">&apos;Content-Type&apos;</span>, <span class="hljs-string">&apos;text/plain;charset=utf-8&apos;</span>)
+    <span class="hljs-keyword">return</span> <span class="hljs-string">&apos;hello,world\n&apos;</span>;
+  })
+
+  <span class="hljs-comment">// Run the server!</span>
+  <span class="hljs-keyword">const</span> start = <span class="hljs-keyword">async</span> () =&gt; {
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">await</span> fastify.listen(<span class="hljs-number">3000</span>)
+      fastify.log.info(<span class="hljs-string">`server listening on <span class="hljs-subst">${fastify.server.address().port}</span>`</span>)
+    } <span class="hljs-keyword">catch</span> (err) {
+      fastify.log.error(err)
+    }
+  }
+  start()
+
+}
+</code></pre>
+<p>&#x4F7F;&#x7528;nodejs-v13&#x9A71;&#x52A8;,&#x540C;&#x6837;&#x4F7F;&#x7528;&#x9ED8;&#x8BA4;&#x8DEF;&#x7531;&#x5668;&#x7684;&#x60C5;&#x51B5;&#x4E0B;&#xFF0C;ab&#x538B;&#x6D4B;&#x5BF9;&#x6BD4;&#x4E8E;qjs_server:
+<img src="image/mongolsVSfastify_ab.png" alt="mongolsVSfastify_ab">
+&#x82E5;&#x4EE5;wrk&#x538B;&#x6D4B;&#xFF0C;&#x5219;&#x5982;&#x4E0B;:
+<img src="image/mongolsVSfastify_wrk.png" alt="mongolsVSfastify_wrk">
+&#x6570;&#x636E;&#x663E;&#x793A;&#xFF1A;fastify&#x53EF;&#x7565;&#x5360;&#x4E0A;&#x98CE;&#xFF0C;&#x4F46;&#x5176;&#x5B8C;&#x6210;&#x5EA6;&#x4E0D;&#x5982;qjs_server&#x3002;</p>
+<p>&#x6BD4;&#x8F83;&#x4E8E;hi-nginx-duktape&#xFF0C;qjs_server&#x4EA6;&#x53EF;&#x5360;&#x4E0A;&#x98CE;(&#x5747;&#x672A;&#x4F7F;&#x7528;&#x8DEF;&#x7531;&#x5668;)&#xFF1A;
 <img src="image/qjs_serverVShi-nginx.png" alt="qjs_serverVShi-nginx-duktape"></p>
 <p>hi-nginx-duktape&#x914D;&#x7F6E;&#x5982;&#x4E0B;&#xFF1A;</p>
 <pre><code class="lang-nginx">    <span class="hljs-attribute">location</span> <span class="hljs-regexp">~ \.duktape$</span> {
@@ -579,7 +620,7 @@ r.get(<span class="hljs-string">&apos;^/(.*)/?$&apos;</span>, <span class="hljs-
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"qjs","level":"1.1.9","depth":2,"next":{"title":"chai","level":"1.1.10","depth":2,"path":"doc/chai.md","ref":"doc/chai.md","articles":[]},"previous":{"title":"js","level":"1.1.8","depth":2,"path":"doc/js.md","ref":"doc/js.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/qjs.md","mtime":"2020-01-31T00:22:23.561Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-01-31T00:22:45.765Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"qjs","level":"1.1.9","depth":2,"next":{"title":"chai","level":"1.1.10","depth":2,"path":"doc/chai.md","ref":"doc/chai.md","articles":[]},"previous":{"title":"js","level":"1.1.8","depth":2,"path":"doc/js.md","ref":"doc/js.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/qjs.md","mtime":"2020-02-02T06:35:02.126Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-02-02T06:46:06.859Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

@@ -139,10 +139,52 @@ export default route_test;
 
 quickjs引擎是一个新的javascript引擎。它具备很多优点和新特性。其综合性能不及V8。此点自然会在一定程度上拖累qjs_server。
 
-不过，qjs_server仍可优于nodejs——即使是号称最快nodejs框架fastify，也只能甘拜下风。
+不过，qjs_server仍可优于nodejs——以nodejs框架fastify为例:
+
+```javascript
+const cluster = require('cluster');
+const numCPUs = require('os').cpus().length;
+// Require the framework and instantiate it
+const fastify = require('fastify')({ logger: false })
 
 
-比较于hi-nginx-duktape，qjs_server亦可占上风：
+
+if (cluster.isMaster) {
+  console.log(`Master ${process.pid} is running`);
+
+  // Fork workers.
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
+
+} else {
+
+  // Declare a route
+  fastify.get('/', async (request, reply) => {
+    reply.header('Content-Type', 'text/plain;charset=utf-8')
+    return 'hello,world\n';
+  })
+
+  // Run the server!
+  const start = async () => {
+    try {
+      await fastify.listen(3000)
+      fastify.log.info(`server listening on ${fastify.server.address().port}`)
+    } catch (err) {
+      fastify.log.error(err)
+    }
+  }
+  start()
+
+}
+```
+使用nodejs-v13驱动,同样使用默认路由器的情况下，ab压测对比于qjs_server:
+![mongolsVSfastify_ab](image/mongolsVSfastify_ab.png)
+若以wrk压测，则如下:
+![mongolsVSfastify_wrk](image/mongolsVSfastify_wrk.png)
+数据显示：fastify可略占上风，但其完成度不如qjs_server。
+
+比较于hi-nginx-duktape，qjs_server亦可占上风(均未使用路由器)：
 ![qjs_serverVShi-nginx-duktape](image/qjs_serverVShi-nginx.png)
 
 hi-nginx-duktape配置如下：
