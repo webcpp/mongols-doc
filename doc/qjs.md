@@ -184,24 +184,5 @@ if (cluster.isMaster) {
 ![mongolsVSfastify_wrk](image/mongolsVSfastify_wrk.png)
 数据显示：fastify可略占上风，但其完成度不如qjs_server。
 
-比较于hi-nginx-duktape，qjs_server亦可占上风(均未使用路由器)：
-![qjs_serverVShi-nginx-duktape](image/qjs_serverVShi-nginx.png)
-
-hi-nginx-duktape配置如下：
-```nginx
-    location ~ \.duktape$ {
-	hi_need_cache off;
-	hi_need_cookies off;
-	hi_need_session off;
-        rewrite ^/(.*)\.duktape$ /$1 break;
-        hi_duktape_script duktape/index.js;
-    }
-
-```
-
-```javascript
- hi_res.header('Content-Type','text/plain;charset=UTF-8')
- hi_res.content('hello,world\n')
- hi_res.status(200)
-
-```
+比较于hi-nginx-qjs，qjs_server亦可占上风(均未使用路由器,均使用几乎完全一致的测试代码)：
+![qjs_serverVShi-nginx-qjs](image/qjs_serverVShi-nginx-qjs.png)
