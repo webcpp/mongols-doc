@@ -562,21 +562,8 @@ r.get(<span class="hljs-string">&apos;^/(.*)/?$&apos;</span>, <span class="hljs-
 &#x82E5;&#x4EE5;wrk&#x538B;&#x6D4B;&#xFF0C;&#x5219;&#x5982;&#x4E0B;:
 <img src="image/mongolsVSfastify_wrk.png" alt="mongolsVSfastify_wrk">
 &#x6570;&#x636E;&#x663E;&#x793A;&#xFF1A;fastify&#x53EF;&#x7565;&#x5360;&#x4E0A;&#x98CE;&#xFF0C;&#x4F46;&#x5176;&#x5B8C;&#x6210;&#x5EA6;&#x4E0D;&#x5982;qjs_server&#x3002;</p>
-<p>&#x6BD4;&#x8F83;&#x4E8E;hi-nginx-duktape&#xFF0C;qjs_server&#x4EA6;&#x53EF;&#x5360;&#x4E0A;&#x98CE;(&#x5747;&#x672A;&#x4F7F;&#x7528;&#x8DEF;&#x7531;&#x5668;)&#xFF1A;
-<img src="image/qjs_serverVShi-nginx.png" alt="qjs_serverVShi-nginx-duktape"></p>
-<p>hi-nginx-duktape&#x914D;&#x7F6E;&#x5982;&#x4E0B;&#xFF1A;</p>
-<pre><code class="lang-nginx">    <span class="hljs-attribute">location</span> <span class="hljs-regexp">~ \.duktape$</span> {
-    <span class="hljs-attribute">hi_need_cache</span> <span class="hljs-literal">off</span>;
-    <span class="hljs-attribute">hi_need_cookies</span> <span class="hljs-literal">off</span>;
-    <span class="hljs-attribute">hi_need_session</span> <span class="hljs-literal">off</span>;
-        <span class="hljs-attribute">rewrite</span><span class="hljs-regexp"> ^/(.*)\.duktape$</span> /<span class="hljs-variable">$1</span> <span class="hljs-literal">break</span>;
-        <span class="hljs-attribute">hi_duktape_script</span> duktape/index.js;
-    }
-</code></pre>
-<pre><code class="lang-javascript"> hi_res.header(<span class="hljs-string">&apos;Content-Type&apos;</span>,<span class="hljs-string">&apos;text/plain;charset=UTF-8&apos;</span>)
- hi_res.content(<span class="hljs-string">&apos;hello,world\n&apos;</span>)
- hi_res.status(<span class="hljs-number">200</span>)
-</code></pre>
+<p>&#x6BD4;&#x8F83;&#x4E8E;hi-nginx-qjs&#xFF0C;qjs_server&#x4EA6;&#x53EF;&#x5360;&#x4E0A;&#x98CE;(&#x5747;&#x672A;&#x4F7F;&#x7528;&#x8DEF;&#x7531;&#x5668;,&#x5747;&#x4F7F;&#x7528;&#x51E0;&#x4E4E;&#x5B8C;&#x5168;&#x4E00;&#x81F4;&#x7684;&#x6D4B;&#x8BD5;&#x4EE3;&#x7801;)&#xFF1A;
+<img src="image/qjs_serverVShi-nginx-qjs.png" alt="qjs_serverVShi-nginx-qjs"></p>
 
                                 
                                 </section>
@@ -620,7 +607,7 @@ r.get(<span class="hljs-string">&apos;^/(.*)/?$&apos;</span>, <span class="hljs-
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"qjs","level":"1.1.9","depth":2,"next":{"title":"chai","level":"1.1.10","depth":2,"path":"doc/chai.md","ref":"doc/chai.md","articles":[]},"previous":{"title":"js","level":"1.1.8","depth":2,"path":"doc/js.md","ref":"doc/js.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/qjs.md","mtime":"2020-02-02T06:35:02.126Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-02-02T06:46:06.859Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"qjs","level":"1.1.9","depth":2,"next":{"title":"chai","level":"1.1.10","depth":2,"path":"doc/chai.md","ref":"doc/chai.md","articles":[]},"previous":{"title":"js","level":"1.1.8","depth":2,"path":"doc/js.md","ref":"doc/js.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/qjs.md","mtime":"2020-02-21T13:59:29.414Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-02-21T14:01:31.343Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
