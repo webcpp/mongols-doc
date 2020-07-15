@@ -13,7 +13,7 @@ mongols提供一个python绑定：[pymongols](https://github.com/webcpp/pymongol
 
 而且，它提供的所有服务器均能像nginx一样实现master-worker多进程模型：
 
-！[multiprocessing anything](doc/image/multiprocess.png)
+![multiprocessing anything](doc/image/multiprocess.png)
 
 
 下载：[https://github.com/webcpp/mongols](https://github.com/webcpp/mongols)
