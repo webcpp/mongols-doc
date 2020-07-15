@@ -4,6 +4,8 @@ mongols提供的所有服务器设施既可以多线程化也可以多进程化�
 
 并且支持在多进程化的同时多线程化。
 
+![multiprocessing](image/multiprocess.png)
+
 来看代码：
 
 ```cpp
