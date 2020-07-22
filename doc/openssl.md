@@ -16,11 +16,3 @@ mongols所包含的所有服务器设施均支持openssl化。也就是说，开
 ```
 
 
-## 压测比较
-
-一句话，工作进程相同的情况下，比NGINX更快、更稳定：
-
-![mongols](image/mongols_https.png)
-
-![nginx](image/nginx_https.png)
-

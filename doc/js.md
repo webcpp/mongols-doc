@@ -2,16 +2,7 @@
 
 mongols-1.7.1以后版本不再支持js语言。此节可忽略。
 
-这是为了方便使用javascript进行web开发准备的。
 
-它与nodejs的不同在于它使用duktape引擎。虽然该引擎的执行效率比不上v8引擎，但是它是轻量级的，效率虽不够好，但也不太差。其执行效率方面的劣势可通过多进程化服务器、开启lru缓存等多种途径来弥补。压测显示，多进程化后，其并发性能高于nodejs。
-
-
-![duktapeVSnode](image/duktapeVSnode.png)
-
-上图是一个简单的hello,world测试，node在8888端口,js_server在9090端口。第一次压测js_server为单进程，第三次压测时采用多进程化js_server。
-
-特别需要说明的是，在测试比较中发现，nodejs(v11)完成上述测试通常需要很多的内存消耗——50MB-120MB,与并发数量正相关。而js_server的内存消耗近通常不会超过1.8MB，与并发数量没什么关系。
 
 来看例子：
 

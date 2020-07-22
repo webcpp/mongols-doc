@@ -474,9 +474,8 @@ http.createServer(<span class="hljs-function"><span class="hljs-keyword">functio
 
 <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&apos;Server running at http://127.0.0.1:&apos;</span>+port+<span class="hljs-string">&apos;/&apos;</span>);
 </code></pre>
-<p>&#x540C;&#x6837;&#x7684;&#x540E;&#x7AEF;&#xFF0C;&#x540C;&#x6837;&#x591A;&#x7684;&#x5DE5;&#x4F5C;&#x8FDB;&#x7A0B;&#xFF0C;&#x5982;&#x679C;&#x6BD4;&#x8F83;&#x4E8E;nginx&#x7684;proxy_pass&#x65B9;&#x6848;&#xFF0C;&#x65E0;&#x8BBA;&#x662F;&#x5426;&#x5F00;&#x542F;&#x7F13;&#x5B58;&#xFF0C;mongols&#x7684;&#x5E76;&#x53D1;&#x6027;&#x80FD;&#x90FD;&#x8981;&#x5F3A;&#x4E8E;nginx&#xFF1A;</p>
-<p><img src="image/tcp_proxy_serverVSnginx_proxy_pass.png" alt="tcp_proxy_serverVSnginx_proxy_pass.png"></p>
-<p>&#x5B9E;&#x9645;&#x4E0A;&#xFF0C;&#x4ECE; web server &#x5230; reverse proxy&#xFF0C;&#x5BF9;&#x6BD4;&#x4E8E;mongols&#xFF0C;nginx&#x5176;&#x5B9E;&#x662F;&#x4E00;&#x6B3E;&#x5F88;&#x6162;&#x7684;&#x670D;&#x52A1;&#x5668;&#x8F6F;&#x4EF6;&#x3002;</p>
+<p>&#x540C;&#x6837;&#x7684;&#x540E;&#x7AEF;&#xFF0C;&#x540C;&#x6837;&#x591A;&#x7684;&#x5DE5;&#x4F5C;&#x8FDB;&#x7A0B;&#xFF0C;&#x5982;&#x679C;&#x6BD4;&#x8F83;&#x4E8E;nginx&#x7684;proxy_pass&#x65B9;&#x6848;&#xFF0C;&#x65E0;&#x8BBA;&#x662F;&#x5426;&#x5F00;&#x542F;&#x7F13;&#x5B58;&#xFF0C;mongols&#x7684;&#x5E76;&#x53D1;&#x6027;&#x80FD;&#x90FD;&#x8981;&#x5F3A;&#x4E8E;nginx.
+&#x5B9E;&#x9645;&#x4E0A;&#xFF0C;&#x4ECE; web server &#x5230; reverse proxy&#xFF0C;&#x5BF9;&#x6BD4;&#x4E8E;mongols&#xFF0C;nginx&#x5176;&#x5B9E;&#x662F;&#x4E00;&#x6B3E;&#x5F88;&#x6162;&#x7684;&#x670D;&#x52A1;&#x5668;&#x8F6F;&#x4EF6;&#x3002;</p>
 <h2 id="&#x7F13;&#x5B58;&#x52A0;&#x901F;">&#x7F13;&#x5B58;&#x52A0;&#x901F;</h2>
 <p>&#x4EC5;&#x5BF9;http&#x4EE3;&#x7406;&#x6709;&#x6548;&#x3002;</p>
 <p>tcp_proxy_server&#x901A;&#x8FC7;lru&#x7B97;&#x6CD5;+&#x8FC7;&#x671F;&#x65F6;&#x95F4;&#x7684;&#x7B56;&#x7565;&#x5B9E;&#x73B0;&#x52A0;&#x901F;&#x3002;&#x56E0;&#x4E3A;&#x7F13;&#x5B58;&#x5728;&#x5185;&#x5B58;&#x4E2D;&#xFF0C;&#x975E;&#x5E38;&#x5FEB;&#x3002;&#x53EA;&#x6709;&#x5F53;&#x8BF7;&#x6C42;&#x65B9;&#x6CD5;&#x3001;URI&#x548C;&#x53C2;&#x6570;&#x90FD;&#x76F8;&#x540C;&#x7684;&#x8BF7;&#x6C42;&#xFF0C;&#x624D;&#x4F1A;&#x5BF9;&#x5E94;&#x5230;&#x540C;&#x4E00;&#x4E2A;&#x7F13;&#x5B58;&#x5185;&#x5BB9;&#x3002;</p>
@@ -521,7 +520,7 @@ int main(int, char**) {
     int port = 9090;
     const char* host = &quot;127.0.0.1&quot;;
 
-    mongols::tcp_proxy_server server(host, port, 5000, 8192, 0/*2*/);
+    mongols::tcp_proxy_server server(host, port, 5000, 8192, 0);
 
     server.set_enable_tcp_send_to_other(true);
     //see example/nodejs
@@ -578,7 +577,7 @@ int main(int, char**) {
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"代理和负载均衡","level":"1.1.13","depth":2,"next":{"title":"服务化","level":"1.1.14","depth":2,"path":"doc/daemon.md","ref":"doc/daemon.md","articles":[]},"previous":{"title":"medis","level":"1.1.12","depth":2,"path":"doc/medis.md","ref":"doc/medis.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/proxy.md","mtime":"2019-07-16T22:06:27.936Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-07-22T13:44:39.327Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"代理和负载均衡","level":"1.1.13","depth":2,"next":{"title":"服务化","level":"1.1.14","depth":2,"path":"doc/daemon.md","ref":"doc/daemon.md","articles":[]},"previous":{"title":"medis","level":"1.1.12","depth":2,"path":"doc/medis.md","ref":"doc/medis.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/proxy.md","mtime":"2020-07-22T23:22:08.199Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-07-22T23:23:27.020Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

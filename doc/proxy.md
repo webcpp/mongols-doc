@@ -91,11 +91,7 @@ console.log('Server running at http://127.0.0.1:'+port+'/');
 
 ```
 
-同样的后端，同样多的工作进程，如果比较于nginx的proxy_pass方案，无论是否开启缓存，mongols的并发性能都要强于nginx：
-
-![tcp_proxy_serverVSnginx_proxy_pass.png](image/tcp_proxy_serverVSnginx_proxy_pass.png)
-
-
+同样的后端，同样多的工作进程，如果比较于nginx的proxy_pass方案，无论是否开启缓存，mongols的并发性能都要强于nginx.
 实际上，从 web server 到 reverse proxy，对比于mongols，nginx其实是一款很慢的服务器软件。
 
 
@@ -160,7 +156,7 @@ int main(int, char**) {
     int port = 9090;
     const char* host = "127.0.0.1";
 
-    mongols::tcp_proxy_server server(host, port, 5000, 8192, 0/*2*/);
+    mongols::tcp_proxy_server server(host, port, 5000, 8192, 0);
 
     server.set_enable_tcp_send_to_other(true);
     //see example/nodejs
