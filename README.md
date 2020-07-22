@@ -11,9 +11,7 @@ mongols提供一个python绑定：[pymongols](https://github.com/webcpp/pymongol
 
 它提供的接口非常友好，使得任何试图基于tcp、resp或http协议开发高性能网络服务器的开发者都能够轻易地完成工作。
 
-而且，它提供的所有服务器均能像nginx一样实现master-worker多进程模型，而且比nginx更高效：
-
-![multiprocessing anything](doc/image/multiprocess.png)
+而且，它提供的所有服务器均能像nginx一样实现master-worker多进程模型，而且比nginx更高效。
 
 
 下载：[https://github.com/webcpp/mongols](https://github.com/webcpp/mongols)
