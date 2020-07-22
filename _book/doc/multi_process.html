@@ -403,22 +403,23 @@
                                 <h1 id="&#x591A;&#x8FDB;&#x7A0B;&#x5316;">&#x591A;&#x8FDB;&#x7A0B;&#x5316;</h1>
 <p>mongols&#x63D0;&#x4F9B;&#x7684;&#x6240;&#x6709;&#x670D;&#x52A1;&#x5668;&#x8BBE;&#x65BD;&#x65E2;&#x53EF;&#x4EE5;&#x591A;&#x7EBF;&#x7A0B;&#x5316;&#x4E5F;&#x53EF;&#x4EE5;&#x591A;&#x8FDB;&#x7A0B;&#x5316;&#x3002;</p>
 <p>&#x5E76;&#x4E14;&#x652F;&#x6301;&#x5728;&#x591A;&#x8FDB;&#x7A0B;&#x5316;&#x7684;&#x540C;&#x65F6;&#x591A;&#x7EBF;&#x7A0B;&#x5316;&#x3002;</p>
-<p><img src="image/multiprocess.png" alt="multiprocessing"></p>
 <p>&#x6765;&#x770B;&#x4EE3;&#x7801;&#xFF1A;</p>
 <pre><code class="lang-cpp">
-<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;unistd.h&gt;</span></span>
-<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;sys/wait.h&gt;</span></span>
-<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;sys/signal.h&gt;</span></span>
-<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;sys/prctl.h&gt;</span></span>
 <span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;mongols/util.hpp&gt;</span></span>
 <span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;mongols/web_server.hpp&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;sys/prctl.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;sys/signal.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;sys/wait.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;unistd.h&gt;</span></span>
 
-<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;</span></span>
 <span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;algorithm&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;functional&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;</span></span>
 
-<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-keyword">int</span>, <span class="hljs-keyword">char</span>**)</span> </span>{
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-keyword">int</span>, <span class="hljs-keyword">char</span>**)</span>
+</span>{
     <span class="hljs-comment">//    daemon(1, 0);</span>
-    <span class="hljs-keyword">auto</span> f = [](<span class="hljs-keyword">const</span> mongols::request &amp; req) {
+    <span class="hljs-keyword">auto</span> f = [](<span class="hljs-keyword">const</span> mongols::request&amp; req) {
         <span class="hljs-keyword">if</span> (req.method == <span class="hljs-string">&quot;GET&quot;</span> &amp;&amp; req.uri.find(<span class="hljs-string">&quot;..&quot;</span>) == <span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span>::npos) {
             <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
         }
@@ -427,34 +428,35 @@
     <span class="hljs-keyword">int</span> port = <span class="hljs-number">9090</span>;
     <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>* host = <span class="hljs-string">&quot;127.0.0.1&quot;</span>;
     mongols::<span class="hljs-function">web_server
-    <span class="hljs-title">server</span><span class="hljs-params">(host, port, <span class="hljs-number">5000</span>, <span class="hljs-number">512000</span>, <span class="hljs-number">0</span><span class="hljs-comment">/*2*/</span>)</span></span>;
+        <span class="hljs-title">server</span><span class="hljs-params">(host, port, <span class="hljs-number">5000</span>, <span class="hljs-number">512000</span>, <span class="hljs-number">0</span>)</span></span>;
     server.set_root_path(<span class="hljs-string">&quot;html&quot;</span>);
     server.set_mime_type_file(<span class="hljs-string">&quot;html/mime.conf&quot;</span>);
     server.set_list_directory(<span class="hljs-literal">true</span>);
     server.set_enable_mmap(<span class="hljs-literal">true</span>);
+    <span class="hljs-comment">//    if (!server.set_openssl(&quot;openssl/localhost.crt&quot;, &quot;openssl/localhost.key&quot;)) {</span>
+    <span class="hljs-comment">//        return -1;</span>
+    <span class="hljs-comment">//    }</span>
 
-    <span class="hljs-built_in">std</span>::function&lt;<span class="hljs-keyword">void</span>(<span class="hljs-keyword">pthread_mutex_t</span>*, <span class="hljs-keyword">size_t</span>*) &gt; ff = [&amp;](<span class="hljs-keyword">pthread_mutex_t</span>* mtx, <span class="hljs-keyword">size_t</span> * data) {
-        prctl(PR_SET_NAME, <span class="hljs-string">&quot;mongols: worker&quot;</span>);
+    <span class="hljs-built_in">std</span>::function&lt;<span class="hljs-keyword">void</span>(<span class="hljs-keyword">pthread_mutex_t</span>*, <span class="hljs-keyword">size_t</span>*)&gt; ff = [&amp;](<span class="hljs-keyword">pthread_mutex_t</span>* mtx, <span class="hljs-keyword">size_t</span>* data) {
+        server.set_shutdown([&amp;]() {
+            <span class="hljs-built_in">std</span>::<span class="hljs-built_in">cout</span> &lt;&lt; <span class="hljs-string">&quot;process &quot;</span> &lt;&lt; getpid() &lt;&lt; <span class="hljs-string">&quot; exit.\n&quot;</span>;
+        });
         server.run(f);
     };
 
-    <span class="hljs-built_in">std</span>::function&lt;<span class="hljs-keyword">bool</span>(<span class="hljs-keyword">int</span>) &gt; g = [&amp;](<span class="hljs-keyword">int</span> status) {
-        <span class="hljs-built_in">std</span>::<span class="hljs-built_in">cout</span> &lt;&lt; strsignal(WTERMSIG(status)) &lt;&lt; <span class="hljs-built_in">std</span>::<span class="hljs-built_in">endl</span>;
+    <span class="hljs-built_in">std</span>::function&lt;<span class="hljs-keyword">bool</span>(<span class="hljs-keyword">int</span>)&gt; g = [&amp;](<span class="hljs-keyword">int</span> status) {
         <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
     };
 
-    mongols::multi_process main_precess;
-    main_precess.run(ff, g);
-
-
+    mongols::multi_process main_process;
+    main_process.run(ff, g);
 }
 </code></pre>
 <p>&#x591A;&#x8FDB;&#x7A0B;&#x5316;&#x6700;&#x5408;&#x9002;&#x7684;&#x573A;&#x666F;&#x662F;web_server&#xFF0C;&#x53EF;&#x4EE5;&#x663E;&#x8457;&#x63D0;&#x5347;&#x6027;&#x80FD;&#xFF1A;</p>
-<p><img src="image/ab_multi_process_web_server.png" alt="ab_multi_process_web_server.png"></p>
-<p><img src="image/wrk_multi_process_web_server.png" alt="wrk_multi_process_web_server.png"></p>
-<p><img src="image/nginxVSmongols.png" alt="nginxVSmongols.png"></p>
-<p><img src="image/mongolsVSnginx_4_worker.png" alt="mongolsVSnginx_4_worker.png"></p>
-<p>&#x4EE5;&#x4E0A;&#x6D4B;&#x8BD5;&#x4F7F;&#x7528;4&#x4E2A;&#x5DE5;&#x4F5C;&#x8FDB;&#x7A0B;&#xFF0C;&#x5BF9;&#x6BD4;&#x4E8E;&#x4F7F;&#x7528;&#x540C;&#x6837;&#x6570;&#x76EE;&#x5DE5;&#x4F5C;&#x8FDB;&#x7A0B;&#x7684;nginx&#xFF0C;&#x66F4;&#x80DC;&#x4E00;&#x7B79;&#x3002;&#x5982;&#x679C;&#x4F60;&#x6709;&#x5174;&#x8DA3;&#x7528;&#x66F4;&#x5927;&#x538B;&#x529B;&#x6D4B;&#x8BD5;&#xFF0C;&#x4F60;&#x4F1A;&#x53D1;&#x73B0;&#xFF0C;&#x6BD4;&#x5982;&#x6211;&#x7528;wrk&#x6D4B;&#x8BD5;&#xFF0C;20000&#x5E76;&#x53D1;&#x4EE5;&#x4E0A;&#xFF0C;&#x968F;&#x7740;&#x5E76;&#x53D1;&#x6570;&#x7684;&#x589E;&#x52A0;nginx&#x7684;&#x5F31;&#x52BF;&#x4F1A;&#x8D8A;&#x6765;&#x8D8A;&#x660E;&#x663E;&#x3002;&#x5B9E;&#x9645;&#x4E0A;&#xFF0C;&#x5728;&#x540C;&#x7B49;&#x4F7F;&#x7528;&#x5355;&#x8FDB;&#x7A0B;&#x7684;&#x60C5;&#x51B5;&#x4E0B;&#xFF0C;mongols&#x4E5F;&#x6BD4;nginx&#x66F4;&#x5FEB;&#x66F4;&#x7A33;&#x5B9A;&#xFF01;</p>
+<p><img src="image/nginx_4_worker.png" alt="nginx_4_worker.png">
+<img src="image/mongols_4_worker.png" alt="mongols_4_worker.png">
+<img src="image/nginx_vs_mongols.png" alt="nginx_vs_mongols.png"></p>
+<p>&#x4EE5;&#x4E0A;&#x6D4B;&#x8BD5;&#x4F7F;&#x7528;4&#x4E2A;&#x5DE5;&#x4F5C;&#x8FDB;&#x7A0B;&#xFF0C;&#x5BF9;&#x6BD4;&#x4E8E;&#x4F7F;&#x7528;&#x540C;&#x6837;&#x6570;&#x76EE;&#x5DE5;&#x4F5C;&#x8FDB;&#x7A0B;&#x7684;nginx&#xFF0C;&#x66F4;&#x80DC;&#x4E00;&#x7B79;&#x3002;&#x5B9E;&#x9645;&#x4E0A;&#xFF0C;&#x5728;&#x540C;&#x7B49;&#x4F7F;&#x7528;&#x5355;&#x8FDB;&#x7A0B;&#x7684;&#x60C5;&#x51B5;&#x4E0B;&#xFF0C;mongols&#x4E5F;&#x6BD4;nginx&#x66F4;&#x5FEB;&#x66F4;&#x7A33;&#x5B9A;&#xFF01;nginx &#x4E5F;&#x662F;&#x4E00;&#x6735;&#x6D6E;&#x4E91;&#x3002;</p>
 <h2 id="&#x5B50;&#x8FDB;&#x7A0B;&#x91CD;&#x542F;">&#x5B50;&#x8FDB;&#x7A0B;&#x91CD;&#x542F;</h2>
 <p>&#x5982;&#x9700;&#x5B50;&#x8FDB;&#x7A0B;&#x91CD;&#x542F;&#xFF0C;&#x53EF;&#x5411;&#x7BA1;&#x7406;&#x8FDB;&#x7A0B;&#x53D1;&#x9001;SIGHUP&#x4FE1;&#x53F7;&#x3002;&#x5F53;&#x7136;&#xFF0C;&#x5982;&#x679C;&#x5B50;&#x8FDB;&#x7A0B;&#x975E;&#x6B63;&#x5E38;&#x7EC8;&#x6B62;&#xFF0C;&#x4F8B;&#x5982;&#x88AB;killed&#xFF0C;&#x5B50;&#x8FDB;&#x7A0B;&#x4F1A;&#x81EA;&#x52A8;&#x91CD;&#x542F;&#x3002;</p>
 <h2 id="&#x6CE8;&#x610F;">&#x6CE8;&#x610F;</h2>
@@ -587,7 +589,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"多进程化","level":"1.1.15","depth":2,"next":{"title":"openssl","level":"1.1.16","depth":2,"path":"doc/openssl.md","ref":"doc/openssl.md","articles":[]},"previous":{"title":"服务化","level":"1.1.14","depth":2,"path":"doc/daemon.md","ref":"doc/daemon.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/multi_process.md","mtime":"2020-07-15T02:20:55.169Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-07-21T09:26:26.649Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"多进程化","level":"1.1.15","depth":2,"next":{"title":"openssl","level":"1.1.16","depth":2,"path":"doc/openssl.md","ref":"doc/openssl.md","articles":[]},"previous":{"title":"服务化","level":"1.1.14","depth":2,"path":"doc/daemon.md","ref":"doc/daemon.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/multi_process.md","mtime":"2020-07-22T06:04:00.464Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-07-22T06:05:16.529Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

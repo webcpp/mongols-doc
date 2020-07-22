@@ -417,17 +417,15 @@
     <span class="hljs-keyword">int</span> port = <span class="hljs-number">9090</span>;
     <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>* host = <span class="hljs-string">&quot;127.0.0.1&quot;</span>;
     mongols::<span class="hljs-function">http_server
-    <span class="hljs-title">server</span><span class="hljs-params">(host, port, <span class="hljs-number">5000</span>, <span class="hljs-number">8096</span>, <span class="hljs-number">0</span><span class="hljs-comment">/*2*/</span>)</span></span>;
+    <span class="hljs-title">server</span><span class="hljs-params">(host, port, <span class="hljs-number">5000</span>, <span class="hljs-number">8096</span>, <span class="hljs-number">0</span>)</span></span>;
     server.set_enable_session(<span class="hljs-literal">false</span>);
     server.set_enable_cache(<span class="hljs-literal">false</span>);
     server.run(f, g);
 }
 </code></pre>
-<p>http&#x670D;&#x52A1;&#x5668;&#x6784;&#x9020;&#x65F6;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;&#x7B2C;&#x4E94;&#x4E2A;&#x53C2;&#x6570;&#x9009;&#x62E9;&#x662F;&#x5426;&#x4F7F;&#x7528;&#x591A;&#x7EBF;&#x7A0B;&#x673A;&#x5236;&#xFF0C;&#x5F53;&#x5176;&#x4E3A;&#x5927;&#x4E8E;0&#x65F6;&#xFF0C;&#x5176;&#x503C;&#x4E3A;&#x5DE5;&#x4F5C;&#x7EBF;&#x7A0B;&#x6570;&#x3002;</p>
+<p>http&#x670D;&#x52A1;&#x5668;&#x6784;&#x9020;&#x51FD;&#x6570;&#x7684;&#x7B2C;&#x4E94;&#x4E2A;&#x53C2;&#x6570;&#x5E94;&#x8BBE;&#x7F6E;&#x4E3A;0&#x3002;</p>
 <p><code>run</code>&#x65B9;&#x6CD5;&#x9700;&#x8981;&#x4E24;&#x4E2A;&#x51FD;&#x6570;&#x53C2;&#x6570;&#xFF0C;&#x7B2C;&#x4E00;&#x4E2A;&#x53EF;&#x7528;&#x6765;&#x8FC7;&#x6EE4;&#x5BA2;&#x6237;&#x7AEF;&#xFF0C;&#x7B2C;&#x4E8C;&#x4E2A;&#x5219;&#x7528;&#x6765;&#x751F;&#x6210;&#x54CD;&#x5E94;&#x3002;</p>
 <p>http_server&#x7684;&#x5E76;&#x53D1;&#x6027;&#x80FD;&#x975E;&#x5E38;&#x597D;&#xFF0C;&#x8FDC;&#x9AD8;&#x4E8E;&#x5E38;&#x89C1;&#x7684;&#x57FA;&#x4E8E;libevent&#x3001;libev&#x6216;&#x8005;libuv&#x7684;&#x5176;&#x4ED6;http&#x670D;&#x52A1;&#x5668;:</p>
-<p><img src="image/ab_http.png" alt="ab_http"></p>
-<p><img src="image/wrk_http.png" alt="mongols"></p>
 <p>&#x6BD4;&#x5982;&#x6211;&#x7528;libevent2&#x5199;&#x4E2A;&#x6700;&#x57FA;&#x672C;&#x7684;http&#x670D;&#x52A1;&#x5668;&#x4F5C;&#x4E3A;&#x5BF9;&#x6BD4;&#xFF0C;&#x4EE3;&#x7801;&#x5982;&#x4E0B;&#xFF1A;</p>
 <pre><code class="lang-cpp">
 <span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cstring&gt;</span></span>
@@ -497,9 +495,47 @@
     evhttp_send_reply(ev_req, <span class="hljs-number">200</span>, <span class="hljs-string">&quot;OK&quot;</span>, ev_res);
 }
 </code></pre>
-<p>&#x7528;ab&#x6216;&#x8005;wrk&#x538B;&#x6D4B;&#x8BE5;http&#x670D;&#x52A1;&#x5668;&#xFF0C;&#x5982;&#x56FE;:</p>
-<p><img src="image/libevent_http_server.png" alt="libevet_http_server"></p>
-<p>&#x4E0D;&#x4EC5;&#x6BD4;mongols&#x6162;&#x5F97;&#x591A;&#xFF0C;&#x800C;&#x4E14;&#x5185;&#x5B58;&#x6D88;&#x8017;&#x51E0;&#x4E4E;&#x5341;&#x500D;&#x4E8E;mongols&#x3002;</p>
+<pre><code class="lang-txt">
+Server Software:        libevent2
+Server Hostname:        localhost
+Server Port:            8080
+
+Document Path:          /
+Document Length:        11 bytes
+
+Concurrency Level:      20000
+Time taken for tests:   15.356 seconds
+Complete requests:      500000
+Failed requests:        0
+Keep-Alive requests:    500000
+Total transferred:      66500000 bytes
+HTML transferred:       5500000 bytes
+Requests per second:    32560.23 [#/sec] (mean)
+Time per request:       614.246 [ms] (mean)
+Time per request:       0.031 [ms] (mean, across all concurrent requests)
+Transfer rate:          4229.01 [Kbytes/sec] received
+</code></pre>
+<pre><code class="lang-txt">
+Server Software:        mongols/1.8.4
+Server Hostname:        localhost
+Server Port:            9090
+
+Document Path:          /
+Document Length:        11 bytes
+
+Concurrency Level:      20000
+Time taken for tests:   6.440 seconds
+Complete requests:      500000
+Failed requests:        0
+Keep-Alive requests:    500000
+Total transferred:      68000000 bytes
+HTML transferred:       5500000 bytes
+Requests per second:    77634.48 [#/sec] (mean)
+Time per request:       257.617 [ms] (mean)
+Time per request:       0.013 [ms] (mean, across all concurrent requests)
+Transfer rate:          10310.83 [Kbytes/sec] received
+</code></pre>
+<p>&#x4E0D;&#x4EC5;&#x6BD4;mongols&#x6162;&#x5F97;&#x591A;&#xFF0C;&#x800C;&#x4E14;&#x5185;&#x5B58;&#x6D88;&#x8017;&#x8FD1;&#x4E4E;&#x4E8C;&#x5341;&#x500D;&#x4E8E;mongols&#x3002;</p>
 <h2 id="&#x4F7F;&#x7528;&#x8DEF;&#x7531;&#x673A;&#x5236;">&#x4F7F;&#x7528;&#x8DEF;&#x7531;&#x673A;&#x5236;</h2>
 <p>http_server&#x53EF;&#x4EE5;&#x50CF;&#x4E00;&#x4E9B;web&#x5F00;&#x53D1;&#x6846;&#x67B6;&#x4E00;&#x6837;&#xFF0C;&#x901A;&#x8FC7;&#x6DFB;&#x52A0;&#x8DEF;&#x7531;&#x6620;&#x5C04;&#x6765;&#x652F;&#x6301;&#x4E1A;&#x52A1;&#x903B;&#x8F91;&#xFF1A;</p>
 <pre><code class="lang-cpp">
@@ -563,7 +599,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"HTTP","level":"1.1.3","depth":2,"next":{"title":"websocket","level":"1.1.4","depth":2,"path":"doc/websocket.md","ref":"doc/websocket.md","articles":[]},"previous":{"title":"TCP","level":"1.1.2","depth":2,"path":"doc/tcp.md","ref":"doc/tcp.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/http.md","mtime":"2019-10-21T03:30:28.804Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-07-21T09:26:26.649Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"HTTP","level":"1.1.3","depth":2,"next":{"title":"websocket","level":"1.1.4","depth":2,"path":"doc/websocket.md","ref":"doc/websocket.md","articles":[]},"previous":{"title":"TCP","level":"1.1.2","depth":2,"path":"doc/tcp.md","ref":"doc/tcp.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/http.md","mtime":"2020-07-22T05:32:32.549Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-07-22T06:05:16.529Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

@@ -4,25 +4,27 @@ mongols提供的所有服务器设施既可以多线程化也可以多进程化�
 
 并且支持在多进程化的同时多线程化。
 
-![multiprocessing](image/multiprocess.png)
+
 
 来看代码：
 
 ```cpp
 
-#include <unistd.h>
-#include <sys/wait.h>
-#include <sys/signal.h>
-#include <sys/prctl.h>
 #include <mongols/util.hpp>
 #include <mongols/web_server.hpp>
+#include <sys/prctl.h>
+#include <sys/signal.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
-#include <iostream>
 #include <algorithm>
+#include <functional>
+#include <iostream>
 
-int main(int, char**) {
+int main(int, char**)
+{
     //    daemon(1, 0);
-    auto f = [](const mongols::request & req) {
+    auto f = [](const mongols::request& req) {
         if (req.method == "GET" && req.uri.find("..") == std::string::npos) {
             return true;
         }
@@ -31,26 +33,28 @@ int main(int, char**) {
     int port = 9090;
     const char* host = "127.0.0.1";
     mongols::web_server
-    server(host, port, 5000, 512000, 0/*2*/);
+        server(host, port, 5000, 512000, 0);
     server.set_root_path("html");
     server.set_mime_type_file("html/mime.conf");
     server.set_list_directory(true);
     server.set_enable_mmap(true);
+    //    if (!server.set_openssl("openssl/localhost.crt", "openssl/localhost.key")) {
+    //        return -1;
+    //    }
 
-    std::function<void(pthread_mutex_t*, size_t*) > ff = [&](pthread_mutex_t* mtx, size_t * data) {
-        prctl(PR_SET_NAME, "mongols: worker");
+    std::function<void(pthread_mutex_t*, size_t*)> ff = [&](pthread_mutex_t* mtx, size_t* data) {
+        server.set_shutdown([&]() {
+            std::cout << "process " << getpid() << " exit.\n";
+        });
         server.run(f);
     };
 
-    std::function<bool(int) > g = [&](int status) {
-        std::cout << strsignal(WTERMSIG(status)) << std::endl;
+    std::function<bool(int)> g = [&](int status) {
         return false;
     };
 
-    mongols::multi_process main_precess;
-    main_precess.run(ff, g);
-
-
+    mongols::multi_process main_process;
+    main_process.run(ff, g);
 }
 
 ```
@@ -58,15 +62,12 @@ int main(int, char**) {
 多进程化最合适的场景是web_server，可以显著提升性能：
 
 
-![ab_multi_process_web_server.png](image/ab_multi_process_web_server.png)
+![nginx_4_worker.png](image/nginx_4_worker.png)
+![mongols_4_worker.png](image/mongols_4_worker.png)
+![nginx_vs_mongols.png](image/nginx_vs_mongols.png)
 
-![wrk_multi_process_web_server.png](image/wrk_multi_process_web_server.png)
 
-![nginxVSmongols.png](image/nginxVSmongols.png)
-
-![mongolsVSnginx_4_worker.png](image/mongolsVSnginx_4_worker.png)
-
-以上测试使用4个工作进程，对比于使用同样数目工作进程的nginx，更胜一筹。如果你有兴趣用更大压力测试，你会发现，比如我用wrk测试，20000并发以上，随着并发数的增加nginx的弱势会越来越明显。实际上，在同等使用单进程的情况下，mongols也比nginx更快更稳定！
+以上测试使用4个工作进程，对比于使用同样数目工作进程的nginx，更胜一筹。实际上，在同等使用单进程的情况下，mongols也比nginx更快更稳定！nginx 也是一朵浮云。
 
 ## 子进程重启
 

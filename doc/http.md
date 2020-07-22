@@ -19,7 +19,7 @@ int main(int, char**) {
     int port = 9090;
     const char* host = "127.0.0.1";
     mongols::http_server
-    server(host, port, 5000, 8096, 0/*2*/);
+    server(host, port, 5000, 8096, 0);
     server.set_enable_session(false);
     server.set_enable_cache(false);
     server.run(f, g);
@@ -27,16 +27,14 @@ int main(int, char**) {
 
 ```
 
-http服务器构造时可以通过第五个参数选择是否使用多线程机制，当其为大于0时，其值为工作线程数。
+http服务器构造函数的第五个参数应设置为0。
 
 `run`方法需要两个函数参数，第一个可用来过滤客户端，第二个则用来生成响应。
 
 
 http_server的并发性能非常好，远高于常见的基于libevent、libev或者libuv的其他http服务器:
 
-![ab_http](image/ab_http.png)
 
-![mongols](image/wrk_http.png)
 
 比如我用libevent2写个最基本的http服务器作为对比，代码如下：
 
@@ -111,11 +109,55 @@ static inline void generic_request_handler(struct evhttp_request* ev_req, void* 
 
 
 ```
-用ab或者wrk压测该http服务器，如图:
+```txt
 
-![libevet_http_server](image/libevent_http_server.png)
+Server Software:        libevent2
+Server Hostname:        localhost
+Server Port:            8080
 
-不仅比mongols慢得多，而且内存消耗几乎十倍于mongols。
+Document Path:          /
+Document Length:        11 bytes
+
+Concurrency Level:      20000
+Time taken for tests:   15.356 seconds
+Complete requests:      500000
+Failed requests:        0
+Keep-Alive requests:    500000
+Total transferred:      66500000 bytes
+HTML transferred:       5500000 bytes
+Requests per second:    32560.23 [#/sec] (mean)
+Time per request:       614.246 [ms] (mean)
+Time per request:       0.031 [ms] (mean, across all concurrent requests)
+Transfer rate:          4229.01 [Kbytes/sec] received
+
+```
+
+```txt
+
+Server Software:        mongols/1.8.4
+Server Hostname:        localhost
+Server Port:            9090
+
+Document Path:          /
+Document Length:        11 bytes
+
+Concurrency Level:      20000
+Time taken for tests:   6.440 seconds
+Complete requests:      500000
+Failed requests:        0
+Keep-Alive requests:    500000
+Total transferred:      68000000 bytes
+HTML transferred:       5500000 bytes
+Requests per second:    77634.48 [#/sec] (mean)
+Time per request:       257.617 [ms] (mean)
+Time per request:       0.013 [ms] (mean, across all concurrent requests)
+Transfer rate:          10310.83 [Kbytes/sec] received
+
+
+
+```
+
+不仅比mongols慢得多，而且内存消耗近乎二十倍于mongols。
 
 ## 使用路由机制
 

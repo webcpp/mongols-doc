@@ -28,20 +28,3 @@ int main(int,char**)
 
 ```
 
-web_server可以通过`set_enable_mmap`来启用内存映射读取，在某些情况下可提升性能。
-
-函数`f`可用来根据http请求过滤客户端。
-
-关于并发性能，可参考(nginx欢迎页)下图：
-
-![wrk_web](image/wrk_web.png)
-
-![ab_web](image/ab_web.png)
-
-mongols比nginx(1 worker)更快:
-
-![mongolsVSnginx_1](image/mongolsVSnginx_1.png)
-
-![mongolsVSnginx_2](image/mongolsVSnginx_2.png)
-
-![mongolsVSnginx_3](image/mongolsVSnginx_3.png)

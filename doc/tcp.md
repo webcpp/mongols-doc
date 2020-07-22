@@ -70,24 +70,4 @@ int main(int,char**)
 注意：白名单机制一旦通过`set_enable_whitelist`方法被启用（默认不启用），服务器将拒绝任何由不在白名单中的IP地址发起的连接请求。所以，请谨慎配置白名单。
 
 
-## 压力测试
-
-`example`下有个ping-pong压测程序`tcp_server_benchmark`，可测试tcp_server的并发吞吐能力。
-
-注意，测试时应当把上例中的`send_to_other`设置为`false`，并且最大buffer值不应超过tcp_server的配置值，在上例中，是默认值8192——如果需要测试更大的buffer,则需加大tcp_server的buffer。
-
-另外，推荐使用`gnomon`进行测试计量。
-
-比如：`./tcp_server_benchmark --host 127.0.0.1 --port 9090 --client 20000 --loop 5000000 --buffer 2048 --ssl 0 | gnomon --high`
-
-下图是与`muduo`的`pingpong_server`的压测比较图，mongols(单线程)在9090端口，muduo(4线程)在9999端口：
-
-![tcp_server_benchmark](image/tcp_server_benchmark.png)
-
-从耗时数值来看，mongols的优势并不明显。但是若结合CPU消耗和内存占用来看，则mongols的优势非常明显：
-
-- CPU消耗: mongols < 28% , muduo > 54%
-- 内存占用: mongols < 5MB, muduo > 60MB
-
-
 

@@ -1,6 +1,6 @@
 # js 服务器
 
-mongols-1.7.1以后版本不再支持js语言。
+mongols-1.7.1以后版本不再支持js语言。此节可忽略。
 
 这是为了方便使用javascript进行web开发准备的。
 

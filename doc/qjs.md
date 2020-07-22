@@ -56,9 +56,6 @@ mongols.content("hello,world\n");
 
 ```
 
-简单的`hello,world`测试如下：
-![qjs_server_ab](image/qjs_server_ab.png)
-![qjs_server_wrk](image/qjs_server_wrk.png)
 
 
 ## 优化
@@ -135,54 +132,3 @@ export default route_test;
 
 如果有更好的路由器实现，欢迎替换。
 
-## 比较
-
-quickjs引擎是一个新的javascript引擎。它具备很多优点和新特性。其综合性能不及V8。此点自然会在一定程度上拖累qjs_server。
-
-不过，qjs_server仍可优于nodejs——以号称最快的nodejs框架fastify为例:
-
-```javascript
-const cluster = require('cluster');
-const numCPUs = require('os').cpus().length;
-// Require the framework and instantiate it
-const fastify = require('fastify')({ logger: false })
-
-
-
-if (cluster.isMaster) {
-  console.log(`Master ${process.pid} is running`);
-
-  // Fork workers.
-  for (let i = 0; i < numCPUs; i++) {
-    cluster.fork();
-  }
-
-} else {
-
-  // Declare a route
-  fastify.get('/', async (request, reply) => {
-    reply.header('Content-Type', 'text/plain;charset=utf-8')
-    return 'hello,world\n';
-  })
-
-  // Run the server!
-  const start = async () => {
-    try {
-      await fastify.listen(3000)
-      fastify.log.info(`server listening on ${fastify.server.address().port}`)
-    } catch (err) {
-      fastify.log.error(err)
-    }
-  }
-  start()
-
-}
-```
-使用nodejs-v13驱动,同样使用默认路由器的情况下，ab压测对比于qjs_server:
-![mongolsVSfastify_ab](image/mongolsVSfastify_ab.png)
-若以wrk压测，则如下:
-![mongolsVSfastify_wrk](image/mongolsVSfastify_wrk.png)
-fastify不仅不如qjs_server快，而且不如后者轻。完成上述测试，fastify每一进程至少需要25至30mb内存消耗，而对qjs_server而言，每一进程使用2mb已经绰绰有余。
-
-比较于hi-nginx-qjs，qjs_server亦可占上风(均未使用路由器,均使用几乎完全一致的测试代码)：
-![qjs_serverVShi-nginx-qjs](image/qjs_serverVShi-nginx-qjs.png)
