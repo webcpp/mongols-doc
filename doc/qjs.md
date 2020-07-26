@@ -132,3 +132,120 @@ export default route_test;
 
 如果有更好的路由器实现，欢迎替换。
 
+## 压力测试比较
+同样开4个工作进程，比较于nodejs(v13)下的fastify框架，qjs_server能够在每工作进程内存消耗仅仅十分之一的优势下，获得近两倍吞吐率：
+
+```js
+const cluster = require('cluster');
+const numCPUs = require('os').cpus().length;
+// Require the framework and instantiate it
+const fastify = require('fastify')({ logger: false })
+
+
+
+if (cluster.isMaster) {
+  console.log(`Master ${process.pid} is running`);
+
+  // Fork workers.
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
+
+} else {
+
+  // Declare a route
+  fastify.get('/', async (request, reply) => {
+    reply.header('Content-Type', 'text/plain;charset=utf-8')
+    return 'hello,world\n';
+  })
+
+  // Run the server!
+  const start = async () => {
+    try {
+      await fastify.listen(3000)
+      fastify.log.info(`server listening on ${fastify.server.address().port}`)
+    } catch (err) {
+      fastify.log.error(err)
+    }
+  }
+  start()
+
+}
+
+```
+```txt
+apib -c30000 -t4 -d30 http://localhost:3000/
+
+(5 / 30) 5311.890 93% cpu
+(10 / 30) 35488.653 100% cpu
+(15 / 30) 39301.124 99% cpu
+(20 / 30) 38975.863 100% cpu
+(25 / 30) 40288.632 99% cpu
+(30 / 30) 39911.255 100% cpu
+Duration:             30.024 seconds
+Attempted requests:   997245
+Successful requests:  997245
+Non-200 results:      0
+Connections opened:   29996
+Socket errors:        0
+
+Throughput:           33214.740 requests/second
+Average latency:      596.694 milliseconds
+Minimum latency:      281.847 milliseconds
+Maximum latency:      27382.753 milliseconds
+Latency std. dev:     488.977 milliseconds
+50% latency:          526.840 milliseconds
+90% latency:          730.986 milliseconds
+98% latency:          1915.567 milliseconds
+99% latency:          3387.646 milliseconds
+
+Client CPU average:    99%
+Client CPU max:        100%
+Client memory usage:    83%
+
+Total bytes sent:      60.74 megabytes
+Total bytes received:  144.56 megabytes
+Send bandwidth:        16.18 megabits / second
+Receive bandwidth:     38.52 megabits / second
+
+
+```
+
+```txt
+apib -c30000 -t4 -d30 http://localhost:9090/
+
+(5 / 30) 45417.124 95% cpu
+(10 / 30) 63895.888 100% cpu
+(15 / 30) 64130.772 100% cpu
+(20 / 30) 64421.669 100% cpu
+(25 / 30) 58932.007 100% cpu
+(30 / 30) 64635.808 100% cpu
+Duration:             30.024 seconds
+Attempted requests:   1808772
+Successful requests:  1808772
+Non-200 results:      0
+Connections opened:   29998
+Socket errors:        0
+
+Throughput:           60243.352 requests/second
+Average latency:      483.053 milliseconds
+Minimum latency:      150.099 milliseconds
+Maximum latency:      2049.196 milliseconds
+Latency std. dev:     131.720 milliseconds
+50% latency:          469.488 milliseconds
+90% latency:          574.891 milliseconds
+98% latency:          804.549 milliseconds
+99% latency:          1042.740 milliseconds
+
+Client CPU average:    99%
+Client CPU max:        100%
+Client memory usage:    74%
+
+Total bytes sent:      108.72 megabytes
+Total bytes received:  238.05 megabytes
+Send bandwidth:        28.97 megabits / second
+Receive bandwidth:     63.43 megabits / second
+
+```
+
+所以不要轻易说quickjs不够快！
