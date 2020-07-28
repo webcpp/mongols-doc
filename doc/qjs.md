@@ -66,9 +66,7 @@ qjs_server通过两个静态变量调整服务器工作状态。
 ### `qjs_server::ctx_called_limit`
 默认值是10240。它负责配置每一quickjs运行时上下文被使用的次数。值过小会导致效率下降，值过大则可能导致内存使用上升。通常默认值即可。配置时，需与`qjs_server::memory_limit`协调。
 ### 开启lru缓存机制
-调用`set_enable_lru_cache`方法，参数为`true`即可。此法甚妙。1秒的过期时间，即可令服务器功力大增。如下图：
-![qjs_server_wrk_lru](image/qjs_server_wrk_lru.png)
-
+调用`set_enable_lru_cache`方法，参数为`true`即可。此法甚妙。1秒的过期时间，即可令服务器功力大增。
 ## api
 
 ### request
