@@ -115,7 +115,7 @@ mongols_res:status(200)
 
 ```
 
-为了方便json处理，我内置了一个基于jsoncpp的类mongols_json，API列表如下：
+为了方便json处理，我内置了一个基于json.hpp的类mongols_json，API列表如下：
 - set
 - get
 - append
