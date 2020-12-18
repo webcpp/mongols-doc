@@ -60,9 +60,11 @@ mongols.content("hello,world\n");
 
 ## 优化
 
-qjs_server通过两个静态变量调整服务器工作状态。
+qjs_server通过三个静态变量调整服务器工作状态。
 ### `qjs_server::memory_limit`
 默认值是1GB。它负责配置quickjs运行时能够使用的最大内存量。因为每一工作进程配有一个运行时，所以配置此值时需要考虑机器的硬件约束。通常默认值即可。
+### `qjs_server::stack_limit`
+默认值是8MB。它负责配置quickjs运行时能够使用的最大stack量。因为每一工作进程配有一个运行时，所以配置此值时需要考虑机器的硬件约束。通常默认值即可。
 ### `qjs_server::ctx_called_limit`
 默认值是10240。它负责配置每一quickjs运行时上下文被使用的次数。值过小会导致效率下降，值过大则可能导致内存使用上升。通常默认值即可。配置时，需与`qjs_server::memory_limit`协调。
 ### 开启lru缓存机制
