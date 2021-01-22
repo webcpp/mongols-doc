@@ -425,26 +425,25 @@
     res.content=<span class="hljs-string">&apos;hello,world&apos;</span>
     res.status=<span class="hljs-number">200</span>
 
-config={}
-config[<span class="hljs-string">&apos;host&apos;</span>]=<span class="hljs-string">&apos;127.0.0.1&apos;</span>
-config[<span class="hljs-string">&apos;port&apos;</span>]=<span class="hljs-number">9090</span>
-config[<span class="hljs-string">&apos;timeout&apos;</span>]=<span class="hljs-number">5000</span>
-config[<span class="hljs-string">&apos;buffer_size&apos;</span>]=<span class="hljs-number">8192</span>
-config[<span class="hljs-string">&apos;thread_size&apos;</span>]=<span class="hljs-number">0</span>
-config[<span class="hljs-string">&apos;max_body_size&apos;</span>]=<span class="hljs-number">4096</span>
-config[<span class="hljs-string">&apos;max_event_size&apos;</span>]=<span class="hljs-number">64</span>
+config = {<span class="hljs-string">&apos;host&apos;</span>:<span class="hljs-string">&apos;127.0.0.1&apos;</span>
+        ,<span class="hljs-string">&apos;port&apos;</span>:<span class="hljs-number">9090</span>
+        ,<span class="hljs-string">&apos;timeout&apos;</span>:<span class="hljs-number">5000</span>
+        ,<span class="hljs-string">&apos;buffer_size&apos;</span>:<span class="hljs-number">8192</span>
+        ,<span class="hljs-string">&apos;max_body_size&apos;</span>:<span class="hljs-number">4096</span>
+        ,<span class="hljs-string">&apos;max_event_size&apos;</span>:<span class="hljs-number">64</span>
+        }
 
 
 
-server = pymongols.http_server(config[<span class="hljs-string">&apos;host&apos;</span>],config[<span class="hljs-string">&apos;port&apos;</span>],config[<span class="hljs-string">&apos;timeout&apos;</span>],config[<span class="hljs-string">&apos;buffer_size&apos;</span>],config[<span class="hljs-string">&apos;thread_size&apos;</span>],config[<span class="hljs-string">&apos;max_body_size&apos;</span>],config[<span class="hljs-string">&apos;max_event_size&apos;</span>])
+server = pymongols.http_server(config)
 
-<span class="hljs-comment">#server.set_enable_daemon(True)</span>
-<span class="hljs-comment">#server.set_enable_multiple_processes(True)</span>
-<span class="hljs-comment">#server.set_pidfile(&quot;test1.pid&quot;)</span>
-<span class="hljs-comment">#server.set_enable_lru_cache(True)</span>
-<span class="hljs-comment">#server.set_lru_cache_expires(1)</span>
+<span class="hljs-comment"># server.set_enable_daemon(True)</span>
+server.set_enable_multiple_processes(<span class="hljs-keyword">True</span>)
+server.set_pidfile(__file__+<span class="hljs-string">&quot;.pid&quot;</span>)
+<span class="hljs-comment"># server.set_enable_lru_cache(True)</span>
+<span class="hljs-comment"># server.set_lru_cache_expires(1)</span>
 
-server.run(req_filter,res_filter)
+server.run(req_filter, res_filter)
 </code></pre>
 <h2 id="&#x8DEF;&#x7531;&#x7EC4;&#x4EF6;">&#x8DEF;&#x7531;&#x7EC4;&#x4EF6;</h2>
 <p>&#x8FD9;&#x4E2A;&#x7EC4;&#x4EF6;&#x4F9D;&#x8D56;&#x4E8E;pymongols,&#x5728;<code>mongols_route.py</code>&#x76EE;&#x5F55;&#x4E2D;&#xFF0C;&#x7528;<code>sudo python3 setup.py install</code>&#x6216;&#x8005;<code>sudo python2 setup.py install</code>&#x5B89;&#x88C5;&#x3002;</p>
@@ -506,21 +505,21 @@ app = application()
     app.run(req, res)
 
 
-config = {}
-config[<span class="hljs-string">&apos;host&apos;</span>] = <span class="hljs-string">&apos;127.0.0.1&apos;</span>
-config[<span class="hljs-string">&apos;port&apos;</span>] = <span class="hljs-number">9090</span>
-config[<span class="hljs-string">&apos;timeout&apos;</span>] = <span class="hljs-number">5000</span>
-config[<span class="hljs-string">&apos;buffer_size&apos;</span>] = <span class="hljs-number">8192</span>
-config[<span class="hljs-string">&apos;thread_size&apos;</span>] = <span class="hljs-number">0</span>
-config[<span class="hljs-string">&apos;max_body_size&apos;</span>] = <span class="hljs-number">4096</span>
-config[<span class="hljs-string">&apos;max_event_size&apos;</span>] = <span class="hljs-number">64</span>
+config = {<span class="hljs-string">&apos;host&apos;</span>:<span class="hljs-string">&apos;127.0.0.1&apos;</span>
+        ,<span class="hljs-string">&apos;port&apos;</span>:<span class="hljs-number">9090</span>
+        ,<span class="hljs-string">&apos;timeout&apos;</span>:<span class="hljs-number">5000</span>
+        ,<span class="hljs-string">&apos;buffer_size&apos;</span>:<span class="hljs-number">8192</span>
+        ,<span class="hljs-string">&apos;max_body_size&apos;</span>:<span class="hljs-number">4096</span>
+        ,<span class="hljs-string">&apos;max_event_size&apos;</span>:<span class="hljs-number">64</span>
+        }
 
 
-server = pymongols.http_server(config[<span class="hljs-string">&apos;host&apos;</span>], config[<span class="hljs-string">&apos;port&apos;</span>], config[<span class="hljs-string">&apos;timeout&apos;</span>], config[<span class="hljs-string">&apos;buffer_size&apos;</span>],
-                               config[<span class="hljs-string">&apos;thread_size&apos;</span>], config[<span class="hljs-string">&apos;max_body_size&apos;</span>], config[<span class="hljs-string">&apos;max_event_size&apos;</span>])
+
+server = pymongols.http_server(config)
 
 <span class="hljs-comment"># server.set_enable_daemon(True)</span>
-<span class="hljs-comment"># server.set_pidfile(&quot;test2.pid&quot;)</span>
+server.set_enable_multiple_processes(<span class="hljs-keyword">True</span>)
+server.set_pidfile(__file__+<span class="hljs-string">&quot;.pid&quot;</span>)
 <span class="hljs-comment"># server.set_enable_lru_cache(True)</span>
 <span class="hljs-comment"># server.set_lru_cache_expires(1)</span>
 server.set_enable_session(<span class="hljs-keyword">True</span>)
@@ -572,7 +571,7 @@ server.run(req_filter, res_filter)
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"python","level":"1.1.18","depth":2,"next":{"title":"其他","level":"1.1.19","depth":2,"path":"doc/others.md","ref":"doc/others.md","articles":[]},"previous":{"title":"压缩","level":"1.1.17","depth":2,"path":"doc/compress.md","ref":"doc/compress.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/python.md","mtime":"2020-07-22T05:57:35.442Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-12-18T20:48:49.583Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"python","level":"1.1.18","depth":2,"next":{"title":"其他","level":"1.1.19","depth":2,"path":"doc/others.md","ref":"doc/others.md","articles":[]},"previous":{"title":"压缩","level":"1.1.17","depth":2,"path":"doc/compress.md","ref":"doc/compress.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"doc/python.md","mtime":"2021-01-22T08:22:16.748Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-01-22T08:22:48.361Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
