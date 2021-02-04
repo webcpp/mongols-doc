@@ -1,8 +1,6 @@
 # qjs 服务器
 
-mongols-1.7.1以后版本不再支持以duktape引擎实现的javascript服务器。
-
-但是，自mongols-1.8.0开始，新增一个基于quickjs引擎的新的javascript服务器。性能较之以前，有较大提升。
+但是，自mongols-1.8.0开始，提供一个基于quickjs引擎的新的javascript服务器。性能较之以前，有较大提升。
 
 来看例子：
 ```cpp
